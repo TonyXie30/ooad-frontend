@@ -11,6 +11,7 @@ import componentsRouter from './modules/components'
 import chartsRouter from './modules/charts'
 import tableRouter from './modules/table'
 import nestedRouter from './modules/nested'
+import viewDormRouter from './modules/view-dorm'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -109,19 +110,6 @@ export const constantRoutes = [
     ]
   },
   {
-    path: '/view-dorm',
-    component: Layout,
-    redirect: '/view-dorm/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/view-dorm/index'),
-        name: 'ViewDorm',
-        meta: { title: 'View Dorm', icon: 'eye-open', noCache: true }
-      }
-    ]
-  },
-  {
     path: '/profile',
     component: Layout,
     redirect: '/profile/index',
@@ -134,7 +122,8 @@ export const constantRoutes = [
         meta: { title: 'Profile', icon: 'user', noCache: true }
       }
     ]
-  }
+  },
+  viewDormRouter
 ]
 
 /**
