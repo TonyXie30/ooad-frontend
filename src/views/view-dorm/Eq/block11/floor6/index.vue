@@ -75,9 +75,6 @@ export default {
   background-color: #f0f2f5;
   padding: 20px; /* Reduced padding to decrease blank space */
   min-height: calc(100vh - 84px);
-  .card-panel-num{
-    text-align: center;display: block;
-  }
   .box-card{
     height: 200px;
     cursor: pointer;
