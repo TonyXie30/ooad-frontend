@@ -286,14 +286,6 @@ export default {
   }
 }
 
-export function fetchList(query) {
-  return request({
-    url: '/api/register',
-    method: 'post',
-    params: query
-  })
-}
-
 </script>
 <style lang="scss">
 /* 修复input 背景不协调 和光标变色 */
