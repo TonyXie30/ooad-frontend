@@ -123,6 +123,19 @@ export const constantRoutes = [
       }
     ]
   },
+  {
+    path: '/dormSelect',
+    component: Layout,
+    redirect: '/dormSelect/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/dormSelect/index'),
+        name: 'DormSelect',
+        meta: { title: 'Select Dorm', icon: 'eye-open' }
+      }
+    ]
+  },
   viewDormRouter
 ]
 

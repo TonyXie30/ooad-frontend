@@ -29,17 +29,19 @@
       </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel">
-        <div class="card-panel-icon-wrapper icon-form">
-          <svg-icon icon-class="form" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            Dorm Selection
+      <router-link to="/dormSelect/index">
+        <div class="card-panel">
+          <div class="card-panel-icon-wrapper icon-form">
+            <svg-icon icon-class="form" class-name="card-panel-icon" />
           </div>
-          <count-to :start-val="0" :end-val="4800" :duration="3200" class="card-panel-num" />
+          <div class="card-panel-description">
+            <div class="card-panel-text">
+              Dorm Selection
+            </div>
+            <count-to :start-val="0" :end-val="4800" :duration="3200" class="card-panel-num" />
+          </div>
         </div>
-      </div>
+      </router-link>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel">
