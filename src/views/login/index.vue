@@ -57,7 +57,86 @@
           <span>Password : any</span>
         </div>
       </div>
+
+      <el-button class="reg-button1" type="primary" @click="showDialog=true">
+        Register
+      </el-button>
+
     </el-form>
+
+    <el-dialog :visible.sync="showDialog">
+
+      <span class="svg-container">
+        <svg-icon icon-class="user" />
+      </span>
+      <el-input
+        ref="username"
+        v-model="registerForm.username"
+        placeholder="Username"
+        name="username"
+        type="text"
+        tabindex="1"
+        autocomplete="on"
+      />
+      <br>
+      <span class="svg-container">
+        <svg-icon icon-class="password" />
+      </span>
+      <el-input
+        ref="password"
+        v-model="registerForm.password"
+        placeholder="Password"
+        name="password"
+        type="text"
+        tabindex="1"
+        autocomplete="on"
+      />
+      <br>
+      <span class="svg-container">
+        <svg-icon icon-class="education" />
+      </span>
+      <template>
+        <el-select v-model="registerForm.subject" placeholder="专业">
+          <el-option
+            v-for="item in subjects"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+      </template>
+      <br>
+      <template>
+        <span class="svg-container">
+          <svg-icon icon-class="dashboard" />
+        </span>
+        <el-time-picker
+          v-model="registerForm.wakeupTime"
+          :picker-options="{
+            selectableRange: '06:00:00 - 11:59:59'
+          }"
+          prefix-icon="null"
+          placeholder="起床时间"
+        />
+        <br>
+        <span class="svg-container">
+          <svg-icon icon-class="dashboard" />
+        </span>
+        <el-time-picker
+          v-model="registerForm.bedTime"
+          :picker-options="{
+            selectableRange: '18:00:00 - 23:59:59'
+          }"
+          prefix-icon="null"
+          placeholder="入睡时间"
+        />
+      </template>
+      <el-button class="reg-button2" type="primary" @click.native.prevent="handleRegister">
+        Register
+      </el-button>
+      <br><br><br>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -81,6 +160,13 @@ export default {
       }
     }
     return {
+      registerForm: {
+        username: '用户名',
+        password: '密码',
+        subject: '专业',
+        wakeupTime: '',
+        bedTime: ''
+      },
       loginForm: {
         username: 'admin',
         password: '111111'
@@ -89,6 +175,22 @@ export default {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
+      subjects: [{
+        value: '数学系',
+        label: '数学系'
+      }, {
+        value: '计算机系',
+        label: '计算机系'
+      }, {
+        value: '物理系',
+        label: '物理系'
+      }, {
+        value: '化学系',
+        label: '化学系'
+      }, {
+        value: '金融系',
+        label: '金融系'
+      }],
       passwordType: 'password',
       capsTooltip: false,
       loading: false,
@@ -155,6 +257,23 @@ export default {
         }
       })
     },
+    handleRegister() {
+      console.log(this.registerForm)
+
+      // this.$axios.post('/login', loginData)
+      /*
+      axios.post('/register', this.registerForm)
+        .then(response => {
+          // 处理登录成功的响应
+          console.log('Register successful:', response.data);
+          // 可以跳转到其他页面或执行其他操作
+        })
+        .catch(error => {
+          // 处理登录失败的响应
+          console.error('Register failed:', error);
+        });
+        */
+    },
     getOtherQuery(query) {
       return Object.keys(query).reduce((acc, cur) => {
         if (cur !== 'redirect') {
@@ -166,7 +285,6 @@ export default {
   }
 }
 </script>
-
 <style lang="scss">
 /* 修复input 背景不协调 和光标变色 */
 /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
@@ -199,10 +317,14 @@ $cursor: #fff;
       caret-color: $cursor;
 
       &:-webkit-autofill {
-        box-shadow: 0 0 0px 1000px $bg inset !important;
+        box-shadow: 0 0 0 1000px $bg inset !important;
         -webkit-text-fill-color: $cursor !important;
       }
     }
+  }
+  .el-dialog{
+    background: $bg;
+    width: 300px;
   }
 
   .el-form-item {
@@ -276,5 +398,24 @@ $light_gray:#eee;
     user-select: none;
   }
 
+  .reg-button1 {
+    position: absolute;
+    right: 7%;
+    bottom: 16px;
+    width: 200px;
+  }
+
+  .reg-button2 {
+    position: absolute;
+    right: 10%;
+    bottom: 20px;
+  }
+
+  @media only screen and (max-width: 470px) {
+    .thirdparty-button {
+      display: none;
+    }
+  }
 }
+
 </style>
