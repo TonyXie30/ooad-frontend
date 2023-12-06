@@ -1,7 +1,7 @@
 <template>
   <el-row :gutter="40" class="panel-group">
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <router-link to="/view-dorm/areas">
+      <router-link to="/view-dorm/zones">
         <div class="card-panel">
           <div class="card-panel-icon-wrapper icon-building">
             <i class="el-icon-office-building" />
