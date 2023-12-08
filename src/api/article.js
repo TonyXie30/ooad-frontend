@@ -79,6 +79,15 @@ export function selectRoom(query) {
   })
 }
 
+export function deleteRoom(query) {
+  var url = 'http://localhost:8443/api/checkInDorm'
+  url += `?dormitoryId=${query.id}&username=aaa`
+  return request({
+    url: url,
+    method: 'post'
+  })
+}
+
 export function fetchArticle(id) {
   return request({
     url: '/vue-element-admin/article/detail',

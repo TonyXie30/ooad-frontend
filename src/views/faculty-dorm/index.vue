@@ -20,9 +20,9 @@
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         Search
       </el-button>
-      <!-- <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         Add
-      </el-button> -->
+      </el-button>
       <!-- <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
         Export
       </el-button> -->
@@ -102,17 +102,17 @@
       </el-table-column>
       <el-table-column label="Actions" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <!-- <el-button type="primary" size="mini" @click="handleUpdate(row)">
+          <el-button type="primary" size="mini" @click="handleUpdate(row)">
             Edit
-          </el-button> -->
+          </el-button>
           <!-- <el-button v-if="row.status!='published'" size="mini" type="success" @click="handleModifyStatus(row,'published')">
             bookmark
           </el-button>
           <el-button v-if="row.status!='draft'" size="mini" @click="handleModifyStatus(row,'draft')">
             unmark
           </el-button> -->
-          <el-button v-if="selected != true" size="mini" type="primary" @click="handleChoose(row)">
-            Choose
+          <el-button v-if="selected != true" size="mini" type="danger" @click="handleDelete(row)">
+            Delete
           </el-button>
         </template>
       </el-table-column>
@@ -169,7 +169,7 @@
 
 <script>
 import { fetchList, fetchPv, createArticle, updateArticle } from '@/api/article'
-import { findBuilding, findFloor, selectRoom } from '@/api/article'
+import { findBuilding, findFloor, selectRoom, deleteRoom } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -414,6 +414,23 @@ export default {
         this.$notify({
           title: 'Success',
           message: 'Choose Successfully',
+          type: 'success',
+          duration: 2000
+        })
+
+        // Just to simulate the time of the request
+        setTimeout(() => {
+          this.listLoading = false
+        }, 1.5 * 1000)
+      })
+      // this.list.splice(index, 1)
+    },
+
+    handleDelete(row) {
+      deleteRoom(row).then(response => {
+        this.$notify({
+          title: 'Success',
+          message: 'delete Successfully',
           type: 'success',
           duration: 2000
         })
