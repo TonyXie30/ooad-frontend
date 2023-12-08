@@ -71,8 +71,8 @@ export function findFloor(query) {
 }
 
 export function selectRoom(query) {
-  var url = 'http://localhost:8443/api/selectRoom'
-  url += `?houseNum=${query.houseNum}&floor=${query.floor}&buildingName=${query.buildingName}&location=${query.location}`
+  var url = 'http://localhost:8443/api/checkInDorm'
+  url += `?dormitoryId=${query.id}&username=aaa`
   return request({
     url: url,
     method: 'post'

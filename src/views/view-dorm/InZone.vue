@@ -1,7 +1,7 @@
 <template>
   <div class="dropdown-container">
     <div class="eq-dorm-image">
-      <img src="https://mirrors.sustech.edu.cn/site/sustech-online/img/facility/buildings/p2-dormitory.jpg">
+      <img :src="imgLink" alt="Zone Image">
     </div>
 
     <el-form label-position="top" class="form-flex-container">
@@ -40,20 +40,51 @@ export default {
   data() {
     return {
       selectedInfo: {
+        zoneId: null,
         selectedBuilding: null,
         selectedFloor: null,
         selectedRoom: null
       },
-      buildings: [11, 15, 16],
+      imgLink: null,
+      buildings: null,
       availableFloors: [],
       availableRooms: []
     }
+  },
+  created() {
+    // watch 路由的参数，以便再次获取数据
+    this.$watch(
+      () => this.$route.params,
+      () => {
+        this.getParams()
+      },
+      // 组件创建完后获取数据，
+      // 此时 data 已经被 observed 了
+      { immediate: true }
+    )
   },
   mounted() {
     this.selectedInfo.selectedBuilding = this.buildings[0]
     this.updateFloors()
   },
   methods: {
+    getParams() {
+      const zoneId = this.$route.params.zoneId
+      this.selectedInfo.zoneId = zoneId
+      if (zoneId === 1) {
+        this.buildings = [1, 2, 3]
+        this.imgLink = 'https://mirrors.sustech.edu.cn/site/sustech-online/img/facility/buildings/zhiren-college.jpg'
+      } else if (zoneId === 2) {
+        this.buildings = [11, 14, 16]
+        this.imgLink = 'https://mirrors.sustech.edu.cn/site/sustech-online/img/facility/buildings/p2-dormitory.jpg'
+      } else if (zoneId === 3) {
+        this.buildings = [6, 7, 8]
+        this.imgLink = 'https://mirrors.sustech.edu.cn/site/sustech-online/img/facility/buildings/liyuan-gate.jpg'
+      } else {
+        this.buildings = [9, 10]
+        this.imgLink = 'https://mirrors.sustech.edu.cn/site/sustech-online/img/facility/buildings/liyuan-huiyuann-xinyuan.jpg'
+      }
+    },
     updateFloors() {
       this.availableFloors = [6, 7, 8]
       this.selectedInfo.selectedFloor = null // Reset floor and room when building changes

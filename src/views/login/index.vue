@@ -131,7 +131,7 @@
           placeholder="入睡时间"
         />
       </template>
-      <el-button class="reg-button2" type="primary" @click.native.prevent="handleRegister">
+      <el-button class="reg-button2" type="primary" @click.native.prevent="handleRegister" @click="showDialog=false">
         Register
       </el-button>
       <br><br><br>
@@ -142,7 +142,6 @@
 
 <script>
 import { validUsername } from '@/utils/validate'
-import request from '@/utils/request'
 export default {
   name: 'Login',
   data() {
@@ -260,7 +259,12 @@ export default {
     },
     handleRegister() {
       console.log(this.registerForm)
-
+      this.$notify({
+        title: 'Success',
+        message: 'Register Successfully',
+        type: 'success',
+        duration: 2000
+      })
       // this.$axios.post('/login', loginData)
       /*
       axios.post('/register', this.registerForm)

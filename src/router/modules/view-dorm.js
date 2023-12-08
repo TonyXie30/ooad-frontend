@@ -12,10 +12,10 @@ const viewDormRouter = {
       meta: { title: 'View Dorm', icon: 'eye-open', noCache: true }
     },
     {
-      path: 'Eq',
-      component: () => import('@/views/view-dorm/Eq.vue'),
-      name: 'EqArea',
-      meta: { title: '二期', noCache: true },
+      path: 'within-zone',
+      component: () => import('@/views/view-dorm/InZone.vue'),
+      name: 'ZoneArea',
+      meta: { title: 'InZone', noCache: true },
       hidden: true
     },
     {

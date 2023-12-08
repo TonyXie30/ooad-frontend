@@ -1,104 +1,108 @@
 <template>
-  <div class="view-dorm-container">
-    <el-row :gutter="20" style="margin-top:50px;">
-      <el-col :span="6">
-        <router-link to="/view-dorm/Eq">
-          <el-card class="box-card">
-            <div slot="header" class="clearfix">
-              <span style="text-align: center;display:block;">二期</span>
-              <count-to :start-val="0" :end-val="244" :duration="2600" class="card-panel-num" />
-            </div>
-            <div class="component-item">
-              <el-button v-waves type="primary">
-                Enter
-              </el-button>
-            </div>
-          </el-card>
+  <div class="dorm-map">
+    <img src="https://www.sustech.edu.cn/uploads/images/2022/09/27102859_86185.jpg" alt="Dorm Map" class="map-image">
+    <div
+      v-for="zone in zones"
+      :key="zone.id"
+      class="zone-point"
+      :style="{ top: zone.y, left: zone.x }"
+      @mouseover="zone.hovering = true"
+      @mouseleave="zone.hovering = false"
+    >
+      {{ zone.name }}
+      <div v-if="zone.hovering" class="preview-page">
+        <div class="info">
+          <div>{{ zone.description }}</div>
+          <div>
+            Room numbers:
+            <count-to :start-val="0" :end-val="zone.num" :duration="1000" class="card-panel-num" />
+          </div>
+        </div>
+        <router-link :to="{ name: 'ZoneArea', params: { zoneId: zone.id }}">
+          <el-button @click="enterZone(zone.id)">
+            Enter
+          </el-button>
         </router-link>
-      </el-col>
+      </div>
 
-      <el-col :span="6">
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span style="text-align: center;display:block;">湖畔</span>
-            <count-to :start-val="0" :end-val="51" :duration="2600" class="card-panel-num" />
-          </div>
-          <div class="component-item">
-            <el-button v-waves type="primary">
-              Enter
-            </el-button>
-          </div>
-        </el-card>
-      </el-col>
+    </div>
 
-      <el-col :span="6">
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span style="text-align: center;display:block;">荔园</span>
-            <count-to :start-val="0" :end-val="42" :duration="2600" class="card-panel-num" />
-          </div>
-          <div class="component-item">
-            <el-button v-waves type="primary">
-              Enter
-            </el-button>
-          </div>
-        </el-card>
-      </el-col>
-
-      <el-col :span="6">
-        <el-card class="box-card">
-          <div slot="header" class="clearfix">
-            <span style="text-align: center;display:block;">欣园</span>
-            <count-to :start-val="0" :end-val="107" :duration="2600" class="card-panel-num" />
-          </div>
-          <div class="component-item">
-            <el-button v-waves type="primary">
-              Enter
-            </el-button>
-          </div>
-        </el-card>
-      </el-col>
-    </el-row>
   </div>
 </template>
 
 <script>
-import waves from '@/directive/waves/index.js'
 import CountTo from 'vue-count-to'
-
 export default {
-  name: 'ViewDorm',
   components: {
     CountTo
   },
-  directives: {
-    waves
+  data() {
+    return {
+      zones: [
+        { id: 1, name: '湖畔宿舍', description: 'Room type: Double', num: 51, x: '30%', y: '60%', hovering: false },
+        { id: 2, name: '二期宿舍', description: 'Room type: Quadruple', num: 244, x: '35%', y: '50%', hovering: false },
+        { id: 3, name: '荔园宿舍', description: 'Room type: Triple', num: 42, x: '35%', y: '35%', hovering: false },
+        { id: 4, name: '欣园宿舍', description: 'Room type: Single', num: 107, x: '42%', y: '28%', hovering: false }
+      ]
+    }
+  },
+  methods: {
+    enterZone(zoneId) {
+      // Implement the logic to navigate to the specific zone page
+      console.log('Entering zone:', zoneId)
+    }
   }
 }
 </script>
 
 <style scoped>
-.view-dorm-container {
-  background-color: #f0f2f5;
-  padding: 30px;
-  min-height: calc(100vh - 84px);
+.dorm-map {
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+  height: 100vh; /* Use the full height of the viewport */
+  width: 100%; /* Ensure the .dorm-map is full width */
 }
-.card-panel-num{
-  text-align: center;display:block;
+.map-image {
+  width: 100%;
+  height: auto;
 }
-.box-card{
-  height: 200px;
-  cursor: pointer;
-  font-size: 30px;
-  position: relative;
-  overflow: hidden;
-  color: #666;
-  background: #fff;
-  box-shadow: 4px 4px 40px rgba(0, 0, 0, .05);
-  border-color: rgba(0, 0, 0, .05);
+.zone-point {
+  position: absolute;
+  width: 70px;
+  height: auto;
+  background-color: blueviolet;
+  border-radius: 20%;
+  color: white;
+  text-align: center;
+  line-height: 30px;
+  transform: translate(-50%, -50%);
+  z-index: 1;
 }
-.component-item{
-  min-height: 100px;
-  text-align: center;display:block;
+
+.preview-page {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: white;
+  padding: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  width: 250px;
+  z-index: 2;
+}
+
+.info {
+  margin: 0;
+  color: black; /* Explicit text color */
+  background-color: lightblue; /* High contrast background */
+  font-size: 16px; /* Ensure readable font size */
+}
+
+.preview-page button {
+  color: white;
+  background-color: #3A71A8;
+  margin-top: 10px;
 }
 </style>

@@ -47,6 +47,10 @@ export default {
   margin: auto;
 }
 
+.comment-content {
+  font-size: 20px;
+}
+
 .comment-card {
   margin-bottom: 10px;
 }

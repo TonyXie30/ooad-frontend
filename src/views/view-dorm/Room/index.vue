@@ -2,6 +2,9 @@
   <div class="room-container">
     <el-card class="box-card">
       <div class="text item">
+        Zone: {{ room.zone }}
+      </div>
+      <div class="text item">
         Block: {{ room.block }}
       </div>
       <div class="text item">
@@ -39,10 +42,11 @@ export default {
   data() {
     return {
       room: {
+        zone: '',
         block: '',
         number: '',
         id: '123456',
-        type: 'Double'
+        type: ''
       },
       isPreviewVisible: false
     }
@@ -62,6 +66,19 @@ export default {
   methods: {
     getParams() {
       const roomInfo = this.$route.params.roomInfo
+      if (roomInfo.zoneId === 1) {
+        this.room.zone = '湖畔'
+        this.room.type = 'Double'
+      } else if (roomInfo.zoneId === 2) {
+        this.room.zone = '二期'
+        this.room.type = 'Quadruple'
+      } else if (roomInfo.zoneId === 3) {
+        this.room.zone = '荔园'
+        this.room.type = 'Triple'
+      } else {
+        this.room.zone = '欣园'
+        this.room.type = 'Single'
+      }
       this.room.block = roomInfo.selectedBuilding
       this.room.number = roomInfo.selectedRoom
     },
@@ -88,6 +105,7 @@ export default {
 .box-card {
   width: 400px;
   height: auto;
+  margin-top: 30px;
   margin-bottom: 20px;
 }
 
