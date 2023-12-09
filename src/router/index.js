@@ -150,6 +150,19 @@ export const constantRoutes = [
       }
     ]
   },
+  {
+    path: '/faculty-user',
+    component: Layout,
+    redirect: '/faculty-user/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/faculty-user/index'),
+        name: 'faculty-user',
+        meta: { title: 'faculty-user', icon: 'list' }
+      }
+    ]
+  },
   viewDormRouter
 ]
 

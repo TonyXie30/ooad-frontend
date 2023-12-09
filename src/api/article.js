@@ -79,15 +79,6 @@ export function selectRoom(query) {
   })
 }
 
-export function deleteRoom(query) {
-  var url = 'http://localhost:8443/api/checkInDorm'
-  url += `?dormitoryId=${query.id}&username=aaa`
-  return request({
-    url: url,
-    method: 'post'
-  })
-}
-
 export function fetchArticle(id) {
   return request({
     url: '/vue-element-admin/article/detail',
@@ -104,9 +95,18 @@ export function fetchPv(pv) {
   })
 }
 
-export function createArticle(data) {
+export function createDorm(data) {
   return request({
-    url: '/vue-element-admin/article/create',
+    url: 'http://localhost:8443/api/admin/addDormitory',
+    method: 'post',
+    data
+  })
+}
+
+export function deleteDorm(data) {
+  var url = 'http://localhost:8443/api/admin/removeDormitory'
+  return request({
+    url: url,
     method: 'post',
     data
   })

@@ -12,7 +12,7 @@
         <el-option v-for="item in buildings" :key="item" :label="item" :value="item" />
       </el-select>
       <el-select v-model="listQuery.floor" placeholder="楼层" clearable class="filter-item" style="width: 130px" :loading="loadingFloors">
-        <el-option v-for="item in floors" :key="item" :label="item" :value="item.name" />
+        <el-option v-for="item in floors" :key="item" :label="item" :value="item" />
       </el-select>
       <el-select v-model="listQuery.sort" style="width: 140px" class="filter-item" @change="handleFilter">
         <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
@@ -168,7 +168,7 @@
 </template>
 
 <script>
-import { fetchList, fetchPv, createArticle, updateArticle } from '@/api/article'
+import { fetchList, fetchPv, createDorm, updateArticle } from '@/api/article'
 import { findBuilding, findFloor, selectRoom } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
@@ -220,11 +220,13 @@ export default {
       selected: false,
       listQuery: {
         // importance: undefined,
+        page: 1,
+        limit: 20,
         houseNum: null,
         floor: null,
         buildingName: null,
-        location: null
-        // sort: '+id'
+        location: null,
+        sort: '+'
       },
       importanceOptions: [1, 2, 3],
       locationTypes,
@@ -366,9 +368,7 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          this.temp.author = 'vue-element-admin'
-          createArticle(this.temp).then(() => {
+          createDorm(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
             this.$notify({
