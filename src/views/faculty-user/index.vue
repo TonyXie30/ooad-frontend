@@ -20,9 +20,9 @@
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         Search
       </el-button>
-      <!-- <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
+      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         Add
-      </el-button> -->
+      </el-button>
       <!-- <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
         Export
       </el-button> -->
@@ -102,17 +102,17 @@
       </el-table-column>
       <el-table-column label="Actions" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
-          <!-- <el-button type="primary" size="mini" @click="handleUpdate(row)">
+          <el-button type="primary" size="mini" @click="handleUpdate(row)">
             Edit
-          </el-button> -->
+          </el-button>
           <!-- <el-button v-if="row.status!='published'" size="mini" type="success" @click="handleModifyStatus(row,'published')">
             bookmark
           </el-button>
           <el-button v-if="row.status!='draft'" size="mini" @click="handleModifyStatus(row,'draft')">
             unmark
           </el-button> -->
-          <el-button v-if="selected != true" size="mini" type="primary" @click="handleChoose(row)">
-            Choose
+          <el-button v-if="selected != true" size="mini" type="danger" @click="handleDelete(row)">
+            Delete
           </el-button>
         </template>
       </el-table-column>
@@ -122,28 +122,40 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="Type" prop="type">
-          <el-select v-model="temp.type" class="filter-item" placeholder="Please select">
+        <el-form-item label="区域" prop="type">
+          <el-select v-model="temp.location" class="filter-item" placeholder="Please select">
             <el-option v-for="item in locationTypes" :key="item.key" :label="item.display_name" :value="item.key" />
           </el-select>
         </el-form-item>
-        <el-form-item label="Date" prop="timestamp">
+        <!-- <el-form-item label="Date" prop="timestamp">
           <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date" />
+        </el-form-item> -->
+        <el-form-item label="房间号" prop="houseNum">
+          <el-input v-model="temp.houseNum" />
         </el-form-item>
-        <el-form-item label="Title" prop="title">
-          <el-input v-model="temp.title" />
+        <el-form-item label="栋" prop="buildingName">
+          <el-input v-model="temp.buildingName" />
         </el-form-item>
-        <el-form-item label="Status">
+        <el-form-item label="楼层" prop="floor">
+          <el-input v-model.number="temp.floor" />
+        </el-form-item>
+        <el-form-item label="类型" prop="type">
+          <el-input v-model="temp.type" />
+        </el-form-item>
+        <el-form-item label="床位" prop="bed">
+          <el-input v-model.number="temp.bed" />
+        </el-form-item>
+        <!-- <el-form-item label="Status">
           <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
             <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
           </el-select>
-        </el-form-item>
-        <el-form-item label="Imp">
+        </el-form-item> -->
+        <!-- <el-form-item label="Imp">
           <el-rate v-model="temp.importance" :colors="['#99A9BF', '#F7BA2A', '#FF9900']" :max="3" style="margin-top:8px;" />
-        </el-form-item>
-        <el-form-item label="Remark">
+        </el-form-item> -->
+        <!-- <el-form-item label="Remark">
           <el-input v-model="temp.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />
-        </el-form-item>
+        </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
@@ -168,8 +180,8 @@
 </template>
 
 <script>
-import { fetchList, fetchPv, createDorm, updateArticle } from '@/api/article'
-import { findBuilding, findFloor, selectRoom } from '@/api/article'
+import { fetchList, fetchPv, createDorm } from '@/api/article'
+import { findBuilding, findFloor, selectRoom, deleteDorm } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -220,13 +232,11 @@ export default {
       selected: false,
       listQuery: {
         // importance: undefined,
-        page: 1,
-        limit: 20,
         houseNum: null,
         floor: null,
         buildingName: null,
-        location: null,
-        sort: '+'
+        location: null
+        // sort: '+id'
       },
       importanceOptions: [1, 2, 3],
       locationTypes,
@@ -234,13 +244,19 @@ export default {
       statusOptions: ['published', 'draft', 'deleted'],
       showReviewer: false,
       temp: {
-        id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        type: '',
-        status: 'published'
+        id: 1,
+        houseNum: undefined,
+        floor: undefined,
+        buildingName: undefined,
+        type: '123',
+        location: undefined,
+        bookedNum: 0,
+        bed: undefined
+        // importance: 1,
+        // remark: '',
+        // timestamp: new Date(),
+        // title: '',
+        // status: 'published'
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -252,8 +268,13 @@ export default {
       pvData: [],
       rules: {
         type: [{ required: true, message: 'type is required', trigger: 'change' }],
-        timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-        title: [{ required: true, message: 'title is required', trigger: 'blur' }]
+        houseNum: [{ required: true, message: '需要房间号', trigger: 'change' }],
+        floor: [{ required: true, type: 'number', message: '需要楼层', trigger: 'change' }],
+        buildingName: [{ required: true, message: '需要栋', trigger: 'change' }],
+        location: [{ required: true, message: '需要位置', trigger: 'change' }],
+        bed: [{ required: true, type: 'number', message: '需要床位数量', trigger: 'change' }]
+        // timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
+        // title: [{ required: true, message: 'title is required', trigger: 'blur' }]
       },
       downloadLoading: false
     }
@@ -348,13 +369,14 @@ export default {
     },
     resetTemp() {
       this.temp = {
-        id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        status: 'published',
-        type: ''
+        id: 1,
+        houseNum: undefined,
+        floor: undefined,
+        buildingName: undefined,
+        type: '123',
+        location: undefined,
+        bookedNum: 0,
+        bed: undefined
       }
     },
     handleCreate() {
@@ -368,6 +390,8 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
+          this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
+          this.temp.author = 'vue-element-admin'
           createDorm(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
@@ -383,7 +407,7 @@ export default {
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
-      this.temp.timestamp = new Date(this.temp.timestamp)
+      // this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -395,7 +419,7 @@ export default {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
           tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          updateArticle(tempData).then(() => {
+          createDorm(tempData).then(() => {
             const index = this.list.findIndex(v => v.id === this.temp.id)
             this.list.splice(index, 1, this.temp)
             this.dialogFormVisible = false
@@ -422,6 +446,27 @@ export default {
         setTimeout(() => {
           this.listLoading = false
         }, 1.5 * 1000)
+      })
+      // this.list.splice(index, 1)
+    },
+
+    handleDelete(row) {
+      deleteDorm(row).then(response => {
+        this.listLoading = true
+        this.getAllList().then(() => {
+          this.getList()
+        })
+        this.$notify({
+          title: 'Success',
+          message: 'delete Successfully',
+          type: 'success',
+          duration: 2000
+        })
+
+        // Just to simulate the time of the request
+        setTimeout(() => {
+          this.listLoading = false
+        }, 1 * 1000)
       })
       // this.list.splice(index, 1)
     },

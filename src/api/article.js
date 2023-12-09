@@ -95,9 +95,18 @@ export function fetchPv(pv) {
   })
 }
 
-export function createArticle(data) {
+export function createDorm(data) {
   return request({
-    url: '/vue-element-admin/article/create',
+    url: 'http://localhost:8443/api/admin/addDormitory',
+    method: 'post',
+    data
+  })
+}
+
+export function deleteDorm(data) {
+  var url = 'http://localhost:8443/api/admin/removeDormitory'
+  return request({
+    url: url,
     method: 'post',
     data
   })

@@ -80,7 +80,7 @@ export const constantRoutes = [
         path: 'dashboard',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
-        meta: { title: 'Dashboard', icon: 'dashboard', affix: true }
+        meta: { title: 'Menu', icon: 'guide', affix: true }
       }
     ]
   },
@@ -120,7 +120,46 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/views/dormSelect/index'),
         name: 'DormSelect',
-        meta: { title: 'Select Dorm', icon: 'el-icon-edit-outline' }
+        meta: { title: 'Select Dorm', icon: 'list' }
+      }
+    ]
+  },
+  {
+    path: '/faculty',
+    component: Layout,
+    redirect: '/faculty/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/faculty/index'),
+        name: 'faculty',
+        meta: { title: 'faculty', icon: 'tree' }
+      }
+    ]
+  },
+  {
+    path: '/faculty-dorm',
+    component: Layout,
+    redirect: '/faculty-dorm/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/faculty-dorm/index'),
+        name: 'faculty-dorm',
+        meta: { title: 'faculty-dorm', icon: 'list' }
+      }
+    ]
+  },
+  {
+    path: '/faculty-user',
+    component: Layout,
+    redirect: '/faculty-user/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/faculty-user/index'),
+        name: 'faculty-user',
+        meta: { title: 'faculty-user', icon: 'list' }
       }
     ]
   },
