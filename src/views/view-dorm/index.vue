@@ -18,7 +18,7 @@
             <count-to :start-val="0" :end-val="zone.num" :duration="1000" class="card-panel-num" />
           </div>
         </div>
-        <router-link :to="{ name: 'ZoneArea', params: { zoneId: zone.id }}">
+        <router-link :to="{ name: 'ViewDormInZone', params: { zoneId: zone.id }}">
           <el-button @click="enterZone(zone.id)">
             Enter
           </el-button>
@@ -33,16 +33,17 @@
 <script>
 import CountTo from 'vue-count-to'
 export default {
+  name: 'MapView',
   components: {
     CountTo
   },
   data() {
     return {
       zones: [
-        { id: 1, name: '湖畔宿舍', description: 'Room type: Double', num: 51, x: '30%', y: '60%', hovering: false },
-        { id: 2, name: '二期宿舍', description: 'Room type: Quadruple', num: 244, x: '35%', y: '50%', hovering: false },
-        { id: 3, name: '荔园宿舍', description: 'Room type: Triple', num: 42, x: '35%', y: '35%', hovering: false },
-        { id: 4, name: '欣园宿舍', description: 'Room type: Single', num: 107, x: '42%', y: '28%', hovering: false }
+        { id: 1, name: '湖畔宿舍', description: 'Room type: Double', num: 51, x: '37%', y: '35%', hovering: false },
+        { id: 2, name: '二期宿舍', description: 'Room type: Quadruple', num: 244, x: '43%', y: '27%', hovering: false },
+        { id: 3, name: '荔园宿舍', description: 'Room type: Triple', num: 42, x: '44%', y: '19%', hovering: false },
+        { id: 4, name: '欣园宿舍', description: 'Room type: Single', num: 107, x: '52%', y: '14%', hovering: false }
       ]
     }
   },

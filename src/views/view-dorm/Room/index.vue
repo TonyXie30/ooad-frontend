@@ -28,14 +28,15 @@
     >
       <img src="https://sustech.online/assets/interior-KIYZNKgg.jpg" alt="Room Preview" class="room-preview-img">
     </el-dialog>
-
     <Comment />
   </div>
 </template>
 
 <script>
 import Comment from './Comment.vue'
+import { findDorm, addBookmark } from '@/api/dormitory'
 export default {
+  name: 'RoomPage',
   components: {
     Comment
   },
@@ -45,23 +46,33 @@ export default {
         zone: '',
         block: '',
         number: '',
-        id: '123456',
+        id: '',
         type: ''
       },
       isPreviewVisible: false
     }
   },
+  computed: {
+    roomFloor: function() {
+      return Math.floor(this.room.number / 100)
+    },
+    userName: function() {
+      return this.$store.getters.name
+    }
+  },
   created() {
     // watch 路由的参数，以便再次获取数据
-    this.$watch(
-      () => this.$route.params,
-      () => {
-        this.getParams()
-      },
-      // 组件创建完后获取数据，
-      // 此时 data 已经被 observed 了
-      { immediate: true }
-    )
+    // this.$watch(
+    //   () => this.$route.params,
+    //   () => {
+    //     this.getParams()
+    //   },
+    //   // 组件创建完后获取数据，
+    //   // 此时 data 已经被 observed 了
+    //   { immediate: true }
+    // )
+    this.getParams()
+    this.getRoomId()
   },
   methods: {
     getParams() {
@@ -89,8 +100,27 @@ export default {
       this.isPreviewVisible = false
     },
     bookmarkRoom() {
-      // Logic to add the room to bookmarks
-      alert('Room bookmarked!')
+      addBookmark(this.room.id, this.userName)
+        .then(response => {
+          // Check if the response has a property code and it's equal to 0
+          if (response.code === 0) {
+            this.$notify({
+              title: 'Success',
+              message: 'Add to bookmark successfully',
+              type: 'success',
+              duration: 2000
+            })
+          }
+        })
+    },
+    getRoomId() {
+      findDorm(this.room.number, this.roomFloor, this.room.block, this.room.zone).then(response => {
+        if (response.data.length === 0) {
+          this.room.id = 'Room does not exist'
+        } else {
+          this.room.id = response.data[0].id
+        }
+      })
     }
   }
 }

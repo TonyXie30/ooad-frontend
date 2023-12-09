@@ -120,7 +120,7 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/views/dormSelect/index'),
         name: 'DormSelect',
-        meta: { title: 'Select Dorm', icon: 'eye-open' }
+        meta: { title: 'Select Dorm', icon: 'el-icon-edit-outline' }
       }
     ]
   },

@@ -3,6 +3,7 @@
     <el-card v-for="comment in comments" :key="comment.id" class="comment-card">
       <div class="comment-content">
         <p>{{ comment.text }}</p>
+        <small>{{ comment.dateTime }}</small> <!-- Display date and time -->
       </div>
     </el-card>
     <!-- Add Comment Form -->
@@ -20,6 +21,7 @@
 
 <script>
 export default {
+  name: 'Comment',
   data() {
     return {
       comments: [], // Placeholder for comments data
@@ -28,12 +30,14 @@ export default {
   },
   methods: {
     submitComment() {
-      // Logic to submit the new comment
-      // For example, push the new comment to the comments array
       if (this.newComment.trim()) {
+        const now = new Date()
+        const dateTime = now.toLocaleString() // Get current date and time
+
         this.comments.push({
           id: this.comments.length + 1,
-          text: this.newComment
+          text: this.newComment,
+          dateTime: dateTime // Add date and time to the comment
         })
         this.newComment = '' // Reset the input after submission
       }
@@ -48,11 +52,14 @@ export default {
 }
 
 .comment-content {
-  font-size: 20px;
+  font-size: 15px; /* Reduced from 20px to 16px */
 }
 
 .comment-card {
-  margin-bottom: 10px;
+  width: 80%;
+  margin: 10px;
+  padding: 10px;
+  background-color: cornsilk;
 }
 
 .comment-input {
