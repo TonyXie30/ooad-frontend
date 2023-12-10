@@ -1,7 +1,7 @@
 <template>
   <el-form ref="createTeamForm" class="el-form" :model="form" label-width="120px">
     <el-form-item label="Team Name:">
-      <el-input v-model="form.teamName" class="el-input" />
+      <el-input v-model="form.teamName" />
     </el-form-item>
 
     <el-form-item label="Number of Members:" style="white-space: nowrap">
@@ -19,6 +19,7 @@
     <el-form-item label="Description:">
       <el-input
         v-model="form.description"
+        class="el-input"
         type="textarea"
         :rows="4"
         placeholder="A brief description of your team..."
@@ -26,7 +27,7 @@
     </el-form-item>
 
     <el-form-item>
-      <el-button type="primary" @click="onSubmit">Create Team</el-button>
+      <el-button class="el-button" type="primary" @click="onSubmit">Create Team</el-button>
     </el-form-item>
   </el-form>
 </template>
@@ -56,25 +57,28 @@ export default {
 
 <!-- Add your styles here -->
 <style scoped>
-/* Your styles here */
 .el-form {
-  max-width: 600px; /* Or your preferred width */
+  width: 600px;
   margin: 200px auto; /* Centers the form in the page with margin top and bottom */
   text-align: left;
 }
 
 .el-input {
   width: 80%;
-  margin-left: 30px;
+  margin-left: 40px;
 }
 
 .el-input-number {
   width: 25%; /* Ensures the number input spans the full width */
-  margin-left: 30px;
+  margin-left: 40px;
 }
 
 .el-select {
   width: 27%; /* Ensures the select input spans the full width */
-  margin-left: 30px;
+  margin-left: 40px;
+}
+
+.el-button {
+  margin-left: 40px;
 }
 </style>
