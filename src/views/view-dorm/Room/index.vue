@@ -115,10 +115,10 @@ export default {
     },
     getRoomId() {
       findDorm(this.room.number, this.roomFloor, this.room.block, this.room.zone).then(response => {
-        if (response.data.length === 0) {
+        if (response.data.content.length === 0) {
           this.room.id = 'Room does not exist'
         } else {
-          this.room.id = response.data[0].id
+          this.room.id = response.data.content[0].id
         }
       })
     }
