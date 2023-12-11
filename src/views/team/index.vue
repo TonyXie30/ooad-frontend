@@ -7,7 +7,7 @@
         <p>In this module, you can:</p>
         <ul>
           <li>Choose to be a team leader and create your own team.</li>
-          <li>Use a team leader's username to search other teams and join one of them if you want.</li>
+          <li>Use team name to search for teams and join one of them if you want.</li>
           <li>View your own team information and manage your team members if you are a leader.</li>
         </ul>
       </div>
@@ -16,10 +16,14 @@
     <!-- Button Section -->
     <div class="flex-container">
       <router-link to="/team/create-team">
-        <el-button class="el-button">Create Team</el-button>
+        <el-button>Create Team</el-button>
       </router-link>
-      <el-button class="el-button">Join Team</el-button>
-      <el-button class="el-button">View My Team</el-button>
+      <router-link to="/team/join-team">
+        <el-button>Join Team</el-button>
+      </router-link>
+      <router-link to="/team/view-my-team">
+        <el-button>View My Team</el-button>
+      </router-link>
     </div>
   </div>
 </template>
@@ -60,7 +64,7 @@ export default {
   display: flex;
   justify-content: space-around;
   width: 60%;
-  .el-button {
+  el-button {
     font-family: 'Your Font Family', sans-serif; /* Match the font family of your page */
     font-weight: bold; /* Assuming the font on your page is bold */
     font-size: 20px;
@@ -72,7 +76,7 @@ export default {
     transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transition for hover effects */
   }
 
-  .el-button:hover {
+  el-button:hover {
     background-color: #4d4d4d; /* A slightly lighter shade for the hover state */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Optional: more pronounced shadow on hover */
   }

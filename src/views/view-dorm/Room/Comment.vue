@@ -4,7 +4,8 @@
       <div class="comment-content">
         <p><strong>{{ comment.author }}</strong>: {{ comment.text }}</p>
         <small>{{ comment.dateTime }}</small>
-        <el-button type="text" class="reply-button" @click="showReplyInput(comment.id)">Reply</el-button>
+        <el-button v-if="comment.showCancelBtn" type="text" class="cancel-button" @click="onClickedCancel(comment.id)">Cancel</el-button>
+        <el-button v-if="comment.showReplyBtn" type="text" class="reply-button" @click="showReplyInput(comment.id)">Reply</el-button>
         <!-- Nested Comments -->
         <div v-if="comment.replies.length" class="nested-comments">
           <el-card v-for="reply in comment.replies" :key="reply.id" class="comment-card reply">
@@ -63,7 +64,9 @@ export default {
           text: this.newComment,
           dateTime: dateTime,
           replies: [],
-          showReplyForm: false // New field to control visibility of reply form
+          showReplyForm: false, // New field to control visibility of reply form
+          showReplyBtn: true,
+          showCancelBtn: false
         })
         this.newComment = ''
       }
@@ -81,26 +84,31 @@ export default {
           dateTime: dateTime
         }
 
-        const commentIndex = this.comments.findIndex(c => c.id === commentId)
-        if (commentIndex !== -1) {
-          this.comments[commentIndex].replies.push(reply)
-          this.comments[commentIndex].showReplyForm = false // Hide the reply form after submission
-        }
-
+        const commentIndex = commentId - 1
+        this.comments[commentIndex].replies.push(reply)
+        this.comments[commentIndex].showReplyForm = false
+        this.comments[commentIndex].showReplyBtn = true
+        this.comments[commentIndex].showCancelBtn = false
         this.replyTexts[commentId] = ''
       }
     },
     showReplyInput(commentId) {
-      const commentIndex = this.comments.findIndex(c => c.id === commentId)
-      if (commentIndex !== -1) {
-        this.comments[commentIndex].showReplyForm = true // Show the reply form for this comment
-      }
+      const commentIndex = commentId - 1
+      this.comments[commentIndex].showReplyForm = true
+      this.comments[commentIndex].showReplyBtn = false
+      this.comments[commentIndex].showCancelBtn = true
+    },
+    onClickedCancel(commentId) {
+      const commentIndex = commentId - 1
+      this.comments[commentIndex].showReplyForm = false
+      this.comments[commentIndex].showReplyBtn = true
+      this.comments[commentIndex].showCancelBtn = false
     }
   }
 }
 </script>
 
-<style>
+<style scoped>
 .comments-section {
   margin: auto;
 }
@@ -110,6 +118,12 @@ export default {
 }
 
 .reply-button {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+}
+
+.cancel-button {
   position: absolute;
   bottom: 10px;
   right: 10px;
