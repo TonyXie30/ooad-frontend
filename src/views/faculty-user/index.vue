@@ -1,27 +1,27 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.houseNum" placeholder="房间号" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-input v-model="listQuery.ID" placeholder="用户ID" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
       <!-- <el-select v-model="listQuery.importance" placeholder="Imp" clearable style="width: 90px" class="filter-item">
         <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
       </el-select> -->
-      <el-select v-model="listQuery.location" placeholder="区域" clearable class="filter-item" style="width: 130px" @change="handleLocationChange">
-        <el-option v-for="item in locationTypes" :key="item.key" :label="item.display_name" :value="item.key" />
+      <el-select v-model="listQuery.gender" placeholder="性别" clearable class="filter-item" style="width: 130px" @change="handleFilter">
+        <el-option v-for="item in genderTypes" :key="item.key" :label="item.display_name" :value="item.key" />
       </el-select>
-      <el-select v-model="listQuery.buildingName" placeholder="栋" clearable class="filter-item" style="width: 130px" :loading="loadingBuildings" @change="getFloors">
+      <!-- <el-select v-model="listQuery.buildingName" placeholder="栋" clearable class="filter-item" style="width: 130px" :loading="loadingBuildings" @change="getFloors">
         <el-option v-for="item in buildings" :key="item" :label="item" :value="item" />
       </el-select>
       <el-select v-model="listQuery.floor" placeholder="楼层" clearable class="filter-item" style="width: 130px" :loading="loadingFloors">
         <el-option v-for="item in floors" :key="item" :label="item" :value="item" />
-      </el-select>
+      </el-select> -->
       <el-select v-model="listQuery.sort" style="width: 140px" class="filter-item" @change="handleFilter">
         <el-option v-for="item in sortOptions" :key="item.key" :label="item.label" :value="item.key" />
       </el-select>
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
-        Search
+        搜索
       </el-button>
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
-        Add
+        添加
       </el-button>
       <!-- <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
         Export
@@ -41,9 +41,9 @@
       style="width: 100%;"
       @sort-change="sortChange"
     >
-      <el-table-column label="房间号" prop="id" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
+      <el-table-column label="用户名" prop="id" sortable="custom" align="center" width="80" :class-name="getSortClass('id')">
         <template slot-scope="{row}">
-          <span>{{ row.houseNum }}</span>
+          <span>{{ row.username }}</span>
         </template>
       </el-table-column>
       <!-- <el-table-column label="" width="150px" align="center">
@@ -62,19 +62,19 @@
           <span>{{ row.author }}</span>
         </template>
       </el-table-column> -->
-      <el-table-column label="Location" width="110px" align="center">
+      <el-table-column label="性别" width="110px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.location }}</span>
+          <span>{{ row.gender }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="Building" width="110px" align="center">
+      <el-table-column label="已选宿舍" width="110px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.buildingName }}</span>
+          <span>{{ row.bookedDormitory }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="floor" width="110px" align="center">
+      <el-table-column label="专业" width="110px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.floor }}</span>
+          <span>{{ row.subject }}</span>
         </template>
       </el-table-column>
       <!-- <el-table-column v-if="showReviewer" label="Reviewer" width="110px" align="center">
@@ -93,13 +93,13 @@
           <span v-else>0</span>
         </template>
       </el-table-column> -->
-      <el-table-column label="Remaining" class-name="status-col" width="100">
+      <!-- <el-table-column label="Remaining" class-name="status-col" width="100">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusFilter">
             {{ row.bed-row.bookedNum }}
           </el-tag>
         </template>
-      </el-table-column>
+      </el-table-column> -->
       <el-table-column label="Actions" align="center" width="230" class-name="small-padding fixed-width">
         <template slot-scope="{row}">
           <el-button type="primary" size="mini" @click="handleUpdate(row)">
@@ -118,13 +118,13 @@
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total>0" :total="total" :page.sync="page" :limit.sync="limit" @pagination="getList" />
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
         <el-form-item label="区域" prop="type">
           <el-select v-model="temp.location" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in locationTypes" :key="item.key" :label="item.display_name" :value="item.key" />
+            <el-option v-for="item in genderTypes" :key="item.key" :label="item.display_name" :value="item.key" />
           </el-select>
         </el-form-item>
         <!-- <el-form-item label="Date" prop="timestamp">
@@ -180,21 +180,20 @@
 </template>
 
 <script>
-import { fetchList, fetchPv, createDorm } from '@/api/article'
+import { fetchUserList, fetchPv, createDorm } from '@/api/article'
 import { findBuilding, findFloor, selectRoom, deleteDorm } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
-const locationTypes = [
-  { key: 'P1', display_name: '一期' },
-  { key: 'P2', display_name: '二期' },
-  { key: 'hupan', display_name: '湖畔' }
+const genderTypes = [
+  { key: 'male', display_name: '男' },
+  { key: 'female', display_name: '女' }
   // { key: 'EU', display_name: 'Eurozone' }
 ]
 
 // arr to obj, such as { CN : "China", US : "USA" }
-const calendarTypeKeyValue = locationTypes.reduce((acc, cur) => {
+const calendarTypeKeyValue = genderTypes.reduce((acc, cur) => {
   acc[cur.key] = cur.display_name
   return acc
 }, {})
@@ -224,23 +223,31 @@ export default {
       buildings: [],
       floors: [],
       total: 0,
-      page: 1,
-      limit: 20,
       listLoading: true,
       loadingBuildings: true,
       loadingFloors: true,
       selected: false,
       listQuery: {
         // importance: undefined,
-        houseNum: null,
-        floor: null,
-        buildingName: null,
-        location: null
+        page: 1,
+        limit: 20,
+        id: null,
+        gender: null,
+        sort: '+'
+        // sort: '+id'
+      },
+      templistQuery: {
+        // importance: undefined,
+        page: 1,
+        limit: 20,
+        id: null,
+        gender: null,
+        sort: '+'
         // sort: '+id'
       },
       importanceOptions: [1, 2, 3],
-      locationTypes,
-      sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
+      genderTypes,
+      sortOptions: [{ label: '正序', key: '+' }, { label: '倒序', key: '-' }],
       statusOptions: ['published', 'draft', 'deleted'],
       showReviewer: false,
       temp: {
@@ -280,41 +287,22 @@ export default {
     }
   },
   created() {
-    this.getAllList().then(() => {
-      this.getList()
-    })
+    this.getList()
     this.getBuildings()
     this.getFloors()
   },
   methods: {
-    // getAllList() {
-    //   this.listLoading = true
-    //   fetchList(this.listQuery).then(response => {
-    //     this.allList = response.data
-    //     this.total = this.allList.length
-
-    //     // Just to simulate the time of the request
-    //     setTimeout(() => {
-    //       this.listLoading = false
-    //     }, 1.5 * 1000)
-    //   })
-    // },
-    getAllList() {
-      return new Promise((resolve, reject) => {
-        fetchList(this.listQuery).then(response => {
-          this.allList = response.data
-          this.total = this.allList.length
-          resolve()
-          setTimeout(() => {
-            this.listLoading = false
-          }, 1 * 1000)
-        })
-      })
-    },
     getList() {
-      const start = (this.page - 1) * this.limit
-      const end = start + this.limit
-      this.list = this.allList.slice(start, end)
+      this.templistQuery = Object.assign({}, this.listQuery)
+      this.templistQuery.page -= 1
+      this.listLoading = true
+      fetchUserList(this.templistQuery).then(response => {
+        this.list = response.data.content
+        this.total = response.data.totalElements
+        setTimeout(() => {
+          this.listLoading = false
+        }, 0.3 * 1000)
+      })
     },
     async handleLocationChange() {
       await this.getBuildings()
@@ -342,9 +330,7 @@ export default {
     },
     handleFilter() {
       this.page = 1
-      this.getAllList().then(() => {
-        this.getList()
-      })
+      this.getList()
     },
     handleModifyStatus(row, status) {
       this.$message({
@@ -354,17 +340,7 @@ export default {
       row.status = status
     },
     sortChange(data) {
-      const { prop, order } = data
-      if (prop === 'id') {
-        this.sortByID(order)
-      }
-    },
-    sortByID(order) {
-      if (order === 'ascending') {
-        this.listQuery.sort = '+id'
-      } else {
-        this.listQuery.sort = '-id'
-      }
+      this.listQuery.sort = this.listQuery.sort === '+' ? '-' : '+'
       this.handleFilter()
     },
     resetTemp() {
@@ -453,9 +429,7 @@ export default {
     handleDelete(row) {
       deleteDorm(row).then(response => {
         this.listLoading = true
-        this.getAllList().then(() => {
-          this.getList()
-        })
+        this.getList()
         this.$notify({
           title: 'Success',
           message: 'delete Successfully',
@@ -501,7 +475,7 @@ export default {
     },
     getSortClass: function(key) {
       const sort = this.listQuery.sort
-      return sort === `+${key}` ? 'ascending' : 'descending'
+      return sort === `+` ? 'ascending' : 'descending'
     }
   }
 }

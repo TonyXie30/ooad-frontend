@@ -118,7 +118,7 @@
       </el-table-column>
     </el-table>
 
-    <pagination v-show="total>0" :total="total" :page.sync="page" :limit.sync="limit" @pagination="getList" />
+    <pagination v-show="total>0" :total="total" :page.sync="listQuery.page" :limit.sync="listQuery.limit" @pagination="getList" />
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
@@ -224,23 +224,33 @@ export default {
       buildings: [],
       floors: [],
       total: 0,
-      page: 1,
-      limit: 20,
       listLoading: true,
       loadingBuildings: true,
       loadingFloors: true,
       selected: false,
       listQuery: {
         // importance: undefined,
+        page: 1,
+        limit: 20,
         houseNum: null,
         floor: null,
         buildingName: null,
-        location: null
-        // sort: '+id'
+        location: null,
+        sort: '+'
+      },
+      templistQuery: {
+        // importance: undefined,
+        page: 1,
+        limit: 20,
+        houseNum: null,
+        floor: null,
+        buildingName: null,
+        location: null,
+        sort: '+'
       },
       importanceOptions: [1, 2, 3],
       locationTypes,
-      sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
+      sortOptions: [{ label: 'ID Ascending', key: '+' }, { label: 'ID Descending', key: '-' }],
       statusOptions: ['published', 'draft', 'deleted'],
       showReviewer: false,
       temp: {
@@ -280,41 +290,22 @@ export default {
     }
   },
   created() {
-    this.getAllList().then(() => {
-      this.getList()
-    })
+    this.getList()
     this.getBuildings()
     this.getFloors()
   },
   methods: {
-    // getAllList() {
-    //   this.listLoading = true
-    //   fetchList(this.listQuery).then(response => {
-    //     this.allList = response.data
-    //     this.total = this.allList.length
-
-    //     // Just to simulate the time of the request
-    //     setTimeout(() => {
-    //       this.listLoading = false
-    //     }, 1.5 * 1000)
-    //   })
-    // },
-    getAllList() {
-      return new Promise((resolve, reject) => {
-        fetchList(this.listQuery).then(response => {
-          this.allList = response.data
-          this.total = this.allList.length
-          resolve()
-          setTimeout(() => {
-            this.listLoading = false
-          }, 1 * 1000)
-        })
-      })
-    },
     getList() {
-      const start = (this.page - 1) * this.limit
-      const end = start + this.limit
-      this.list = this.allList.slice(start, end)
+      this.templistQuery = Object.assign({}, this.listQuery)
+      this.templistQuery.page -= 1
+      this.listLoading = true
+      fetchList(this.templistQuery).then(response => {
+        this.list = response.data.content
+        this.total = response.data.totalElements
+        setTimeout(() => {
+          this.listLoading = false
+        }, 0.3 * 1000)
+      })
     },
     async handleLocationChange() {
       await this.getBuildings()
@@ -342,9 +333,7 @@ export default {
     },
     handleFilter() {
       this.page = 1
-      this.getAllList().then(() => {
-        this.getList()
-      })
+      this.getList()
     },
     handleModifyStatus(row, status) {
       this.$message({
@@ -354,17 +343,7 @@ export default {
       row.status = status
     },
     sortChange(data) {
-      const { prop, order } = data
-      if (prop === 'id') {
-        this.sortByID(order)
-      }
-    },
-    sortByID(order) {
-      if (order === 'ascending') {
-        this.listQuery.sort = '+id'
-      } else {
-        this.listQuery.sort = '-id'
-      }
+      this.listQuery.sort = this.listQuery.sort === '+' ? '-' : '+'
       this.handleFilter()
     },
     resetTemp() {
@@ -453,9 +432,7 @@ export default {
     handleDelete(row) {
       deleteDorm(row).then(response => {
         this.listLoading = true
-        this.getAllList().then(() => {
-          this.getList()
-        })
+        this.getList()
         this.$notify({
           title: 'Success',
           message: 'delete Successfully',
@@ -501,7 +478,7 @@ export default {
     },
     getSortClass: function(key) {
       const sort = this.listQuery.sort
-      return sort === `+${key}` ? 'ascending' : 'descending'
+      return sort === `+` ? 'ascending' : 'descending'
     }
   }
 }
