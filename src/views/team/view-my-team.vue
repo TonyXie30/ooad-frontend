@@ -121,7 +121,7 @@ export default {
 .view-my-team {
   position: relative;
   width: 800px;
-  margin: auto;
+  margin: 80px auto auto;
   padding: 2rem;
   background-color: #f7f7f7;
   border-radius: 8px;

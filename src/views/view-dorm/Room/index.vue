@@ -28,17 +28,25 @@
     >
       <img src="https://sustech.online/assets/interior-KIYZNKgg.jpg" alt="Room Preview" class="room-preview-img">
     </el-dialog>
-    <Comment />
+    <comment
+      v-for="comment in comments"
+      :key="comment.id"
+      :comment="comment"
+      @delete-comment="handleDeleteComment"
+    />
+    <comment-box @submit-comment="handleNewComment" />
   </div>
 </template>
 
 <script>
 import Comment from './Comment.vue'
+import CommentBox from '@/views/view-dorm/Room/CommentBox.vue'
 import { findDorm, addBookmark } from '@/api/dormitory'
 export default {
   name: 'RoomPage',
   components: {
-    Comment
+    Comment,
+    CommentBox
   },
   data() {
     return {
@@ -49,6 +57,7 @@ export default {
         id: '',
         type: ''
       },
+      comments: [],
       isPreviewVisible: false
     }
   },
@@ -61,16 +70,6 @@ export default {
     }
   },
   created() {
-    // watch 路由的参数，以便再次获取数据
-    // this.$watch(
-    //   () => this.$route.params,
-    //   () => {
-    //     this.getParams()
-    //   },
-    //   // 组件创建完后获取数据，
-    //   // 此时 data 已经被 observed 了
-    //   { immediate: true }
-    // )
     this.getParams()
     this.getRoomId()
   },
@@ -121,6 +120,20 @@ export default {
           this.room.id = response.data.content[0].id
         }
       })
+    },
+    handleNewComment(newCommentText) {
+      const newComment = {
+        pid: 0,
+        cid: Date.now(),
+        author: this.userName,
+        text: newCommentText,
+        submitDate: new Date().toLocaleString(),
+        replies: []
+      }
+      this.comments.push(newComment)
+    },
+    handleDeleteComment(cid) {
+      this.comments = this.comments.filter(comment => comment.cid !== cid)
     }
   }
 }

@@ -1,43 +1,24 @@
 <template>
-  <div class="comments-section">
-    <el-card v-for="comment in comments" :key="comment.id" class="comment-card">
-      <div class="comment-content">
-        <p><strong>{{ comment.author }}</strong>: {{ comment.text }}</p>
-        <small>{{ comment.dateTime }}</small>
-        <el-button v-if="comment.showCancelBtn" type="text" class="cancel-button" @click="onClickedCancel(comment.id)">Cancel</el-button>
-        <el-button v-if="comment.showReplyBtn" type="text" class="reply-button" @click="showReplyInput(comment.id)">Reply</el-button>
-        <!-- Nested Comments -->
-        <div v-if="comment.replies.length" class="nested-comments">
-          <el-card v-for="reply in comment.replies" :key="reply.id" class="comment-card reply">
-            <div class="comment-content">
-              <p><strong>{{ reply.author }}</strong>: {{ reply.text }}</p>
-              <small>{{ reply.dateTime }}</small>
-            </div>
-          </el-card>
-        </div>
-        <!-- Conditional Reply Form -->
-        <div v-if="comment.showReplyForm">
-          <el-input
-            v-model="replyTexts[comment.id]"
-            type="textarea"
-            placeholder="Reply to this comment..."
-            class="reply-input"
-          />
-          <div class="reply-submit-button">
-            <el-button type="primary" @click="submitReply(comment.id)">Submit</el-button>
-          </div>
-        </div>
-      </div>
-    </el-card>
-    <!-- Add Comment Form -->
-    <el-input
-      v-model="newComment"
-      type="textarea"
-      placeholder="Add a comment..."
-      class="comment-input"
-    />
-    <div class="submit-button">
-      <el-button type="primary" @click="submitComment">Submit</el-button>
+  <div class="comment">
+    <div class="comment-content">
+      <h3>{{ comment.author }}</h3>
+      <p>{{ comment.text }}</p>
+      <span class="comment-date">{{ comment.submitDate }}</span>
+      <button v-if="isCurrentUser" class="delete-btn" @click="deleteComment">Delete</button>
+      <button class="reply-btn" @click="showReplyInput = true">Reply</button>
+      <button v-if="showReplyInput" class="cancel-btn" @click="cancelReply">Cancel</button>
+    </div>
+    <div v-if="showReplyInput" class="reply-input">
+      <textarea v-model="replyText" />
+      <button class="submit-btn" @click="submitReply">Submit</button>
+    </div>
+    <div v-if="comment.replies && comment.replies.length" class="replies">
+      <Comment
+        v-for="reply in comment.replies"
+        :key="reply.cid"
+        :comment="reply"
+        class="nested-comment"
+      />
     </div>
   </div>
 </template>
@@ -45,113 +26,137 @@
 <script>
 export default {
   name: 'Comment',
+  props: {
+    comment: {
+      type: Object,
+      default: () => ({})
+    }
+  },
   data() {
     return {
-      comments: [],
-      newComment: '',
-      replyTexts: {}
+      showReplyInput: false,
+      replyText: ''
+    }
+  },
+  computed: {
+    userName: function() {
+      return this.$store.getters.name
+    },
+    isCurrentUser: function() {
+      return this.comment.author === this.userName
     }
   },
   methods: {
-    submitComment() {
-      if (this.newComment.trim()) {
-        const now = new Date()
-        const dateTime = now.toLocaleString()
-
-        this.comments.push({
-          id: this.comments.length + 1,
-          author: 'YourName', // Replace with dynamic author name
-          text: this.newComment,
-          dateTime: dateTime,
-          replies: [],
-          showReplyForm: false, // New field to control visibility of reply form
-          showReplyBtn: true,
-          showCancelBtn: false
-        })
-        this.newComment = ''
+    cancelReply() {
+      this.showReplyInput = false
+      this.replyText = ''
+    },
+    submitReply() {
+      if (!this.replyText.trim()) return
+      const newReply = {
+        pid: this.comment.cid,
+        cid: Date.now(), // A unique ID should be generated here
+        author: this.userName,
+        text: this.replyText,
+        submitDate: new Date().toLocaleString(),
+        replies: []
       }
+      this.comment.replies.push(newReply)
+      this.cancelReply()
     },
-    submitReply(commentId) {
-      const replyText = this.replyTexts[commentId]
-      if (replyText && replyText.trim()) {
-        const now = new Date()
-        const dateTime = now.toLocaleString()
-
-        const reply = {
-          id: new Date().getTime(),
-          author: 'YourName',
-          text: replyText,
-          dateTime: dateTime
-        }
-
-        const commentIndex = commentId - 1
-        this.comments[commentIndex].replies.push(reply)
-        this.comments[commentIndex].showReplyForm = false
-        this.comments[commentIndex].showReplyBtn = true
-        this.comments[commentIndex].showCancelBtn = false
-        this.replyTexts[commentId] = ''
+    deleteComment() {
+      // Check if the comment is a top-level comment
+      if (!this.comment.pid || this.comment.pid === 0) {
+        // Emit an event to the parent component to handle the deletion of the comment and its replies
+        this.$emit('delete-comment', this.comment.cid)
+      } else {
+        this.comment.replies = []
+        this.$parent.comment.replies = this.$parent.comment.replies.filter(reply => reply.cid !== this.comment.cid)
       }
-    },
-    showReplyInput(commentId) {
-      const commentIndex = commentId - 1
-      this.comments[commentIndex].showReplyForm = true
-      this.comments[commentIndex].showReplyBtn = false
-      this.comments[commentIndex].showCancelBtn = true
-    },
-    onClickedCancel(commentId) {
-      const commentIndex = commentId - 1
-      this.comments[commentIndex].showReplyForm = false
-      this.comments[commentIndex].showReplyBtn = true
-      this.comments[commentIndex].showCancelBtn = false
     }
   }
 }
 </script>
 
 <style scoped>
-.comments-section {
-  margin: auto;
+.comment {
+  margin-bottom: 16px;
+  padding: 8px;
+  border: 1px solid #eaeaea;
+  border-radius: 8px;
+  background-color: #f9f9f9;
 }
 
 .comment-content {
-  font-size: 15px; /* Reduced from 20px to 16px */
+  margin-bottom: 8px;
 }
 
-.reply-button {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-}
-
-.cancel-button {
-  position: absolute;
-  bottom: 10px;
-  right: 10px;
-}
-
-.reply-input {
-  margin-top: 20px;
-}
-
-.comment-card {
-  position: relative;
-  width: 80%;
-  margin: 10px;
-  padding: 10px;
-  background-color: cornsilk;
-}
-
-.comment-input {
-  margin-top: 10px;
-  margin-bottom: 10px;
-}
-
-.reply-submit-button {
-  margin-top: 20px;
-}
-
-.submit-button {
-  text-align: center;
+.comment-date {
   display: block;
+  color: #777;
+  margin-top: 4px;
+  font-size: 0.8em;
+}
+
+.reply-btn, .cancel-btn, .submit-btn {
+  margin-right: 8px;
+  margin-top: 8px;
+}
+
+.reply-input textarea {
+  width: 100%;
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
+.replies .comment {
+  margin-top: 16px;
+  margin-left: 20px; /* Indentation for nested comments */
+  border-color: #d9d9d9; /* Lighter border for nested comments */
+  background-color: #ffffff; /* Different background for nested comments */
+}
+
+/* Additional styling for buttons */
+.reply-btn, .cancel-btn, .submit-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.reply-btn {
+  background-color: #e0e0e0;
+}
+
+.cancel-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.submit-btn {
+  background-color: #4caf50;
+  color: white;
+}
+
+/* Styling for the input textarea */
+.reply-input textarea {
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  padding: 8px;
+  resize: vertical; /* Allow vertical resizing */
+}
+
+.delete-btn {
+  background-color: #ff5252;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  padding: 6px 12px;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.delete-btn:hover {
+  background-color: #ff4444;
 }
 </style>

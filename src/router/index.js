@@ -10,7 +10,6 @@ import Layout from '@/layout'
 import componentsRouter from './modules/components'
 import chartsRouter from './modules/charts'
 import tableRouter from './modules/table'
-import nestedRouter from './modules/nested'
 import viewDormRouter from './modules/view-dorm'
 import teamRouter from '@/router/modules/team'
 
@@ -231,7 +230,6 @@ export const asyncRoutes = [
   /** when your routing map is too long, you can split it into small modules **/
   componentsRouter,
   chartsRouter,
-  nestedRouter,
   tableRouter,
 
   {
