@@ -4,10 +4,8 @@
 
     <ul class="team-list">
       <li v-for="team in filteredTeams" :key="team.id" class="team-item">
-        <span>{{ team.name }}</span>
         <span>{{ team.leader }}</span>
-        <span>{{ team.gender }}</span>
-        <span>{{ team.currentMembers }} / {{ team.maxMembers }}</span>
+        <span>{{ team.currentMembers }}</span>
         <el-button @click="joinTeam(team.id)">Join</el-button>
       </li>
     </ul>
@@ -19,11 +17,11 @@ export default {
   data() {
     return {
       teams: [
-        { id: 1, name: 'Alpha Team', leader: 'Alice', gender: 'Male', currentMembers: 3, maxMembers: 5 },
-        { id: 2, name: 'Bravo Squad', leader: 'Bob', gender: 'Male', currentMembers: 4, maxMembers: 6 },
-        { id: 3, name: 'Charlie Crew', leader: 'Charlie', gender: 'Female', currentMembers: 2, maxMembers: 4 },
-        { id: 4, name: 'Delta Force', leader: 'Diana', gender: 'Male', currentMembers: 5, maxMembers: 5 },
-        { id: 5, name: 'Echo Team', leader: 'Ethan', gender: 'Male', currentMembers: 1, maxMembers: 3 }
+        { id: 1, leader: 'Alice', currentMembers: 3 },
+        { id: 2, leader: 'Bob', currentMembers: 4 },
+        { id: 3, leader: 'Charlie', currentMembers: 2 },
+        { id: 4, leader: 'Diana', currentMembers: 5 },
+        { id: 5, leader: 'Ethan', currentMembers: 1 }
       ],
       searchTerm: ''
     }
@@ -31,7 +29,7 @@ export default {
   computed: {
     filteredTeams() {
       return this.teams.filter(team =>
-        team.name.toLowerCase().includes(this.searchTerm.toLowerCase())
+        team.leader.toLowerCase().includes(this.searchTerm.toLowerCase())
       )
     }
   },

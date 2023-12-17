@@ -12,13 +12,6 @@ const teamRouter = {
       meta: { title: 'Team Page', icon: 'peoples', noCache: true }
     },
     {
-      path: 'create-team',
-      component: () => import('@/views/team/create-team'),
-      name: 'CreateTeam',
-      meta: { title: 'Create Team', noCache: true },
-      hidden: true
-    },
-    {
       path: 'join-team',
       component: () => import('@/views/team/join-team'),
       name: 'JoinTeam',

@@ -36,12 +36,13 @@
 </template>
 
 <script>
+import { findBuilding, findFloor, findRoom } from '@/api/dormitory'
 export default {
   name: 'ViewDormInZone',
   data() {
     return {
       selectedInfo: {
-        zoneId: null,
+        zoneName: null,
         selectedBuilding: null,
         selectedFloor: null,
         selectedRoom: null
@@ -52,49 +53,40 @@ export default {
       availableRooms: []
     }
   },
-  created() {
-    // watch 路由的参数，以便再次获取数据
-    // this.$watch(
-    //   () => this.$route.params,
-    //   () => {
-    //     this.getParams()
-    //   },
-    //   // 组件创建完后获取数据，
-    //   // 此时 data 已经被 observed 了
-    //   { immediate: true }
-    // )
-    this.getParams()
-  },
-  mounted() {
-    this.selectedInfo.selectedBuilding = this.buildings[0]
-    this.updateFloors()
+  async created() {
+    await this.getParams()
   },
   methods: {
-    getParams() {
-      const zoneId = this.$route.params.zoneId
-      this.selectedInfo.zoneId = zoneId
-      if (zoneId === 1) {
-        this.buildings = [1, 2, 3]
+    async getParams() {
+      this.selectedInfo.zoneName = this.$route.params.zoneName
+      const response = await findBuilding(this.selectedInfo.zoneName)
+      this.buildings = response.data.map(Number)
+      this.selectedInfo.selectedBuilding = this.buildings[0]
+      await this.updateFloors()
+      if (this.selectedInfo.zoneName === '湖畔') {
         this.imgLink = 'https://mirrors.sustech.edu.cn/site/sustech-online/img/facility/buildings/zhiren-college.jpg'
-      } else if (zoneId === 2) {
-        this.buildings = [11, 14, 16]
+      } else if (this.selectedInfo.zoneName === '二期') {
         this.imgLink = 'https://mirrors.sustech.edu.cn/site/sustech-online/img/facility/buildings/p2-dormitory.jpg'
-      } else if (zoneId === 3) {
-        this.buildings = [6, 7, 8]
+      } else if (this.selectedInfo.zoneName === '荔园') {
         this.imgLink = 'https://mirrors.sustech.edu.cn/site/sustech-online/img/facility/buildings/liyuan-gate.jpg'
       } else {
-        this.buildings = [9, 10]
         this.imgLink = 'https://mirrors.sustech.edu.cn/site/sustech-online/img/facility/buildings/liyuan-huiyuann-xinyuan.jpg'
       }
     },
-    updateFloors() {
-      this.availableFloors = [6, 7, 8]
+    async updateFloors() {
+      const response = await findFloor(this.selectedInfo.zoneName, this.selectedInfo.selectedBuilding)
+      this.availableFloors = response.data.map(Number)
       this.selectedInfo.selectedFloor = null // Reset floor and room when building changes
       this.selectedInfo.selectedRoom = null
       this.availableRooms = null
     },
-    updateRooms() {
-      this.availableRooms = [`${this.selectedInfo.selectedFloor}01`, `${this.selectedInfo.selectedFloor}02`, `${this.selectedInfo.selectedFloor}03`]
+    async updateRooms() {
+      const response = await findRoom(this.selectedInfo.selectedFloor, this.selectedInfo.selectedBuilding, this.selectedInfo.zoneName)
+      const rooms = []
+      for (let i = 0; i < response.data.content.length; i++) {
+        rooms.push(response.data.content[i].houseNum)
+      }
+      this.availableRooms = rooms
     }
   }
 }
