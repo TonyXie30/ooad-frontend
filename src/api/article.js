@@ -7,6 +7,28 @@ import request from '@/utils/request'
 //     params: query
 //   })
 // }
+export function Login(data) {
+  return request({
+    url: `http://localhost:8443/api/login`,
+    method: 'post',
+    data
+  })
+}
+
+export function Register(data) {
+  return request({
+    url: `http://localhost:8443/api/register`,
+    method: 'post',
+    data
+  })
+}
+
+export function gerProfile(data) {
+  return request({
+    url: `http://localhost:8443/api/getUser?location=${data}`,
+    method: 'post'
+  })
+}
 
 export function fetchList(query) {
   // const queryParams = {}

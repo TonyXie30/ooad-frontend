@@ -72,7 +72,7 @@
       <el-input
         ref="username"
         v-model="registerForm.username"
-        placeholder="Username"
+        placeholder="用户名"
         name="username"
         type="text"
         tabindex="1"
@@ -85,7 +85,7 @@
       <el-input
         ref="password"
         v-model="registerForm.password"
-        placeholder="Password"
+        placeholder="密码"
         name="password"
         type="text"
         tabindex="1"
@@ -110,26 +110,50 @@
         <span class="svg-container">
           <svg-icon icon-class="dashboard" />
         </span>
-        <el-time-picker
-          v-model="registerForm.wakeupTime"
-          :picker-options="{
-            selectableRange: '06:00:00 - 11:59:59'
-          }"
-          prefix-icon="null"
-          placeholder="起床时间"
-        />
+        <el-select v-model="registerForm.wakeupTime" placeholder="起床时间">
+          <el-option
+            v-for="item in timeRanges"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
         <br>
         <span class="svg-container">
           <svg-icon icon-class="dashboard" />
         </span>
-        <el-time-picker
-          v-model="registerForm.bedTime"
-          :picker-options="{
-            selectableRange: '18:00:00 - 23:59:59'
-          }"
-          prefix-icon="null"
-          placeholder="入睡时间"
-        />
+        <el-select v-model="registerForm.bedTime" placeholder="入睡时间">
+          <el-option
+            v-for="item in timeRanges"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+        <br>
+        <span class="svg-container">
+          <svg-icon icon-class="dashboard" />
+        </span>
+        <el-select v-model="registerForm.gender" placeholder="性别">
+          <el-option
+            v-for="item in genders"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+        <br>
+        <span class="svg-container">
+          <svg-icon icon-class="dashboard" />
+        </span>
+        <el-select v-model="registerForm.degree" placeholder="学位">
+          <el-option
+            v-for="item in degrees"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
       </template>
       <el-button class="reg-button2" type="primary" @click.native.prevent="handleRegister" @click="showDialog=false">
         Register
@@ -142,6 +166,7 @@
 
 <script>
 import { validUsername } from '@/utils/validate'
+import { Register } from '@/api/article'
 export default {
   name: 'Login',
   data() {
@@ -161,11 +186,13 @@ export default {
     }
     return {
       registerForm: {
-        username: '用户名',
-        password: '密码',
-        subject: '专业',
+        username: '',
+        password: '',
+        subject: '',
         wakeupTime: '',
-        bedTime: ''
+        bedTime: '',
+        gender: '',
+        degree: ''
       },
       loginForm: {
         username: 'admin',
@@ -176,20 +203,179 @@ export default {
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       subjects: [{
-        value: '数学系',
+        value: 1,
         label: '数学系'
       }, {
-        value: '计算机系',
+        value: 2,
         label: '计算机系'
       }, {
-        value: '物理系',
+        value: 3,
         label: '物理系'
       }, {
-        value: '化学系',
+        value: 4,
         label: '化学系'
       }, {
-        value: '金融系',
+        value: 5,
         label: '金融系'
+      }],
+      timeRanges: [{
+        value: '00:00:00',
+        label: '00:00:00-00:30:00'
+      }, {
+        value: '00:30:00',
+        label: '00:30:00-01:00:00'
+      }, {
+        value: '01:00:00',
+        label: '01:00:00-01:30:00'
+      }, {
+        value: '01:30:00',
+        label: '01:30:00-02:00:00'
+      }, {
+        value: '02:00:00',
+        label: '02:00:00-02:30:00'
+      }, {
+        value: '02:30:00',
+        label: '02:30:00-03:00:00'
+      }, {
+        value: '03:00:00',
+        label: '03:00:00-03:30:00'
+      }, {
+        value: '03:30:00',
+        label: '03:30:00-04:00:00'
+      }, {
+        value: '04:00:00',
+        label: '04:00:00-04:30:00'
+      }, {
+        value: '04:30:00',
+        label: '04:30:00-05:00:00'
+      }, {
+        value: '05:00:00',
+        label: '05:00:00-05:30:00'
+      }, {
+        value: '05:30:00',
+        label: '05:30:00-06:00:00'
+      }, {
+        value: '06:00:00',
+        label: '06:00:00-06:30:00'
+      }, {
+        value: '06:30:00',
+        label: '06:30:00-07:00:00'
+      }, {
+        value: '07:00:00',
+        label: '07:00:00-07:30:00'
+      }, {
+        value: '07:30:00',
+        label: '07:30:00-08:00:00'
+      }, {
+        value: '08:00:00',
+        label: '08:00:00-08:30:00'
+      }, {
+        value: '08:30:00',
+        label: '08:30:00-09:00:00'
+      }, {
+        value: '09:00:00',
+        label: '09:00:00-09:30:00'
+      }, {
+        value: '09:30:00',
+        label: '09:30:00-10:00:00'
+      }, {
+        value: '10:00:00',
+        label: '10:00:00-10:30:00'
+      }, {
+        value: '10:30:00',
+        label: '10:30:00-11:00:00'
+      }, {
+        value: '11:00:00',
+        label: '11:00:00-11:30:00'
+      }, {
+        value: '11:30:00',
+        label: '11:30:00-12:00:00'
+      }, {
+        value: '12:00:00',
+        label: '12:00:00-12:30:00'
+      }, {
+        value: '12:30:00',
+        label: '12:30:00-13:00:00'
+      }, {
+        value: '13:00:00',
+        label: '13:00:00-13:30:00'
+      }, {
+        value: '13:30:00',
+        label: '13:30:00-14:00:00'
+      }, {
+        value: '14:00:00',
+        label: '14:00:00-14:30:00'
+      }, {
+        value: '14:30:00',
+        label: '14:30:00-15:00:00'
+      }, {
+        value: '15:00:00',
+        label: '15:00:00-15:30:00'
+      }, {
+        value: '15:30:00',
+        label: '15:30:00-16:00:00'
+      }, {
+        value: '16:00:00',
+        label: '16:00:00-16:30:00'
+      }, {
+        value: '16:30:00',
+        label: '16:30:00-17:00:00'
+      }, {
+        value: '17:00:00',
+        label: '17:00:00-17:30:00'
+      }, {
+        value: '17:30:00',
+        label: '17:30:00-18:00:00'
+      }, {
+        value: '18:00:00',
+        label: '18:00:00-18:30:00'
+      }, {
+        value: '18:30:00',
+        label: '18:30:00-19:00:00'
+      }, {
+        value: '19:00:00',
+        label: '19:00:00-19:30:00'
+      }, {
+        value: '19:30:00',
+        label: '19:30:00-20:00:00'
+      }, {
+        value: '20:00:00',
+        label: '20:00:00-20:30:00'
+      }, {
+        value: '20:30:00',
+        label: '20:30:00-21:00:00'
+      }, {
+        value: '21:00:00',
+        label: '21:00:00-21:30:00'
+      }, {
+        value: '21:30:00',
+        label: '21:30:00-22:00:00'
+      }, {
+        value: '22:00:00',
+        label: '22:00:00-22:30:00'
+      }, {
+        value: '22:30:00',
+        label: '22:30:00-23:00:00'
+      }, {
+        value: '23:00:00',
+        label: '23:00:00-23:30:00'
+      }, {
+        value: '23:30:00',
+        label: '23:30:00-24:00:00'
+      }],
+      genders: [{
+        value: 'male',
+        label: '男'
+      }, {
+        value: 'female',
+        label: '女'
+      }],
+      degrees: [{
+        value: 'postgraduate',
+        label: '本科'
+      }, {
+        value: 'doctorate',
+        label: '研究生'
       }],
       passwordType: 'password',
       capsTooltip: false,
@@ -258,12 +444,44 @@ export default {
       })
     },
     handleRegister() {
-      console.log(this.registerForm)
-      this.$notify({
-        title: 'Success',
-        message: 'Register Successfully',
-        type: 'success',
-        duration: 2000
+      // console.log(this.registerForm)
+
+      const regData = {
+        username: this.registerForm.gender,
+        password: this.registerForm.password,
+        gender: {
+          gender: this.registerForm.gender
+        },
+        degree: {
+          degree: this.registerForm.degree
+        },
+        subject: {
+          id: this.registerForm.subject
+        },
+        bedtime: {
+          id: 1,
+          timeSlot: this.registerForm.bedTime
+        },
+        uptime: {
+          id: 1,
+          timeSlot: this.registerForm.wakeupTime
+        }
+      }
+      return new Promise((resolve, reject) => {
+        Register(regData).then(response => {
+          this.allList = response.data
+          this.total = this.allList.length
+          resolve()
+          setTimeout(() => {
+            this.listLoading = false
+          }, 1000)
+          this.$notify({
+            title: 'Success',
+            message: 'Register Successfully',
+            type: 'success',
+            duration: 2000
+          })
+        })
       })
       // this.$axios.post('/login', loginData)
       /*
