@@ -2,6 +2,8 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import getters from './getters'
 
+import realUsername from '@/store/modules/realUsername'
+
 Vue.use(Vuex)
 
 // https://webpack.js.org/guides/dependency-management/#requirecontext
@@ -19,6 +21,13 @@ const modules = modulesFiles.keys().reduce((modules, modulePath) => {
 
 const store = new Vuex.Store({
   modules,
+  // app,
+  // errorLog,
+  // permission,
+  realUsername,
+  // settings,
+  // tagsView,
+  // user,
   getters
 })
 

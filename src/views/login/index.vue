@@ -12,7 +12,7 @@
         </span>
         <el-input
           ref="username"
-          v-model="loginForm.username"
+          v-model="realUser.username"
           placeholder="Username"
           name="username"
           type="text"
@@ -29,7 +29,7 @@
           <el-input
             :key="passwordType"
             ref="password"
-            v-model="loginForm.password"
+            v-model="realUser.password"
             :type="passwordType"
             placeholder="Password"
             name="password"
@@ -166,7 +166,7 @@
 
 <script>
 import { validUsername } from '@/utils/validate'
-import { Register } from '@/api/article'
+import { Login, Register } from '@/api/article'
 export default {
   name: 'Login',
   data() {
@@ -197,6 +197,10 @@ export default {
       loginForm: {
         username: 'admin',
         password: '111111'
+      },
+      realUser: {
+        username: '',
+        password: ''
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
@@ -426,21 +430,46 @@ export default {
       })
     },
     handleLogin() {
-      this.$refs.loginForm.validate(valid => {
-        if (valid) {
-          this.loading = true
-          this.$store.dispatch('user/login', this.loginForm)
-            .then(() => {
-              this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
-              this.loading = false
-            })
-            .catch(() => {
-              this.loading = false
-            })
-        } else {
-          console.log('error submit!!')
-          return false
-        }
+      // this.$router.push({ path: "/profile/index" })
+      // this.$forceUpdate()
+      new Promise((resolve, reject) => {
+        Login(this.realUser).then(response => {
+          this.allList = response.data
+          this.total = this.allList.length
+          resolve()
+          setTimeout(() => {
+            this.listLoading = false
+          }, 1000)
+          this.$notify({
+            title: 'Success',
+            message: 'Register Successfully',
+            type: 'success',
+            duration: 2000
+          })
+          // const actionTypes = Object.keys(store._actions).map(action => action);
+          // console.log(actionTypes);
+          this.$store.dispatch('realUsername/setRealUser', this.realUser.username)
+          console.log(this.$store.getters.realUserName)
+          this.$refs.loginForm.validate(valid => {
+            if (valid) {
+              this.loading = true
+              this.$store.dispatch('user/login', this.loginForm)
+                .then(() => {
+                  // console.log("r:"+this.redirect)
+                  // console.log("q:"+this.otherQuery)
+                  this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
+                  // this.$router.push({ path: this.redirect })
+                  this.loading = false
+                })
+                .catch(() => {
+                  this.loading = false
+                })
+            } else {
+              console.log('error submit!!')
+              return false
+            }
+          })
+        })
       })
     },
     handleRegister() {
@@ -467,7 +496,7 @@ export default {
           timeSlot: this.registerForm.wakeupTime
         }
       }
-      return new Promise((resolve, reject) => {
+      new Promise((resolve, reject) => {
         Register(regData).then(response => {
           this.allList = response.data
           this.total = this.allList.length
