@@ -28,16 +28,25 @@
     >
       <img src="https://sustech.online/assets/interior-KIYZNKgg.jpg" alt="Room Preview" class="room-preview-img">
     </el-dialog>
-
-    <Comment />
+    <comment
+      v-for="(comment, index) in comments"
+      :key="index"
+      :comment="comment"
+      @delete-comment="handleDeleteComment"
+    />
+    <comment-box @submit-comment="handleNewComment" />
   </div>
 </template>
 
 <script>
 import Comment from './Comment.vue'
+import CommentBox from '@/views/view-dorm/Room/CommentBox.vue'
+import { findDorm, addBookmark, addParentComment, deleteComment, getCommentTree } from '@/api/dormitory'
 export default {
+  name: 'RoomPage',
   components: {
-    Comment
+    Comment,
+    CommentBox
   },
   data() {
     return {
@@ -45,42 +54,44 @@ export default {
         zone: '',
         block: '',
         number: '',
-        id: '123456',
+        id: '',
         type: ''
       },
+      comments: [],
       isPreviewVisible: false
     }
   },
-  created() {
-    // watch 路由的参数，以便再次获取数据
-    this.$watch(
-      () => this.$route.params,
-      () => {
-        this.getParams()
-      },
-      // 组件创建完后获取数据，
-      // 此时 data 已经被 observed 了
-      { immediate: true }
-    )
+  computed: {
+    roomFloor: function() {
+      return Math.floor(this.room.number / 100)
+    },
+    userName: function() {
+      return this.$store.getters.name
+    }
+  },
+  async created() {
+    await this.getParams()
+    await this.getAllComments()
   },
   methods: {
-    getParams() {
+    async getParams() {
       const roomInfo = this.$route.params.roomInfo
-      if (roomInfo.zoneId === 1) {
-        this.room.zone = '湖畔'
-        this.room.type = 'Double'
-      } else if (roomInfo.zoneId === 2) {
-        this.room.zone = '二期'
-        this.room.type = 'Quadruple'
-      } else if (roomInfo.zoneId === 3) {
-        this.room.zone = '荔园'
-        this.room.type = 'Triple'
-      } else {
-        this.room.zone = '欣园'
-        this.room.type = 'Single'
-      }
+      this.room.zone = roomInfo.zoneName
       this.room.block = roomInfo.selectedBuilding
       this.room.number = roomInfo.selectedRoom
+
+      const response = await findDorm(this.room.number, this.roomFloor, this.room.block, this.room.zone)
+      this.room.id = response.data.content[0].id
+      const bedNum = response.data.content[0].bed
+      if (bedNum === 1) {
+        this.room.type = 'Single'
+      } else if (bedNum === 2) {
+        this.room.type = 'Double'
+      } else if (bedNum === 3) {
+        this.room.type = 'Triple'
+      } else {
+        this.room.type = 'Quadruple'
+      }
     },
     previewRoom() {
       this.isPreviewVisible = true
@@ -89,8 +100,40 @@ export default {
       this.isPreviewVisible = false
     },
     bookmarkRoom() {
-      // Logic to add the room to bookmarks
-      alert('Room bookmarked!')
+      addBookmark(this.room.id, this.userName)
+        .then(response => {
+          // Check if the response has a property code and it's equal to 0
+          if (response.code === 0) {
+            this.$notify({
+              title: 'Success',
+              message: 'Add to bookmark successfully',
+              type: 'success',
+              duration: 2000
+            })
+          }
+        })
+    },
+    async handleNewComment(newCommentText) {
+      if (!newCommentText.trim()) return
+      const response = await addParentComment(this.userName, this.room.id, newCommentText)
+      const newComment = {
+        parent_id: response.data.parent_id,
+        id: response.data.comment_id,
+        dormitory_id: this.room.id,
+        author: this.userName,
+        content: newCommentText,
+        create_time: response.data.create_time,
+        replies: []
+      }
+      this.comments.push(newComment)
+    },
+    async handleDeleteComment(id) {
+      await deleteComment(id)
+      this.comments = this.comments.filter(comment => comment.id !== id)
+    },
+    async getAllComments() {
+      const response = await getCommentTree(this.room.id)
+      this.comments = response.data
     }
   }
 }

@@ -31,33 +31,13 @@ export function gerProfile(data) {
 }
 
 export function fetchList(query) {
-  // const queryParams = {}
+  const houseNumParam = query.houseNum ? `houseNum=${query.houseNum}` : ''
+  const floorParam = query.floor ? `floor=${query.floor}` : ''
+  const buildingNameParam = query.buildingName ? `buildingName=${query.buildingName}` : ''
+  const locationParam = query.location ? `location=${query.location}` : ''
+  const sortParam = query.sort === '-' ? '-' : '%2B'
 
-  // if (query.houseNum !== undefined) {
-  //   queryParams.houseNum = query.houseNum
-  // }
-
-  // if (query.floor !== undefined) {
-  //   queryParams.floor = query.floor
-  // }
-
-  // if (query.buildingName !== undefined) {
-  //   queryParams.buildingName = query.buildingName
-  // }
-
-  // if (query.location !== undefined) {
-  //   queryParams.location = query.location
-  // }
-  // const queryString = Object.entries(queryParams)
-  //   .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(value)}`)
-  //   .join('&')
-  const houseNumParam = query.houseNum !== undefined && query.houseNum !== null ? `houseNum=${query.houseNum}` : ''
-  const floorParam = query.floor !== undefined && query.floor !== null ? `floor=${query.floor}` : ''
-  const buildingNameParam = query.buildingName !== undefined && query.buildingName !== null ? `buildingName=${query.buildingName}` : ''
-  const locationParam = query.location !== undefined && query.location !== null ? `location=${query.location}` : ''
-
-  const url = `http://localhost:8443/api/findDorm?${houseNumParam}&${floorParam}&${buildingNameParam}&${locationParam}`
-  // const url = `http://localhost:8443/api/findDorm?houseNum=${query.houseNum}&floor=${query.floor}&buildingName=${query.buildingName}&location=${query.location}`
+  const url = `http://localhost:8443/api/findDorm?sort=${sortParam}&page=${query.page}&limit=${query.limit}&${houseNumParam}&${floorParam}&${buildingNameParam}&${locationParam}`
   return request({
     url: url,
     method: 'post'
@@ -117,9 +97,18 @@ export function fetchPv(pv) {
   })
 }
 
-export function createArticle(data) {
+export function createDorm(data) {
   return request({
-    url: '/vue-element-admin/article/create',
+    url: 'http://localhost:8443/api/admin/addDormitory',
+    method: 'post',
+    data
+  })
+}
+
+export function deleteDorm(data) {
+  var url = 'http://localhost:8443/api/admin/removeDormitory'
+  return request({
+    url: url,
     method: 'post',
     data
   })
@@ -130,5 +119,19 @@ export function updateArticle(data) {
     url: '/vue-element-admin/article/update',
     method: 'post',
     data
+  })
+}
+
+export function fetchUserList(query) {
+  // const IDParam = query.ID ? `ID=${query.ID}` : ''
+  // const genderParam = query.gender ? `gender=${query.gender}` : ''
+  // const subjectParam = query.subjectName ? `subject=${query.subject}` : ''
+  const sortParam = query.sort === '-' ? '-' : '%2B'
+
+  const url = `http://localhost:8443/api/getUsers?sort=${sortParam}&page=${query.page}&limit=${query.limit}`
+  return request({
+    url: url,
+    method: 'post'
+    // params: query
   })
 }

@@ -10,8 +10,8 @@ import Layout from '@/layout'
 import componentsRouter from './modules/components'
 import chartsRouter from './modules/charts'
 import tableRouter from './modules/table'
-import nestedRouter from './modules/nested'
 import viewDormRouter from './modules/view-dorm'
+import teamRouter from '@/router/modules/team'
 
 /**
  * Note: sub-menu only appear when route children.length >= 1
@@ -80,7 +80,7 @@ export const constantRoutes = [
         path: 'dashboard',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
-        meta: { title: 'Dashboard', icon: 'dashboard', affix: true }
+        meta: { title: 'Menu', icon: 'guide', affix: true }
       }
     ]
   },
@@ -120,7 +120,7 @@ export const constantRoutes = [
         path: 'index',
         component: () => import('@/views/dormSelect/index'),
         name: 'DormSelect',
-        meta: { title: 'Select Dorm', icon: 'eye-open' }
+        meta: { title: 'Select Dorm', icon: 'list' }
       }
     ]
   },
@@ -137,7 +137,47 @@ export const constantRoutes = [
       }
     ]
   },
-  viewDormRouter
+  {
+    path: '/faculty',
+    component: Layout,
+    redirect: '/faculty/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/faculty/index'),
+        name: 'faculty',
+        meta: { title: 'faculty', icon: 'tree' }
+      }
+    ]
+  },
+  {
+    path: '/faculty-dorm',
+    component: Layout,
+    redirect: '/faculty-dorm/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/faculty-dorm/index'),
+        name: 'faculty-dorm',
+        meta: { title: 'faculty-dorm', icon: 'list' }
+      }
+    ]
+  },
+  {
+    path: '/faculty-user',
+    component: Layout,
+    redirect: '/faculty-user/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/faculty-user/index'),
+        name: 'faculty-user',
+        meta: { title: 'faculty-user', icon: 'list' }
+      }
+    ]
+  },
+  viewDormRouter,
+  teamRouter
 ]
 
 /**
@@ -203,7 +243,6 @@ export const asyncRoutes = [
   /** when your routing map is too long, you can split it into small modules **/
   componentsRouter,
   chartsRouter,
-  nestedRouter,
   tableRouter,
 
   {

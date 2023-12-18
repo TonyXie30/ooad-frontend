@@ -1,21 +1,21 @@
 <template>
   <el-row :gutter="40" class="panel-group">
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <router-link to="/view-dorm/zones">
+      <router-link to="/faculty-dorm/index">
         <div class="card-panel">
           <div class="card-panel-icon-wrapper icon-building">
             <i class="el-icon-office-building" />
           </div>
           <div class="card-panel-description">
             <div class="card-panel-text">
-              View Dorm
+              Dorm Manage
             </div>
             <count-to :start-val="0" :end-val="5000" :duration="2600" class="card-panel-num" />
           </div>
         </div>
       </router-link>
     </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+    <!-- <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <div class="card-panel">
         <div class="card-panel-icon-wrapper icon-message">
           <svg-icon icon-class="message" class-name="card-panel-icon" />
@@ -27,6 +27,19 @@
           <count-to :start-val="0" :end-val="30" :duration="3000" class="card-panel-num" />
         </div>
       </div>
+    </el-col> -->
+    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+      <div class="card-panel">
+        <div class="card-panel-icon-wrapper icon-team">
+          <svg-icon icon-class="peoples" class-name="card-panel-icon" />
+        </div>
+        <div class="card-panel-description">
+          <div class="card-panel-text">
+            Student Manage
+          </div>
+          <count-to :start-val="0" :end-val="5" :duration="3600" class="card-panel-num" />
+        </div>
+      </div>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <router-link to="/dormSelect/index">
@@ -36,24 +49,9 @@
           </div>
           <div class="card-panel-description">
             <div class="card-panel-text">
-              Dorm Selection
+              Selection Time
             </div>
             <count-to :start-val="0" :end-val="4800" :duration="3200" class="card-panel-num" />
-          </div>
-        </div>
-      </router-link>
-    </el-col>
-    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <router-link to="/team/team-page">
-        <div class="card-panel">
-          <div class="card-panel-icon-wrapper icon-team">
-            <svg-icon icon-class="peoples" class-name="card-panel-icon" />
-          </div>
-          <div class="card-panel-description">
-            <div class="card-panel-text">
-              Team
-            </div>
-            <count-to :start-val="0" :end-val="5" :duration="3600" class="card-panel-num" />
           </div>
         </div>
       </router-link>
