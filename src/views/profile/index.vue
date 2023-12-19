@@ -3,7 +3,7 @@
     <div v-if="user">
       <el-row :gutter="20">
 
-        <el-col :span="6" :xs="24">
+        <el-col :span="8" :xs="24">
           <user-card :user="user" />
         </el-col>
 
@@ -22,7 +22,9 @@
         <!--            </el-tabs>-->
         <!--          </el-card>-->
         <!--        </el-col>-->
-
+        <el-col :span="16" :xs="24">
+          <recommend :user="user" />
+        </el-col>
       </el-row>
     </div>
   </div>
@@ -31,13 +33,14 @@
 <script>
 import { mapGetters } from 'vuex'
 import UserCard from './components/UserCard'
+import Recommend from '@/views/profile/components/Recommend.vue'
 // import Activity from './components/Activity'
 // import Timeline from './components/Timeline'
 // import Account from './components/Account'
 
 export default {
   name: 'Profile',
-  components: { UserCard },
+  components: { Recommend, UserCard },
   data() {
     return {
       user: {},

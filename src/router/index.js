@@ -125,6 +125,19 @@ export const constantRoutes = [
     ]
   },
   {
+    path: '/roomExchange',
+    component: Layout,
+    redirect: '/roomExchange/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/roomExchange/index'),
+        name: 'roomExchange',
+        meta: { title: 'Exchange room', icon: 'example' }
+      }
+    ]
+  },
+  {
     path: '/faculty',
     component: Layout,
     redirect: '/faculty/index',

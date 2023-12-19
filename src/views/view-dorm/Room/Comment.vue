@@ -2,9 +2,9 @@
   <div class="comment">
     <div class="comment-content">
       <h3>{{ comment.author }}</h3>
-      <p>{{ comment.text }}</p>
-      <span class="comment-date">{{ comment.submitDate }}</span>
-      <button v-if="isCurrentUser" class="delete-btn" @click="deleteComment">Delete</button>
+      <p>{{ comment.content }}</p>
+      <span class="comment-date">{{ commentTime }}</span>
+      <button v-if="isCurrentUser" class="leave-btn" @click="deleteComment">Delete</button>
       <button class="reply-btn" @click="showReplyInput = true">Reply</button>
       <button v-if="showReplyInput" class="cancel-btn" @click="cancelReply">Cancel</button>
     </div>
@@ -14,8 +14,8 @@
     </div>
     <div v-if="comment.replies && comment.replies.length" class="replies">
       <Comment
-        v-for="reply in comment.replies"
-        :key="reply.cid"
+        v-for="(reply, index) in comment.replies"
+        :key="index"
         :comment="reply"
         class="nested-comment"
       />
@@ -24,6 +24,7 @@
 </template>
 
 <script>
+import { addChildComment, deleteComment } from '@/api/dormitory'
 export default {
   name: 'Comment',
   props: {
@@ -44,6 +45,9 @@ export default {
     },
     isCurrentUser: function() {
       return this.comment.author === this.userName
+    },
+    commentTime: function() {
+      return new Date(this.comment.create_time).toLocaleString()
     }
   },
   methods: {
@@ -51,27 +55,30 @@ export default {
       this.showReplyInput = false
       this.replyText = ''
     },
-    submitReply() {
+    async submitReply() {
       if (!this.replyText.trim()) return
+      const response = await addChildComment(this.userName, this.comment.dormitory_id, this.replyText, this.comment.id)
       const newReply = {
-        pid: this.comment.cid,
-        cid: Date.now(), // A unique ID should be generated here
+        parent_id: this.comment.id,
+        id: response.data.comment_id,
+        dormitory_id: this.comment.dormitory_id,
         author: this.userName,
-        text: this.replyText,
-        submitDate: new Date().toLocaleString(),
+        content: this.replyText,
+        create_time: response.data.create_time,
         replies: []
       }
       this.comment.replies.push(newReply)
       this.cancelReply()
     },
-    deleteComment() {
+    async deleteComment() {
       // Check if the comment is a top-level comment
-      if (!this.comment.pid || this.comment.pid === 0) {
+      if (this.comment.parent_id === this.comment.id) {
         // Emit an event to the parent component to handle the deletion of the comment and its replies
-        this.$emit('delete-comment', this.comment.cid)
+        this.$emit('delete-comment', this.comment.id)
       } else {
+        await deleteComment(this.comment.id)
         this.comment.replies = []
-        this.$parent.comment.replies = this.$parent.comment.replies.filter(reply => reply.cid !== this.comment.cid)
+        this.$parent.comment.replies = this.$parent.comment.replies.filter(reply => reply.id !== this.comment.id)
       }
     }
   }
@@ -146,7 +153,7 @@ export default {
   resize: vertical; /* Allow vertical resizing */
 }
 
-.delete-btn {
+.leave-btn {
   background-color: #ff5252;
   color: white;
   border: none;
@@ -156,7 +163,7 @@ export default {
   margin-left: 8px;
 }
 
-.delete-btn:hover {
+.leave-btn:hover {
   background-color: #ff4444;
 }
 </style>

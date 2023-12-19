@@ -15,9 +15,6 @@
 
     <!-- Button Section -->
     <div class="flex-container">
-      <router-link to="/team/create-team">
-        <el-button>Create Team</el-button>
-      </router-link>
       <router-link to="/team/join-team">
         <el-button>Join Team</el-button>
       </router-link>
@@ -67,7 +64,7 @@ export default {
   el-button {
     font-family: 'Your Font Family', sans-serif; /* Match the font family of your page */
     font-weight: bold; /* Assuming the font on your page is bold */
-    font-size: 20px;
+    font-size: 10px;
     color: white; /* A color that contrasts well with your button background */
     background-color: #a8a9a9; /* A yellow shade that matches your design */
     border-radius: 4px; /* Adjust as per your design preference */
