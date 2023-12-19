@@ -6,10 +6,10 @@
         <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
       </el-select> -->
       <el-select v-model="listQuery.gender" placeholder="性别" clearable class="filter-item" style="width: 130px" @change="handleFilter">
-        <el-option v-for="item in genderTypes" :key="item.key" :label="item.display_name" :value="item.key" />
+        <el-option v-for="item in genderTypes" :key="item.gender.id" :label="item.display_name" :value="item.gender" />
       </el-select>
       <el-select v-model="listQuery.grade" placeholder="学级" clearable class="filter-item" style="width: 130px" @change="handleFilter">
-        <el-option v-for="item in gradeTypes" :key="item.key" :label="item.display_name" :value="item.key" />
+        <el-option v-for="item in gradeTypes" :key="item.degree.id" :label="item.display_name" :value="item.degree" />
       </el-select>
       <!-- <el-select v-model="listQuery.buildingName" placeholder="栋" clearable class="filter-item" style="width: 130px" :loading="loadingBuildings" @change="getFloors">
         <el-option v-for="item in buildings" :key="item" :label="item" :value="item" />
@@ -56,12 +56,12 @@
       </el-table-column> -->
       <el-table-column label="起始时间" width="150px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ row.startTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
       <el-table-column label="结束时间" width="150px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.timestamp | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
+          <span>{{ row.endTime | parseTime('{y}-{m}-{d} {h}:{i}') }}</span>
         </template>
       </el-table-column>
       <!-- <el-table-column label="Title" min-width="150px">
@@ -77,12 +77,12 @@
       </el-table-column> -->
       <el-table-column label="性别" width="110px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.gender }}</span>
+          <span>{{ row.gender.gender }}</span>
         </template>
       </el-table-column>
       <el-table-column label="学级" width="110px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.bookedDormitory }}</span>
+          <span>{{ row.degree.degree }}</span>
         </template>
       </el-table-column>
       <!-- <el-table-column label="专业" width="110px" align="center">
@@ -136,20 +136,20 @@
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
         <el-form-item label="性别" prop="gender">
-          <el-select v-model="temp.location" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in genderTypes" :key="item.key" :label="item.display_name" :value="item.key" />
+          <el-select v-model="temp.gender" class="filter-item" placeholder="Please select">
+            <el-option v-for="item in genderTypes" :key="item.gender.id" :label="item.display_name" :value="item.gender" />
           </el-select>
         </el-form-item>
         <el-form-item label="学级" prop="grade">
-          <el-select v-model="temp.location" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in gradeTypes" :key="item.key" :label="item.display_name" :value="item.key" />
+          <el-select v-model="temp.degree" class="filter-item" placeholder="Please select">
+            <el-option v-for="item in gradeTypes" :key="item.degree.id" :label="item.display_name" :value="item.degree" />
           </el-select>
         </el-form-item>
         <el-form-item label="起始" prop="timestamp1">
-          <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date" />
+          <el-date-picker v-model="temp.startTime" type="datetime" placeholder="Please pick a date" />
         </el-form-item>
         <el-form-item label="结束" prop="timestamp2">
-          <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date" />
+          <el-date-picker v-model="temp.endTime" type="datetime" placeholder="Please pick a date" />
         </el-form-item>
         <!-- <el-form-item label="房间号" prop="houseNum">
           <el-input v-model="temp.houseNum" />
@@ -201,22 +201,44 @@
 </template>
 
 <script>
-import { fetchUserList, fetchPv, createDorm } from '@/api/article'
+import { fetchTimeList, setTimeInterval } from '@/api/article'
 import { findBuilding, findFloor, selectRoom, deleteDorm } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 const genderTypes = [
-  { key: 'male', display_name: '男' },
-  { key: 'female', display_name: '女' }
-  // { key: 'EU', display_name: 'Eurozone' }
+  {
+    gender: {
+      id: 1,
+      gender: 'male'
+    },
+    display_name: '男'
+  },
+  {
+    gender: {
+      id: 2,
+      gender: 'female'
+    },
+    display_name: '女'
+  }
 ]
 
 const gradeTypes = [
-  { key: 'master', display_name: '硕士研究生' },
-  { key: 'Phd', display_name: '博士研究生' }
-  // { key: 'EU', display_name: 'Eurozone' }
+  {
+    degree: {
+      id: 1,
+      degree: 'postgraduate'
+    },
+    display_name: '硕士研究生'
+  },
+  {
+    degree: {
+      id: 2,
+      degree: 'doctorate'
+    },
+    display_name: '博士研究生'
+  }
 ]
 
 // arr to obj, such as { CN : "China", US : "USA" }
@@ -245,7 +267,7 @@ export default {
   data() {
     return {
       tableKey: 0,
-      list: null,
+      list: [],
       allList: [],
       buildings: [],
       floors: [],
@@ -259,8 +281,8 @@ export default {
         page: 1,
         limit: 20,
         id: null,
-        gender: null,
-        grade: null,
+        degree: {},
+        gender: {},
         sort: '+'
         // sort: '+id'
       },
@@ -269,8 +291,8 @@ export default {
         page: 1,
         limit: 20,
         id: null,
-        gender: null,
-        grade: null,
+        degree: {},
+        gender: {},
         sort: '+'
         // sort: '+id'
       },
@@ -281,19 +303,10 @@ export default {
       statusOptions: ['published', 'draft', 'deleted'],
       showReviewer: false,
       temp: {
-        id: 1,
-        houseNum: undefined,
-        floor: undefined,
-        buildingName: undefined,
-        type: '123',
-        location: undefined,
-        bookedNum: 0,
-        bed: undefined
-        // importance: 1,
-        // remark: '',
-        // timestamp: new Date(),
-        // title: '',
-        // status: 'published'
+        degree: {},
+        gender: {},
+        startTime: undefined,
+        endTime: undefined
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -324,7 +337,7 @@ export default {
       this.templistQuery = Object.assign({}, this.listQuery)
       this.templistQuery.page -= 1
       this.listLoading = true
-      fetchUserList(this.templistQuery).then(response => {
+      fetchTimeList(this.templistQuery).then(response => {
         this.list = response.data.content
         this.total = response.data.totalElements
         setTimeout(() => {
@@ -373,14 +386,10 @@ export default {
     },
     resetTemp() {
       this.temp = {
-        id: 1,
-        houseNum: undefined,
-        floor: undefined,
-        buildingName: undefined,
-        type: '123',
-        location: undefined,
-        bookedNum: 0,
-        bed: undefined
+        degree: {},
+        gender: {},
+        startTime: undefined,
+        endTime: undefined
       }
     },
     handleCreate() {
@@ -394,9 +403,7 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          this.temp.author = 'vue-element-admin'
-          createDorm(this.temp).then(() => {
+          setTimeInterval(this.temp).then(() => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
             this.$notify({
@@ -422,10 +429,8 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          createDorm(tempData).then(() => {
-            const index = this.list.findIndex(v => v.id === this.temp.id)
-            this.list.splice(index, 1, this.temp)
+          setTimeInterval(tempData).then(() => {
+            this.getList()
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
@@ -471,12 +476,6 @@ export default {
         }, 1 * 1000)
       })
       // this.list.splice(index, 1)
-    },
-    handleFetchPv(pv) {
-      fetchPv(pv).then(response => {
-        this.pvData = response.data.pvData
-        this.dialogPvVisible = true
-      })
     },
     handleDownload() {
       this.downloadLoading = true

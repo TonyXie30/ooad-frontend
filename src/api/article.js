@@ -74,7 +74,7 @@ export function findFloor(query) {
 
 export function selectRoom(query) {
   var url = 'http://localhost:8443/api/checkInDorm'
-  url += `?dormitoryId=${query.id}&username=aaa`
+  url += `?dormitoryId=${query.id}&username=${query.user}`
   return request({
     url: url,
     method: 'post'
@@ -135,3 +135,27 @@ export function fetchUserList(query) {
     // params: query
   })
 }
+
+export function fetchTimeList(query) {
+  // const IDParam = query.ID ? `ID=${query.ID}` : ''
+  // const genderParam = query.gender ? `gender=${query.gender}` : ''
+  // const subjectParam = query.subjectName ? `subject=${query.subject}` : ''
+  const sortParam = query.sort === '-' ? '-' : '%2B'
+
+  const url = `http://localhost:8443/api/getUsers?sort=${sortParam}&page=${query.page}&limit=${query.limit}`
+  return request({
+    url: url,
+    method: 'post'
+    // params: query
+  })
+}
+
+export function setTimeInterval(query) {
+  const url = 'http://localhost:8443/api/admin/setSelectionTime'
+  return request({
+    url: url,
+    method: 'post',
+    params: query
+  })
+}
+

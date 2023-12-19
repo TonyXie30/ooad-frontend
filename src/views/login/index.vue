@@ -476,7 +476,7 @@ export default {
       // console.log(this.registerForm)
 
       const regData = {
-        username: this.registerForm.gender,
+        username: this.registerForm.username,
         password: this.registerForm.password,
         gender: {
           gender: this.registerForm.gender
