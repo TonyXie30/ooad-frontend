@@ -163,6 +163,19 @@ export const constantRoutes = [
       }
     ]
   },
+  {
+    path: '/faculty-time_range',
+    component: Layout,
+    redirect: '/faculty-time_range/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/faculty-time_range/index'),
+        name: 'faculty-time_range',
+        meta: { title: 'faculty-time', icon: 'list' }
+      }
+    ]
+  },
   viewDormRouter,
   teamRouter
 ]
