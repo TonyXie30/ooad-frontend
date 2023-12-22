@@ -6,10 +6,10 @@
         <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
       </el-select> -->
       <el-select v-model="listQuery.gender" placeholder="性别" clearable class="filter-item" style="width: 130px" @change="handleFilter">
-        <el-option v-for="item in genderTypes" :key="item.gender.id" :label="item.display_name" :value="item.gender" />
+        <el-option v-for="item in genderTypes" :key="item.gender" :label="item.display_name" :value="item.gender" />
       </el-select>
-      <el-select v-model="listQuery.grade" placeholder="学级" clearable class="filter-item" style="width: 130px" @change="handleFilter">
-        <el-option v-for="item in gradeTypes" :key="item.degree.id" :label="item.display_name" :value="item.degree" />
+      <el-select v-model="listQuery.degree" placeholder="学级" clearable class="filter-item" style="width: 130px" @change="handleFilter">
+        <el-option v-for="item in gradeTypes" :key="item.degree" :label="item.display_name" :value="item.degree" />
       </el-select>
       <!-- <el-select v-model="listQuery.buildingName" placeholder="栋" clearable class="filter-item" style="width: 130px" :loading="loadingBuildings" @change="getFloors">
         <el-option v-for="item in buildings" :key="item" :label="item" :value="item" />
@@ -137,19 +137,19 @@
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
         <el-form-item label="性别" prop="gender">
           <el-select v-model="temp.gender" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in genderTypes" :key="item.gender.id" :label="item.display_name" :value="item.gender" />
+            <el-option v-for="item in genderTypes" :key="item.gender" :label="item.display_name" :value="item.gender" />
           </el-select>
         </el-form-item>
-        <el-form-item label="学级" prop="grade">
+        <el-form-item label="学级" prop="degree">
           <el-select v-model="temp.degree" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in gradeTypes" :key="item.degree.id" :label="item.display_name" :value="item.degree" />
+            <el-option v-for="item in gradeTypes" :key="item.degree" :label="item.display_name" :value="item.degree" />
           </el-select>
         </el-form-item>
-        <el-form-item label="起始" prop="timestamp1">
-          <el-date-picker v-model="temp.startTime" type="datetime" placeholder="Please pick a date" />
+        <el-form-item label="起始" prop="startTime">
+          <el-date-picker v-model="temp.startTime" type="datetime" placeholder="Please pick a date" value-format="yyyy-MM-dd HH:mm:ss" />
         </el-form-item>
-        <el-form-item label="结束" prop="timestamp2">
-          <el-date-picker v-model="temp.endTime" type="datetime" placeholder="Please pick a date" />
+        <el-form-item label="结束" prop="endTime">
+          <el-date-picker v-model="temp.endTime" type="datetime" placeholder="Please pick a date" value-format="yyyy-MM-dd HH:mm:ss" />
         </el-form-item>
         <!-- <el-form-item label="房间号" prop="houseNum">
           <el-input v-model="temp.houseNum" />
@@ -202,42 +202,60 @@
 
 <script>
 import { fetchTimeList, setTimeInterval } from '@/api/article'
-import { findBuilding, findFloor, selectRoom, deleteDorm } from '@/api/article'
+import { selectRoom, deleteTimeInterval } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 const genderTypes = [
   {
-    gender: {
-      id: 1,
-      gender: 'male'
-    },
+    gender: 'male',
     display_name: '男'
   },
   {
-    gender: {
-      id: 2,
-      gender: 'female'
-    },
+    gender: 'female',
     display_name: '女'
   }
 ]
 
 const gradeTypes = [
   {
+    degree: 'postgraduate',
+    display_name: '硕士研究生'
+  },
+  {
+    degree: 'doctorate',
+    display_name: '博士研究生'
+  }
+]
+
+const degrees = [
+  {
     degree: {
       id: 1,
       degree: 'postgraduate'
-    },
-    display_name: '硕士研究生'
+    }
   },
   {
     degree: {
       id: 2,
       degree: 'doctorate'
-    },
-    display_name: '博士研究生'
+    }
+  }
+]
+
+const genders = [
+  {
+    gender: {
+      id: 1,
+      gender: 'male'
+    }
+  },
+  {
+    gender: {
+      id: 2,
+      gender: 'female'
+    }
   }
 ]
 
@@ -267,10 +285,7 @@ export default {
   data() {
     return {
       tableKey: 0,
-      list: [],
-      allList: [],
-      buildings: [],
-      floors: [],
+      list: null,
       total: 0,
       listLoading: true,
       loadingBuildings: true,
@@ -281,9 +296,8 @@ export default {
         page: 1,
         limit: 20,
         id: null,
-        degree: {},
-        gender: {},
-        sort: '+'
+        degree: null,
+        gender: null
         // sort: '+id'
       },
       templistQuery: {
@@ -291,20 +305,21 @@ export default {
         page: 1,
         limit: 20,
         id: null,
-        degree: {},
-        gender: {},
-        sort: '+'
+        degree: null,
+        gender: null
         // sort: '+id'
       },
       importanceOptions: [1, 2, 3],
       genderTypes,
       gradeTypes,
+      degrees,
+      genders,
       sortOptions: [{ label: '正序', key: '+' }, { label: '倒序', key: '-' }],
       statusOptions: ['published', 'draft', 'deleted'],
       showReviewer: false,
       temp: {
-        degree: {},
-        gender: {},
+        degree: null,
+        gender: null,
         startTime: undefined,
         endTime: undefined
       },
@@ -318,9 +333,9 @@ export default {
       pvData: [],
       rules: {
         gender: [{ required: true, message: 'gender is required', trigger: 'change' }],
-        grade: [{ required: true, message: 'grade is required', trigger: 'change' }],
-        timestamp1: [{ required: true, message: 'time is required', trigger: 'change' }],
-        timestamp2: [{ required: true, message: 'time is required', trigger: 'change' }]
+        degree: [{ required: true, message: 'grade is required', trigger: 'change' }],
+        startTime: [{ required: true, message: 'time is required', trigger: 'change' }],
+        endTime: [{ required: true, message: 'time is required', trigger: 'change' }]
         // timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
         // title: [{ required: true, message: 'title is required', trigger: 'blur' }]
       },
@@ -329,8 +344,8 @@ export default {
   },
   created() {
     this.getList()
-    this.getBuildings()
-    this.getFloors()
+    // this.getBuildings()
+    // this.getFloors()
   },
   methods: {
     getList() {
@@ -338,35 +353,11 @@ export default {
       this.templistQuery.page -= 1
       this.listLoading = true
       fetchTimeList(this.templistQuery).then(response => {
-        this.list = response.data.content
-        this.total = response.data.totalElements
+        this.list = response.data
+        this.total = 1
         setTimeout(() => {
           this.listLoading = false
         }, 0.3 * 1000)
-      })
-    },
-    async handleLocationChange() {
-      await this.getBuildings()
-      await this.getFloors()
-    },
-    async getBuildings() {
-      this.loadingBuildings = true
-      findBuilding(this.listQuery).then(response => {
-        // console.log("1")
-        this.buildings = response.data
-        this.loadingBuildings = false
-        // setTimeout(() => {
-        //   this.loadingBuildings = false
-        // }, 1 * 1000)
-      })
-    },
-    async getFloors() {
-      this.loadingFloors = true
-      findFloor(this.listQuery).then(response => {
-        this.floors = response.data
-        setTimeout(() => {
-          this.loadingFloors = false
-        }, 0.5 * 1000)
       })
     },
     handleFilter() {
@@ -386,8 +377,8 @@ export default {
     },
     resetTemp() {
       this.temp = {
-        degree: {},
-        gender: {},
+        degree: null,
+        gender: null,
         startTime: undefined,
         endTime: undefined
       }
@@ -403,8 +394,11 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          setTimeInterval(this.temp).then(() => {
-            this.list.unshift(this.temp)
+          var data = Object.assign({}, this.temp)
+          data.degree = this.degrees.find(item => item.degree.degree === this.temp.degree)?.degree
+          data.gender = this.genders.find(item => item.gender.gender === this.temp.gender)?.gender
+          setTimeInterval(data).then(() => {
+            this.getList()
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
@@ -419,6 +413,8 @@ export default {
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
       // this.temp.timestamp = new Date(this.temp.timestamp)
+      this.temp.gender = row.gender.gender
+      this.temp.degree = row.degree.degree
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -428,8 +424,10 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          const tempData = Object.assign({}, this.temp)
-          setTimeInterval(tempData).then(() => {
+          var data = Object.assign({}, this.temp)
+          data.degree = this.degrees.find(item => item.degree.degree === this.temp.degree)?.degree
+          data.gender = this.genders.find(item => item.gender.gender === this.temp.gender)?.gender
+          setTimeInterval(data).then(() => {
             this.getList()
             this.dialogFormVisible = false
             this.$notify({
@@ -458,9 +456,8 @@ export default {
       })
       // this.list.splice(index, 1)
     },
-
     handleDelete(row) {
-      deleteDorm(row).then(response => {
+      deleteTimeInterval(row).then(response => {
         this.listLoading = true
         this.getList()
         this.$notify({

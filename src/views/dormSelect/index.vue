@@ -131,7 +131,7 @@
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
         <el-form-item label="学生" prop="type">
           <el-select v-model="temp.type" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in locationTypes" :key="item.key" :label="item.display_name" :value="item.key" />
+            <el-option v-for="item in dormUsers" :key="item.id" :label="item.username" :value="item.username" />
           </el-select>
         </el-form-item>
         <!-- <el-form-item label="Date" prop="timestamp">
@@ -156,7 +156,7 @@
         <el-button @click="dialogFormVisible = false">
           Cancel
         </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
+        <el-button type="primary" @click="Exchange">
           Confirm
         </el-button>
       </div>
@@ -175,10 +175,9 @@
 </template>
 
 <script>
-import { fetchList, fetchPv, createDorm, updateArticle } from '@/api/article'
+import { fetchList, checkTime, checkUser, getDormUsers } from '@/api/article'
 import { findBuilding, findFloor, selectRoom } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
-import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 const locationTypes = [
@@ -213,16 +212,18 @@ export default {
   },
   data() {
     return {
+      user: null,
       tableKey: 0,
       list: null,
       allList: [],
       buildings: [],
       floors: [],
+      dormUsers: [],
       total: 0,
       listLoading: true,
       loadingBuildings: true,
       loadingFloors: true,
-      selected: true,
+      selected: false,
       inTime: true,
       listQuery: {
         // importance: undefined,
@@ -280,32 +281,23 @@ export default {
     // this.getAllList().then(() => {
     //   this.getList()
     // })
+    this.user = this.$store.getters.realUserName
+    console.log(localStorage.getItem('username'))
     this.getList()
     this.getBuildings()
     this.getFloors()
   },
   methods: {
-    // getAllList() {
-    //   return new Promise((resolve, reject) => {
-    //     fetchList(this.listQuery).then(response => {
-    //       this.allList = response.data
-    //       this.total = this.allList.length
-    //       resolve()
-    //       setTimeout(() => {
-    //         this.listLoading = false
-    //       }, 1 * 1000)
-    //     })
-    //   })
-    // },
-    // getList() {
-    //   const start = (this.page - 1) * this.limit
-    //   const end = start + this.limit
-    //   this.list = this.allList.slice(start, end)
-    // },
     getList() {
       this.templistQuery = Object.assign({}, this.listQuery)
       this.templistQuery.page -= 1
       this.listLoading = true
+      checkUser(localStorage.getItem('username')).then(response => {
+        this.selected = response.data
+      })
+      checkTime(localStorage.getItem('username')).then(response => {
+        this.inTime = response.data
+      })
       fetchList(this.templistQuery).then(response => {
         this.list = response.data.content
         this.total = response.data.totalElements
@@ -381,63 +373,11 @@ export default {
         type: ''
       }
     },
-    handleCreate() {
-      this.resetTemp()
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    createData() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          createDorm(this.temp).then(() => {
-            this.list.unshift(this.temp)
-            this.dialogFormVisible = false
-            this.$notify({
-              title: 'Success',
-              message: 'Created Successfully',
-              type: 'success',
-              duration: 2000
-            })
-          })
-        }
-      })
-    },
-    handleUpdate(row) {
-      this.temp = Object.assign({}, row) // copy obj
-      this.temp.timestamp = new Date(this.temp.timestamp)
-      this.dialogStatus = 'update'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
-    updateData() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          const tempData = Object.assign({}, this.temp)
-          tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          updateArticle(tempData).then(() => {
-            const index = this.list.findIndex(v => v.id === this.temp.id)
-            this.list.splice(index, 1, this.temp)
-            this.dialogFormVisible = false
-            this.$notify({
-              title: 'Success',
-              message: 'Update Successfully',
-              type: 'success',
-              duration: 2000
-            })
-          })
-        }
-      })
-    },
     handleChoose(row) {
-      const user = this.$store.getters.realUserName
       const data = Object.assign({}, row)
-      data.user = user
+      data.user = localStorage.getItem('username')
       selectRoom(data).then(response => {
+        this.getList()
         this.$notify({
           title: 'Success',
           message: 'Choose Successfully',
@@ -453,40 +393,39 @@ export default {
       // this.list.splice(index, 1)
     },
     handleExchange(row) {
-      this.dialogStatus = 'create'
+      this.dialogStatus = 'exchange'
+      getDormUsers(row.id).then(response => {
+        this.dormUsers = response.data
+      })
       this.dialogFormVisible = true
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
     },
-    handleFetchPv(pv) {
-      fetchPv(pv).then(response => {
-        this.pvData = response.data.pvData
-        this.dialogPvVisible = true
-      })
-    },
-    handleDownload() {
-      this.downloadLoading = true
-      import('@/vendor/Export2Excel').then(excel => {
-        const tHeader = ['timestamp', 'title', 'type', 'importance', 'status']
-        const filterVal = ['timestamp', 'title', 'type', 'importance', 'status']
-        const data = this.formatJson(filterVal)
-        excel.export_json_to_excel({
-          header: tHeader,
-          data,
-          filename: 'table-list'
-        })
-        this.downloadLoading = false
-      })
-    },
-    formatJson(filterVal) {
-      return this.list.map(v => filterVal.map(j => {
-        if (j === 'timestamp') {
-          return parseTime(v[j])
-        } else {
-          return v[j]
+    Exchange() {
+      this.$refs['dataForm'].validate((valid) => {
+        if (valid) {
+          // var data = Object.assign({}, this.temp)
+          // data.degree = this.degrees.find(item => item.degree.degree === this.temp.degree)?.degree
+          // data.gender = this.genders.find(item => item.gender.gender === this.temp.gender)?.gender
+          // setTimeInterval(data).then(() => {
+          //   this.getList()
+          //   this.dialogFormVisible = false
+          //   this.$notify({
+          //     title: 'Success',
+          //     message: 'Exchange Successfully',
+          //     type: 'success',
+          //     duration: 2000
+          //   })
+          // })
+          this.$notify({
+            title: 'Success',
+            message: 'Update Successfully',
+            type: 'success',
+            duration: 2000
+          })
         }
-      }))
+      })
     },
     getSortClass: function() {
       const sort = this.listQuery.sort

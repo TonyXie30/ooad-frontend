@@ -5,9 +5,9 @@
       <!-- <el-select v-model="listQuery.importance" placeholder="Imp" clearable style="width: 90px" class="filter-item">
         <el-option v-for="item in importanceOptions" :key="item" :label="item" :value="item" />
       </el-select> -->
-      <el-select v-model="listQuery.gender" placeholder="性别" clearable class="filter-item" style="width: 130px" @change="handleFilter">
+      <!-- <el-select v-model="listQuery.gender" placeholder="性别" clearable class="filter-item" style="width: 130px" @change="handleFilter">
         <el-option v-for="item in genderTypes" :key="item.key" :label="item.display_name" :value="item.key" />
-      </el-select>
+      </el-select> -->
       <!-- <el-select v-model="listQuery.buildingName" placeholder="栋" clearable class="filter-item" style="width: 130px" :loading="loadingBuildings" @change="getFloors">
         <el-option v-for="item in buildings" :key="item" :label="item" :value="item" />
       </el-select>
@@ -64,17 +64,22 @@
       </el-table-column> -->
       <el-table-column label="性别" width="110px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.gender }}</span>
+          <span>{{ row.gender ? row.gender.gender : '-' }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="学级" width="110px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.degree ? row.degree.degree : '-' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="已选宿舍" width="110px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.bookedDormitory }}</span>
+          <span>{{ row.bookedDormitory ? row.bookedDormitory.houseNum : '-' }}</span>
         </template>
       </el-table-column>
       <el-table-column label="专业" width="110px" align="center">
         <template slot-scope="{row}">
-          <span>{{ row.subject }}</span>
+          <span>{{ row.subject ? row.subject.name : '-' }}</span>
         </template>
       </el-table-column>
       <!-- <el-table-column v-if="showReviewer" label="Reviewer" width="110px" align="center">
@@ -181,7 +186,7 @@
 
 <script>
 import { fetchUserList, fetchPv, createDorm } from '@/api/article'
-import { findBuilding, findFloor, selectRoom, deleteDorm } from '@/api/article'
+import { findBuilding, findFloor, selectRoom, deleteUser } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
@@ -427,7 +432,7 @@ export default {
     },
 
     handleDelete(row) {
-      deleteDorm(row).then(response => {
+      deleteUser(row.username).then(response => {
         this.listLoading = true
         this.getList()
         this.$notify({

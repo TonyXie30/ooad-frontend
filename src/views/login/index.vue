@@ -449,6 +449,7 @@ export default {
           // const actionTypes = Object.keys(store._actions).map(action => action);
           // console.log(actionTypes);
           this.$store.dispatch('realUsername/setRealUser', this.realUser.username)
+          localStorage.setItem('username', this.realUser.username)
           console.log(this.$store.getters.realUserName)
           this.$refs.loginForm.validate(valid => {
             if (valid) {

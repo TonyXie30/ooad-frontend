@@ -77,6 +77,16 @@
           <span>{{ row.floor }}</span>
         </template>
       </el-table-column>
+      <el-table-column label="gender" width="110px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.gender.gender }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="degree" width="110px" align="center">
+        <template slot-scope="{row}">
+          <span>{{ row.degree.degree }}</span>
+        </template>
+      </el-table-column>
       <!-- <el-table-column v-if="showReviewer" label="Reviewer" width="110px" align="center">
         <template slot-scope="{row}">
           <span style="color:red;">{{ row.reviewer }}</span>
@@ -139,8 +149,15 @@
         <el-form-item label="楼层" prop="floor">
           <el-input v-model.number="temp.floor" />
         </el-form-item>
-        <el-form-item label="类型" prop="type">
-          <el-input v-model="temp.type" />
+        <el-form-item label="性别" prop="gender">
+          <el-select v-model="temp.gender" class="filter-item" placeholder="Please select">
+            <el-option v-for="item in genderTypes" :key="item.gender" :label="item.display_name" :value="item.gender" />
+          </el-select>
+        </el-form-item>
+        <el-form-item label="学级" prop="degree">
+          <el-select v-model="temp.degree" class="filter-item" placeholder="Please select">
+            <el-option v-for="item in gradeTypes" :key="item.degree" :label="item.display_name" :value="item.degree" />
+          </el-select>
         </el-form-item>
         <el-form-item label="床位" prop="bed">
           <el-input v-model.number="temp.bed" />
@@ -199,6 +216,58 @@ const calendarTypeKeyValue = locationTypes.reduce((acc, cur) => {
   return acc
 }, {})
 
+const genderTypes = [
+  {
+    gender: 'male',
+    display_name: '男'
+  },
+  {
+    gender: 'female',
+    display_name: '女'
+  }
+]
+
+const gradeTypes = [
+  {
+    degree: 'postgraduate',
+    display_name: '硕士研究生'
+  },
+  {
+    degree: 'doctorate',
+    display_name: '博士研究生'
+  }
+]
+
+const degrees = [
+  {
+    degree: {
+      id: 1,
+      degree: 'postgraduate'
+    }
+  },
+  {
+    degree: {
+      id: 2,
+      degree: 'doctorate'
+    }
+  }
+]
+
+const genders = [
+  {
+    gender: {
+      id: 1,
+      gender: 'male'
+    }
+  },
+  {
+    gender: {
+      id: 2,
+      gender: 'female'
+    }
+  }
+]
+
 export default {
   name: 'DormSelect',
   components: { Pagination },
@@ -254,11 +323,12 @@ export default {
       statusOptions: ['published', 'draft', 'deleted'],
       showReviewer: false,
       temp: {
-        id: 1,
+        id: 0,
         houseNum: undefined,
         floor: undefined,
         buildingName: undefined,
-        type: '123',
+        degree: null,
+        gender: null,
         location: undefined,
         bookedNum: 0,
         bed: undefined
@@ -269,6 +339,10 @@ export default {
         // status: 'published'
       },
       dialogFormVisible: false,
+      genderTypes,
+      gradeTypes,
+      degrees,
+      genders,
       dialogStatus: '',
       textMap: {
         update: 'Edit',
@@ -277,7 +351,8 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        type: [{ required: true, message: 'type is required', trigger: 'change' }],
+        gender: [{ required: true, message: 'gender is required', trigger: 'change' }],
+        degree: [{ required: true, message: 'grade is required', trigger: 'change' }],
         houseNum: [{ required: true, message: '需要房间号', trigger: 'change' }],
         floor: [{ required: true, type: 'number', message: '需要楼层', trigger: 'change' }],
         buildingName: [{ required: true, message: '需要栋', trigger: 'change' }],
@@ -348,11 +423,12 @@ export default {
     },
     resetTemp() {
       this.temp = {
-        id: 1,
+        id: 0,
         houseNum: undefined,
         floor: undefined,
         buildingName: undefined,
-        type: '123',
+        degree: null,
+        gender: null,
         location: undefined,
         bookedNum: 0,
         bed: undefined
@@ -369,10 +445,11 @@ export default {
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          this.temp.id = parseInt(Math.random() * 100) + 1024 // mock a id
-          this.temp.author = 'vue-element-admin'
-          createDorm(this.temp).then(() => {
-            this.list.unshift(this.temp)
+          var data = Object.assign({}, this.temp)
+          data.degree = this.degrees.find(item => item.degree.degree === this.temp.degree)?.degree
+          data.gender = this.genders.find(item => item.gender.gender === this.temp.gender)?.gender
+          createDorm(data).then(() => {
+            this.getList()
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
@@ -387,6 +464,8 @@ export default {
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
       // this.temp.timestamp = new Date(this.temp.timestamp)
+      this.temp.gender = row.gender.gender
+      this.temp.degree = row.degree.degree
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
       this.$nextTick(() => {
@@ -396,11 +475,11 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          const tempData = Object.assign({}, this.temp)
-          tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          createDorm(tempData).then(() => {
-            const index = this.list.findIndex(v => v.id === this.temp.id)
-            this.list.splice(index, 1, this.temp)
+          var data = Object.assign({}, this.temp)
+          data.degree = this.degrees.find(item => item.degree.degree === this.temp.degree)?.degree
+          data.gender = this.genders.find(item => item.gender.gender === this.temp.gender)?.gender
+          createDorm(data).then(() => {
+            this.getList()
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',

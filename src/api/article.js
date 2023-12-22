@@ -81,6 +81,30 @@ export function selectRoom(query) {
   })
 }
 
+export function checkUser(query) {
+  var url = `http://localhost:8443/api/checkUserIsCheckedIn?username=${query}`
+  return request({
+    url: url,
+    method: 'post'
+  })
+}
+
+export function checkTime(query) {
+  var url = `http://localhost:8443/api/checkTime?username=${query}`
+  return request({
+    url: url,
+    method: 'post'
+  })
+}
+
+export function getDormUsers(query) {
+  var url = `http://localhost:8443/api/getRoomCheckInedUsers?dormitoryid=${query}`
+  return request({
+    url: url,
+    method: 'post'
+  })
+}
+
 export function fetchArticle(id) {
   return request({
     url: '/vue-element-admin/article/detail',
@@ -136,13 +160,18 @@ export function fetchUserList(query) {
   })
 }
 
-export function fetchTimeList(query) {
-  // const IDParam = query.ID ? `ID=${query.ID}` : ''
-  // const genderParam = query.gender ? `gender=${query.gender}` : ''
-  // const subjectParam = query.subjectName ? `subject=${query.subject}` : ''
-  const sortParam = query.sort === '-' ? '-' : '%2B'
+export function deleteUser(data) {
+  const url = `http://localhost:8443/api/admin/user/deleteUser?username=${data}`
+  return request({
+    url: url,
+    method: 'post'
+  })
+}
 
-  const url = `http://localhost:8443/api/getUsers?sort=${sortParam}&page=${query.page}&limit=${query.limit}`
+export function fetchTimeList(query) {
+  const genderParam = query.gender ? `${query.gender}` : ''
+  const degreeParam = query.degree ? `${query.degree}` : ''
+  const url = `http://localhost:8443/api/getSelectionTime?gender=${genderParam}&degree=${degreeParam}`
   return request({
     url: url,
     method: 'post'
@@ -150,12 +179,21 @@ export function fetchTimeList(query) {
   })
 }
 
-export function setTimeInterval(query) {
+export function setTimeInterval(data) {
   const url = 'http://localhost:8443/api/admin/setSelectionTime'
   return request({
     url: url,
     method: 'post',
-    params: query
+    data
+  })
+}
+
+export function deleteTimeInterval(data) {
+  const url = 'http://localhost:8443/api/admin/deleteSelectionTime'
+  return request({
+    url: url,
+    method: 'post',
+    data
   })
 }
 
