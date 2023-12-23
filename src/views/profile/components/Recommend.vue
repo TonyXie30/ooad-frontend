@@ -41,28 +41,48 @@
 
 <script>
 
+import { recommend } from '@/api/article'
+
 export default {
   data() {
     return {
 
       tableData: [
         {
-          username: 'user1',
-          subject: 'math',
-          wakeupTime: '07:00:00',
-          bedTime: '23:00:00'
+          username: 'none',
+          subject: 'null',
+          wakeupTime: 'null',
+          bedTime: 'null'
         },
         {
-          username: 'user2',
-          subject: 'math',
-          wakeupTime: '07:00:00',
-          bedTime: '23:00:00'
+          username: 'none',
+          subject: 'null',
+          wakeupTime: 'null',
+          bedTime: 'null'
         },
         {
-          username: 'user3',
-          subject: 'math',
-          wakeupTime: '07:00:00',
-          bedTime: '23:00:00'
+          username: 'none',
+          subject: 'null',
+          wakeupTime: 'null',
+          bedTime: 'null'
+        },
+        {
+          username: 'none',
+          subject: 'null',
+          wakeupTime: 'null',
+          bedTime: 'null'
+        },
+        {
+          username: 'none',
+          subject: 'null',
+          wakeupTime: 'null',
+          bedTime: 'null'
+        },
+        {
+          username: 'none',
+          subject: 'null',
+          wakeupTime: 'null',
+          bedTime: 'null'
         }
       ]
 
@@ -70,7 +90,29 @@ export default {
   },
   methods: {
     update() {
+      new Promise((resolve, reject) => {
+        recommend(localStorage.getItem('username')).then(response => {
+          console.log(response.data)
+          for (let i = 0; i < 6; i++) {
+            if (i < response.data.length) {
+              this.$data.tableData[i].username = response.data[i].username
+              this.$data.tableData[i].subject = response.data[i].subject
+              this.$data.tableData[i].bedTime = response.data[i].bedTime
+              this.$data.tableData[i].wakeupTime = response.data[i].upTime
+            } else {
+              this.$data.tableData[i].username = 'none'
+              this.$data.tableData[i].subject = 'null'
+              this.$data.tableData[i].bedTime = 'null'
+              this.$data.tableData[i].wakeupTime = 'null'
+            }
+          }
 
+          resolve()
+          setTimeout(() => {
+            this.listLoading = false
+          }, 1000)
+        })
+      })
     }
   }
 }
@@ -86,7 +128,7 @@ export default {
   line-height: 60px;
 }
 .button{
-  top: 19%;
+  top: 17%;
   right: 5%;
   position: absolute;
 }

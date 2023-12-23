@@ -42,6 +42,7 @@
 
 <script>
 import PanThumb from '@/components/PanThumb'
+import { gerProfile } from '@/api/article'
 
 export default {
   components: { PanThumb },
@@ -59,6 +60,28 @@ export default {
           bedTime: ''
         }
       }
+    }
+  },
+  mounted() {
+    this.initMethod()
+  },
+  methods: {
+    initMethod() {
+      console.log(localStorage.getItem('username'))
+      new Promise((resolve, reject) => {
+        gerProfile(localStorage.getItem('username')).then(response => {
+          console.log(response.data)
+          this.$props.user.name = localStorage.getItem('username')
+          this.$props.user.subject = response.data.subject.name
+          console.log(this.$props.user.subject)
+          this.$props.user.wakeupTime = response.data.uptime.timeSlot
+          this.$props.user.bedTime = response.data.bedtime.timeSlot
+          resolve()
+          setTimeout(() => {
+            this.listLoading = false
+          }, 1000)
+        })
+      })
     }
   }
 }

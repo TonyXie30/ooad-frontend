@@ -442,7 +442,7 @@ export default {
           }, 1000)
           this.$notify({
             title: 'Success',
-            message: 'Register Successfully',
+            message: 'Login Successfully',
             type: 'success',
             duration: 2000
           })

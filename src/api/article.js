@@ -25,7 +25,13 @@ export function Register(data) {
 
 export function gerProfile(data) {
   return request({
-    url: `http://localhost:8443/api/getUser?location=${data}`,
+    url: `http://localhost:8443/api/getUser?username=${data}`,
+    method: 'post'
+  })
+}
+export function recommend(data) {
+  return request({
+    url: `http://localhost:8443/api/recommend?username=${data}`,
     method: 'post'
   })
 }
