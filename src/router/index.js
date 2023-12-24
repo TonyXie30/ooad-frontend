@@ -137,58 +137,6 @@ export const constantRoutes = [
       }
     ]
   },
-  {
-    path: '/faculty',
-    component: Layout,
-    redirect: '/faculty/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/faculty/index'),
-        name: 'faculty',
-        meta: { title: 'faculty', icon: 'tree' }
-      }
-    ]
-  },
-  {
-    path: '/faculty-dorm',
-    component: Layout,
-    redirect: '/faculty-dorm/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/faculty-dorm/index'),
-        name: 'faculty-dorm',
-        meta: { title: 'faculty-dorm', icon: 'list' }
-      }
-    ]
-  },
-  {
-    path: '/faculty-user',
-    component: Layout,
-    redirect: '/faculty-user/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/faculty-user/index'),
-        name: 'faculty-user',
-        meta: { title: 'faculty-user', icon: 'list' }
-      }
-    ]
-  },
-  {
-    path: '/faculty-time_range',
-    component: Layout,
-    redirect: '/faculty-time_range/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/faculty-time_range/index'),
-        name: 'faculty-time_range',
-        meta: { title: 'faculty-time', icon: 'list' }
-      }
-    ]
-  },
   viewDormRouter,
   teamRouter
 ]
@@ -239,7 +187,58 @@ export const asyncRoutes = [
       }
     ]
   },
-
+  {
+    path: '/faculty',
+    component: Layout,
+    redirect: '/faculty/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/faculty/index'),
+        name: 'faculty',
+        meta: { title: 'faculty', icon: 'tree', roles: ['admin'] }
+      }
+    ]
+  },
+  {
+    path: '/faculty-dorm',
+    component: Layout,
+    redirect: '/faculty-dorm/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/faculty-dorm/index'),
+        name: 'faculty-dorm',
+        meta: { title: 'faculty-dorm', icon: 'list', roles: ['admin'] }
+      }
+    ]
+  },
+  {
+    path: '/faculty-user',
+    component: Layout,
+    redirect: '/faculty-user/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/faculty-user/index'),
+        name: 'faculty-user',
+        meta: { title: 'faculty-user', icon: 'list', roles: ['admin'] }
+      }
+    ]
+  },
+  {
+    path: '/faculty-time_range',
+    component: Layout,
+    redirect: '/faculty-time_range/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/faculty-time_range/index'),
+        name: 'faculty-time_range',
+        meta: { title: 'faculty-time', icon: 'list', roles: ['admin'] }
+      }
+    ]
+  },
   {
     path: '/icon',
     component: Layout,

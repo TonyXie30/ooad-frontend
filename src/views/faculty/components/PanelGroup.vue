@@ -29,20 +29,22 @@
       </div>
     </el-col> -->
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel">
-        <div class="card-panel-icon-wrapper icon-team">
-          <svg-icon icon-class="peoples" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            Student Manage
+      <router-link to="/faculty-user/index">
+        <div class="card-panel">
+          <div class="card-panel-icon-wrapper icon-team">
+            <svg-icon icon-class="peoples" class-name="card-panel-icon" />
           </div>
-          <count-to :start-val="0" :end-val="5" :duration="3600" class="card-panel-num" />
+          <div class="card-panel-description">
+            <div class="card-panel-text">
+              Student Manage
+            </div>
+            <count-to :start-val="0" :end-val="5" :duration="3600" class="card-panel-num" />
+          </div>
         </div>
-      </div>
+      </router-link>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <router-link to="/dormSelect/index">
+      <router-link to="/faculty-time_range/index">
         <div class="card-panel">
           <div class="card-panel-icon-wrapper icon-form">
             <svg-icon icon-class="form" class-name="card-panel-icon" />

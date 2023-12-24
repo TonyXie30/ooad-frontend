@@ -42,8 +42,9 @@ export function fetchList(query) {
   const buildingNameParam = query.buildingName ? `buildingName=${query.buildingName}` : ''
   const locationParam = query.location ? `location=${query.location}` : ''
   const sortParam = query.sort === '-' ? '-' : '%2B'
+  const userParam = query.username ? `username=${query.username}` : ''
 
-  const url = `http://localhost:8443/api/findDorm?sort=${sortParam}&page=${query.page}&limit=${query.limit}&${houseNumParam}&${floorParam}&${buildingNameParam}&${locationParam}`
+  const url = `http://localhost:8443/api/findDorm?sort=${sortParam}&page=${query.page}&limit=${query.limit}&${houseNumParam}&${floorParam}&${buildingNameParam}&${locationParam}&${userParam}`
   return request({
     url: url,
     method: 'post'
@@ -81,6 +82,14 @@ export function findFloor(query) {
 export function selectRoom(query) {
   var url = 'http://localhost:8443/api/checkInDorm'
   url += `?dormitoryId=${query.id}&username=${query.user}`
+  return request({
+    url: url,
+    method: 'post'
+  })
+}
+
+export function exchangeRoom(query) {
+  var url = `http://localhost:8443/api/exchangeApply?username=${query.username}&to=${query.to}`
   return request({
     url: url,
     method: 'post'

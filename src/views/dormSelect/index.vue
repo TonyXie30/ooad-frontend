@@ -129,28 +129,11 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="学生" prop="type">
-          <el-select v-model="temp.type" class="filter-item" placeholder="Please select">
+        <el-form-item label="学生" prop="exchangeTo">
+          <el-select v-model="temp.exchangeTo" class="filter-item" placeholder="Please select">
             <el-option v-for="item in dormUsers" :key="item.id" :label="item.username" :value="item.username" />
           </el-select>
         </el-form-item>
-        <!-- <el-form-item label="Date" prop="timestamp">
-          <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date" />
-        </el-form-item>
-        <el-form-item label="Title" prop="title">
-          <el-input v-model="temp.title" />
-        </el-form-item>
-        <el-form-item label="Status">
-          <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
-            <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
-          </el-select>
-        </el-form-item>
-        <el-form-item label="Imp">
-          <el-rate v-model="temp.importance" :colors="['#99A9BF', '#F7BA2A', '#FF9900']" :max="3" style="margin-top:8px;" />
-        </el-form-item>
-        <el-form-item label="Remark">
-          <el-input v-model="temp.remark" :autosize="{ minRows: 2, maxRows: 4}" type="textarea" placeholder="Please input" />
-        </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
@@ -176,7 +159,7 @@
 
 <script>
 import { fetchList, checkTime, checkUser, getDormUsers } from '@/api/article'
-import { findBuilding, findFloor, selectRoom } from '@/api/article'
+import { findBuilding, findFloor, selectRoom, exchangeRoom } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
@@ -253,13 +236,7 @@ export default {
       statusOptions: ['published', 'draft', 'deleted'],
       showReviewer: false,
       temp: {
-        id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        type: '',
-        status: 'published'
+        exchangeTo: null
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -270,9 +247,9 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        type: [{ required: true, message: 'type is required', trigger: 'change' }],
-        timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-        title: [{ required: true, message: 'title is required', trigger: 'blur' }]
+        exchangeTo: [{ required: true, message: 'student is required', trigger: 'change' }]
+        // timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
+        // title: [{ required: true, message: 'title is required', trigger: 'blur' }]
       },
       downloadLoading: false
     }
@@ -313,12 +290,8 @@ export default {
     async getBuildings() {
       this.loadingBuildings = true
       findBuilding(this.listQuery).then(response => {
-        // console.log("1")
         this.buildings = response.data
         this.loadingBuildings = false
-        // setTimeout(() => {
-        //   this.loadingBuildings = false
-        // }, 1 * 1000)
       })
     },
     async getFloors() {
@@ -364,13 +337,7 @@ export default {
     },
     resetTemp() {
       this.temp = {
-        id: undefined,
-        importance: 1,
-        remark: '',
-        timestamp: new Date(),
-        title: '',
-        status: 'published',
-        type: ''
+        exchangeTo: null
       }
     },
     handleChoose(row) {
@@ -393,6 +360,7 @@ export default {
       // this.list.splice(index, 1)
     },
     handleExchange(row) {
+      this.resetTemp()
       this.dialogStatus = 'exchange'
       getDormUsers(row.id).then(response => {
         this.dormUsers = response.data
@@ -405,25 +373,27 @@ export default {
     Exchange() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          // var data = Object.assign({}, this.temp)
-          // data.degree = this.degrees.find(item => item.degree.degree === this.temp.degree)?.degree
-          // data.gender = this.genders.find(item => item.gender.gender === this.temp.gender)?.gender
-          // setTimeInterval(data).then(() => {
-          //   this.getList()
-          //   this.dialogFormVisible = false
-          //   this.$notify({
-          //     title: 'Success',
-          //     message: 'Exchange Successfully',
-          //     type: 'success',
-          //     duration: 2000
-          //   })
-          // })
-          this.$notify({
-            title: 'Success',
-            message: 'Update Successfully',
-            type: 'success',
-            duration: 2000
+          var data = {}
+          data.username = localStorage.getItem('username')
+          data.to = this.temp.exchangeTo
+          console.log(data.username)
+          console.log(data.to)
+          exchangeRoom(data).then(() => {
+            this.getList()
+            this.dialogFormVisible = false
+            this.$notify({
+              title: 'Success',
+              message: 'Apply Exchange Successfully',
+              type: 'success',
+              duration: 2000
+            })
           })
+          // this.$notify({
+          //   title: 'Success',
+          //   message: 'Update Successfully',
+          //   type: 'success',
+          //   duration: 2000
+          // })
         }
       })
     },
