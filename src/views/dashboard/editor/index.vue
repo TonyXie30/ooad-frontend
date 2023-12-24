@@ -11,9 +11,9 @@
         <span style="font-size:20px;padding-top:20px;display:inline-block;">Editor's Dashboard</span>
       </div>
     </div>
-    <div>
-      <img :src="emptyGif" class="emptyGif">
-    </div>
+    <!--    <div>-->
+    <!--      <img :src="emptyGif" class="emptyGif">-->
+    <!--    </div>-->
   </div>
 </template>
 

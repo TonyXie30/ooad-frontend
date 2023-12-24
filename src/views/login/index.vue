@@ -195,7 +195,7 @@ export default {
         degree: ''
       },
       loginForm: {
-        username: 'admin',
+        username: 'editor',
         password: '111111'
       },
       realUser: {
@@ -446,6 +446,11 @@ export default {
             type: 'success',
             duration: 2000
           })
+          if (response.data.admin === true) {
+            this.loginForm.username = 'admin'
+          } else {
+            this.loginForm.username = 'editor'
+          }
           // const actionTypes = Object.keys(store._actions).map(action => action);
           // console.log(actionTypes);
           this.$store.dispatch('realUsername/setRealUser', this.realUser.username)
