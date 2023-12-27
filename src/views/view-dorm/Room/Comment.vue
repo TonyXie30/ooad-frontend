@@ -4,13 +4,13 @@
       <h3>{{ comment.author }}</h3>
       <p>{{ comment.content }}</p>
       <span class="comment-date">{{ commentTime }}</span>
-      <button v-if="isCurrentUser" class="leave-btn" @click="deleteComment">Delete</button>
-      <button class="reply-btn" @click="showReplyInput = true">Reply</button>
-      <button v-if="showReplyInput" class="cancel-btn" @click="cancelReply">Cancel</button>
+      <el-button v-if="isCurrentUser" type="danger" class="inline-button" @click="deleteComment">Delete</el-button>
+      <el-button type="primary" class="inline-button" @click="showReplyInput = true">Reply</el-button>
+      <el-button v-if="showReplyInput" type="warning" class="inline-button" @click="cancelReply">Cancel</el-button>
     </div>
     <div v-if="showReplyInput" class="reply-input">
       <textarea v-model="replyText" />
-      <button class="submit-btn" @click="submitReply">Submit</button>
+      <el-button type="success" @click="submitReply">Submit</el-button>
     </div>
     <div v-if="comment.replies && comment.replies.length" class="replies">
       <Comment
@@ -87,15 +87,20 @@ export default {
 
 <style scoped>
 .comment {
+  width: 700px;
   margin-bottom: 16px;
-  padding: 8px;
+  margin-left: 350px;
+  padding: 3px;
   border: 1px solid #eaeaea;
   border-radius: 8px;
   background-color: #f9f9f9;
+  opacity: 0.9;
 }
 
 .comment-content {
+  margin-left: 10px;
   margin-bottom: 8px;
+  height: 130px;
 }
 
 .comment-date {
@@ -105,44 +110,22 @@ export default {
   font-size: 0.8em;
 }
 
-.reply-btn, .cancel-btn, .submit-btn {
-  margin-right: 8px;
-  margin-top: 8px;
+.inline-button {
+  margin-top: 10px;
 }
 
 .reply-input textarea {
   width: 100%;
-  margin-top: 8px;
+  margin-top: 20px;
   margin-bottom: 8px;
 }
 
 .replies .comment {
-  margin-top: 16px;
+  width: 90%;
+  margin-top: 30px;
   margin-left: 20px; /* Indentation for nested comments */
   border-color: #d9d9d9; /* Lighter border for nested comments */
   background-color: #ffffff; /* Different background for nested comments */
-}
-
-/* Additional styling for buttons */
-.reply-btn, .cancel-btn, .submit-btn {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.reply-btn {
-  background-color: #e0e0e0;
-}
-
-.cancel-btn {
-  background-color: #f44336;
-  color: white;
-}
-
-.submit-btn {
-  background-color: #4caf50;
-  color: white;
 }
 
 /* Styling for the input textarea */
@@ -151,19 +134,5 @@ export default {
   border-radius: 4px;
   padding: 8px;
   resize: vertical; /* Allow vertical resizing */
-}
-
-.leave-btn {
-  background-color: #ff5252;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  padding: 6px 12px;
-  cursor: pointer;
-  margin-left: 8px;
-}
-
-.leave-btn:hover {
-  background-color: #ff4444;
 }
 </style>

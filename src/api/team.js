@@ -21,9 +21,23 @@ export function kickThisMember(leaderName, memberName) {
   })
 }
 
+export function getTeamList(userName) {
+  return request({
+    url: `http://localhost:8443/api/getUsers?username=${userName}`,
+    method: 'post'
+  })
+}
+
 export function getTeamMember(userName) {
   return request({
     url: `http://localhost:8443/api/getTeam?username=${userName}`,
+    method: 'post'
+  })
+}
+
+export function requestTeamUp(leaderName, userName) {
+  return request({
+    url: `http://localhost:8443/api/requestTeamUp?leaderName=${leaderName}&username=${userName}`,
     method: 'post'
   })
 }

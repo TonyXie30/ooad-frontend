@@ -3,40 +3,45 @@
     <input v-model="searchTerm" placeholder="Search teams by name">
 
     <ul class="team-list">
-      <li v-for="team in filteredTeams" :key="team.id" class="team-item">
-        <span>{{ team.leader }}</span>
-        <span>{{ team.currentMembers }}</span>
-        <el-button @click="joinTeam(team.id)">Join</el-button>
+      <li v-for="(team, index) in filteredTeams" :key="index" class="team-item">
+        <span>{{ team }}</span>
+        <el-button type="primary" @click="requestToTeamUp(team)">Join</el-button>
       </li>
     </ul>
   </div>
 </template>
 
 <script>
+import { getTeamList, requestTeamUp } from '@/api/team'
 export default {
   data() {
     return {
-      teams: [
-        { id: 1, leader: 'Alice', currentMembers: 3 },
-        { id: 2, leader: 'Bob', currentMembers: 4 },
-        { id: 3, leader: 'Charlie', currentMembers: 2 },
-        { id: 4, leader: 'Diana', currentMembers: 5 },
-        { id: 5, leader: 'Ethan', currentMembers: 1 }
-      ],
+      teamLeaders: [],
       searchTerm: ''
     }
   },
   computed: {
     filteredTeams() {
-      return this.teams.filter(team =>
-        team.leader.toLowerCase().includes(this.searchTerm.toLowerCase())
+      return this.teamLeaders.filter(leader =>
+        leader.toLowerCase().includes(this.searchTerm.toLowerCase())
       )
+    },
+    userName: function() {
+      return sessionStorage.getItem('username')
     }
   },
+  async created() {
+    await this.getAllTeams()
+  },
   methods: {
-    joinTeam(teamId) {
-      // Add your join team logic here
-      console.log(`Request to join team with ID: ${teamId}`)
+    async getAllTeams() {
+      const response = await getTeamList(this.userName)
+      for (const leader of response.data.content) {
+        this.teamLeaders.push(leader.username)
+      }
+    },
+    async requestToTeamUp(leaderName) {
+      await requestTeamUp(leaderName, this.userName)
     }
   }
 }
@@ -59,8 +64,9 @@ export default {
   background-color: #f9f9f9;
   border: 1px solid #ddd;
   padding: 10px;
+  width: 300px;
   margin-bottom: 10px; /* adds space between team items */
-  border-radius: 4px;
+  border-radius: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -68,24 +74,6 @@ export default {
 
 .team-item span {
   margin-right: 10px; /* adds space between text elements */
-}
-
-el-button {
-  background-color: #4CAF50; /* Green */
-  border: none;
-  color: white;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
-  transition-duration: 0.4s;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #45a049;
 }
 
 input {

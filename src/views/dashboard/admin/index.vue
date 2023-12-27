@@ -1,31 +1,30 @@
 <template>
   <div class="dashboard-editor-container">
-    <panel-group />
-
-    <el-row :gutter="8">
-      <el-col :xs="{span: 24}" :sm="{span: 12}" :md="{span: 12}" :lg="{span: 6}" :xl="{span: 6}" style="margin-bottom:30px;">
-        <todo-list />
-      </el-col>
-    </el-row>
+    <video-background
+      src="/autumn-leaves.mp4"
+      style="max-height: 900px; height: 100vh;"
+    >
+      <panel-group />
+    </video-background>
   </div>
 </template>
 
 <script>
 import PanelGroup from './components/PanelGroup'
-import TodoList from './components/TodoList'
+import VideoBackground from 'vue-responsive-video-background-player'
 
 export default {
   name: 'DashboardAdmin',
   components: {
     PanelGroup,
-    TodoList
+    VideoBackground
   }
 }
 </script>
 
 <style lang="scss" scoped>
 .dashboard-editor-container {
-  padding: 32px;
+  padding: 3px;
   background-color: rgb(240, 242, 245);
   position: relative;
 }

@@ -2,7 +2,7 @@
   <div class="new-comment">
     <h3>Add a Comment</h3>
     <textarea v-model="newCommentText" placeholder="Write your comment here..." />
-    <button @click="submitNewComment">Submit</button>
+    <el-button type="success" @click="submitNewComment">Submit</el-button>
   </div>
 </template>
 
@@ -31,11 +31,13 @@ export default {
 
 <style scoped>
 .new-comment {
-  margin-bottom: 16px;
-  padding: 8px;
+  width: 800px;
+  margin-left: 300px;
+  padding: 10px;
   border-radius: 8px;
   background-color: #f9f9f9;
   border: 1px solid #eaeaea;
+  opacity: 0.9;
 }
 
 .new-comment h3 {
@@ -51,21 +53,6 @@ export default {
   resize: vertical; /* Allow vertical resizing */
   box-sizing: border-box; /* Include padding and border in the width */
   min-height: 80px; /* Minimum height */
-}
-
-.new-comment button {
-  padding: 6px 12px;
-  border: none;
-  border-radius: 4px;
-  background-color: #4caf50;
-  color: white;
-  cursor: pointer;
-  float: right; /* Align the button to the right */
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2); /* Add a subtle shadow to the button */
-}
-
-.new-comment button:hover {
-  background-color: #45a045; /* Slightly darker green on hover */
 }
 
 /* Clear float */

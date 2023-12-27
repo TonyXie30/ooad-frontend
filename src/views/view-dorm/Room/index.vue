@@ -141,15 +141,21 @@ export default {
 
 <style>
 .room-container {
-  max-width: 600px;
-  margin: auto;
+  width: 100%;
+  padding: 30px;
+  margin-left: 10px;
+  margin-bottom: 20px;
+  background-image: url('/dorm.png'); /* Adjust the path as per your project structure */
+  background-size: cover; /* Ensures the image covers the entire div */
+  background-position: center; /* Centers the background image */
 }
 
 .box-card {
-  width: 400px;
+  width: 450px;
   height: auto;
-  margin-top: 30px;
+  margin-left: 450px;
   margin-bottom: 20px;
+  opacity: 0.9;
 }
 
 .text.item {

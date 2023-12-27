@@ -10,7 +10,6 @@
             <div class="card-panel-text">
               View Dorm
             </div>
-            <count-to :start-val="0" :end-val="5000" :duration="2600" class="card-panel-num" />
           </div>
         </div>
       </router-link>
@@ -38,7 +37,6 @@
             <div class="card-panel-text">
               Dorm Selection
             </div>
-            <count-to :start-val="0" :end-val="4800" :duration="3200" class="card-panel-num" />
           </div>
         </div>
       </router-link>
@@ -53,7 +51,6 @@
             <div class="card-panel-text">
               Team
             </div>
-            <count-to :start-val="0" :end-val="5" :duration="3600" class="card-panel-num" />
           </div>
         </div>
       </router-link>
@@ -73,22 +70,26 @@ export default {
 
 <style lang="scss" scoped>
 .panel-group {
-  margin-top: 18px;
+  margin-top: 200px;
 
   .card-panel-col {
     margin-bottom: 32px;
+    margin-left: 70px;
+    margin-right: 80px;
   }
 
   .card-panel {
-    height: 108px;
+    height: 90px;
+    width: auto;
     cursor: pointer;
-    font-size: 12px;
     position: relative;
     overflow: hidden;
+    border-radius: 20px;
     color: #666;
     background: #fff;
     box-shadow: 4px 4px 40px rgba(0, 0, 0, .05);
     border-color: rgba(0, 0, 0, .05);
+    opacity: 0.85;
 
     &:hover {
       .card-panel-icon-wrapper {
@@ -113,7 +114,7 @@ export default {
     }
 
     .icon-building {
-      font-size: 50px;
+      font-size: 43px;
       color: #40c9c6;
     }
 
@@ -139,7 +140,7 @@ export default {
 
     .card-panel-icon {
       float: left;
-      font-size: 48px;
+      font-size: 40px;
     }
 
     .card-panel-description {
@@ -149,13 +150,13 @@ export default {
 
       .card-panel-text {
         line-height: 18px;
-        color: rgba(0, 0, 0, 0.45);
-        font-size: 16px;
-        margin-bottom: 12px;
+        color: #222222;
+        font-size: 18px;
+        margin-bottom: 10px;
       }
 
       .card-panel-num {
-        font-size: 20px;
+        font-size: 18px;
       }
     }
   }

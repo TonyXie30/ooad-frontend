@@ -5,12 +5,15 @@
 
     <ul>
       <li v-for="member in team.members" :key="member.username">
-        {{ member.username }}
-        <button v-if="isLeader" class="remove-btn" @click="removeMember(member.username)">Remove</button>
+        <div class="row-element">
+          {{ member.username }}
+          <el-button v-if="isLeader" type="primary" class="remove-btn" @click="removeMember(member.username)">Remove</el-button>
+        </div>
       </li>
     </ul>
 
-    <button class="leave-btn" @click="leaveTeam">Leave Team</button>
+    <el-button v-if="isLeader" type="primary" class="leave-btn" @click="disbandTeam">Disband Team</el-button>
+    <el-button v-else class="leave-btn" type="primary" @click="leaveTeam">Leave Team</el-button>
   </div>
 </template>
 
@@ -39,7 +42,11 @@ export default {
   },
   methods: {
     leaveTeam() {
-      if (!this.isLeader) {
+      if (this.team.members.length === 1) {
+        this.$alert('You are the only member of the team!', {
+          confirmButtonText: 'Confirm'
+        })
+      } else {
         this.$confirm('Confirm to leave the team?', 'Warning', {
           confirmButtonText: 'Confirm',
           cancelButtonText: 'Cancel',
@@ -50,6 +57,13 @@ export default {
             type: 'success',
             message: 'You leave the team successfully!'
           })
+        })
+      }
+    },
+    disbandTeam() {
+      if (this.team.members.length === 1) {
+        this.$alert('You are the only member of the team!', {
+          confirmButtonText: 'Confirm'
         })
       } else {
         this.$confirm('Confirm to disband the team?', 'Warning', {
@@ -76,7 +90,11 @@ export default {
     async getTeamMemberList() {
       const response = await getTeamMember(this.userName)
       this.team.members = response.data.members
-      this.team.leader = response.data.leader.username
+      if (this.team.members.length === 1) {
+        this.team.leader = this.userName
+      } else {
+        this.team.leader = response.data.leader.username
+      }
     }
   }
 }
@@ -85,43 +103,26 @@ export default {
 <style scoped>
 .view-my-team {
   position: relative;
-  width: 500px;
+  width: 600px;
   margin: 80px auto auto;
-  padding: 2rem;
+  padding: 3rem;
   background-color: #f7f7f7;
-  border-radius: 8px;
+  opacity: 0.8;
+  border-radius: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.view-my-team h1,
-.view-my-team p,
-.view-my-team ul,
-.view-my-team button,
-.view-my-team,
-.view-my-team textarea {
-  margin-bottom: 1rem;
-}
-
-.remove-btn {
-  text-align: left;
-  display: block;
-  margin-left: 20px;
-  margin-top: 10px;
+.row-element {
+  display: flex;
+  font-size: 25px;
+  .remove-btn {
+    display: block;
+    margin-left: 120px;
+  }
 }
 
 .leave-btn {
-  margin-top: 40px;
-}
-
-button {
-  font-size: 15px;
-  padding: 0.5rem 0.7rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  background-color: #007bff;
-  color: white;
-  transition: background-color 0.3s ease;
-  margin-inline: 10px;
+  display: block;
+  margin: 0 auto;
 }
 </style>

@@ -196,7 +196,7 @@ export const asyncRoutes = [
         path: 'index',
         component: () => import('@/views/faculty/index'),
         name: 'faculty',
-        meta: { title: 'faculty', icon: 'tree', roles: ['admin'] }
+        meta: { title: 'Faculty', icon: 'tree', roles: ['admin'] }
       }
     ]
   },
@@ -209,7 +209,7 @@ export const asyncRoutes = [
         path: 'index',
         component: () => import('@/views/faculty-dorm/index'),
         name: 'faculty-dorm',
-        meta: { title: 'faculty-dorm', icon: 'list', roles: ['admin'] }
+        meta: { title: 'Faculty Dorm', icon: 'list', roles: ['admin'] }
       }
     ]
   },
@@ -222,7 +222,7 @@ export const asyncRoutes = [
         path: 'index',
         component: () => import('@/views/faculty-user/index'),
         name: 'faculty-user',
-        meta: { title: 'faculty-user', icon: 'list', roles: ['admin'] }
+        meta: { title: 'Faculty User', icon: 'list', roles: ['admin'] }
       }
     ]
   },
@@ -235,7 +235,7 @@ export const asyncRoutes = [
         path: 'index',
         component: () => import('@/views/faculty-time_range/index'),
         name: 'faculty-time_range',
-        meta: { title: 'faculty-time', icon: 'list', roles: ['admin'] }
+        meta: { title: 'Faculty Time', icon: 'list', roles: ['admin'] }
       }
     ]
   },
