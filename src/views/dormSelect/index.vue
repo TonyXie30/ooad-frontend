@@ -269,10 +269,10 @@ export default {
       this.templistQuery = Object.assign({}, this.listQuery)
       this.templistQuery.page -= 1
       this.listLoading = true
-      checkUser(localStorage.getItem('username')).then(response => {
+      checkUser(sessionStorage.getItem('username')).then(response => {
         this.selected = response.data
       })
-      checkTime(localStorage.getItem('username')).then(response => {
+      checkTime(sessionStorage.getItem('username')).then(response => {
         this.inTime = response.data
       })
       fetchList(this.templistQuery).then(response => {
@@ -342,7 +342,7 @@ export default {
     },
     handleChoose(row) {
       const data = Object.assign({}, row)
-      data.user = localStorage.getItem('username')
+      data.user = sessionStorage.getItem('username')
       selectRoom(data).then(response => {
         this.getList()
         this.$notify({
@@ -374,7 +374,7 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           var data = {}
-          data.username = localStorage.getItem('username')
+          data.username = sessionStorage.getItem('username')
           data.to = this.temp.exchangeTo
           console.log(data.username)
           console.log(data.to)

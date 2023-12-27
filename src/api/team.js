@@ -20,3 +20,10 @@ export function kickThisMember(leaderName, memberName) {
     method: 'post'
   })
 }
+
+export function getTeamMember(userName) {
+  return request({
+    url: `http://localhost:8443/api/getTeam?username=${userName}`,
+    method: 'post'
+  })
+}

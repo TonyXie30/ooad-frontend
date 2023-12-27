@@ -66,7 +66,7 @@ export default {
       return Math.floor(this.room.number / 100)
     },
     userName: function() {
-      return this.$store.getters.name
+      return sessionStorage.getItem('username')
     }
   },
   async created() {

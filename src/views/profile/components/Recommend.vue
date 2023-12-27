@@ -91,7 +91,7 @@ export default {
   methods: {
     update() {
       new Promise((resolve, reject) => {
-        recommend(localStorage.getItem('username')).then(response => {
+        recommend(sessionStorage.getItem('username')).then(response => {
           console.log(response.data)
           for (let i = 0; i < 6; i++) {
             if (i < response.data.length) {

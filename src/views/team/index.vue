@@ -6,9 +6,9 @@
       <div class="content">
         <p>In this module, you can:</p>
         <ul>
-          <li>Choose to be a team leader and create your own team.</li>
-          <li>Use team name to search for teams and join one of them if you want.</li>
-          <li>View your own team information and manage your team members if you are a leader.</li>
+          <li>Search for teams and join one of them if you want.</li>
+          <li>View your team information.</li>
+          <li>Manage your team members if you are a leader.</li>
         </ul>
       </div>
     </div>
@@ -16,10 +16,10 @@
     <!-- Button Section -->
     <div class="flex-container">
       <router-link to="/team/join-team">
-        <el-button>Join Team</el-button>
+        <el-button class="button">Join Team</el-button>
       </router-link>
       <router-link to="/team/view-my-team">
-        <el-button>View My Team</el-button>
+        <el-button class="button">View My Team</el-button>
       </router-link>
     </div>
   </div>
@@ -51,26 +51,27 @@ export default {
 
 .introduction .content {
   font-family: Algerian,serif;
-  font-size: 20px;
+  font-size: 25px;
   text-align: left;
-  max-width: 600px; /* Adjust width as needed */
-  line-height: 45px;
+  max-width: 800px;
+  line-height: 60px;
 }
 
 .flex-container {
   display: flex;
   justify-content: space-around;
   width: 60%;
-  el-button {
+  .button {
     font-family: 'Your Font Family', sans-serif; /* Match the font family of your page */
     font-weight: bold; /* Assuming the font on your page is bold */
-    font-size: 10px;
+    font-size: 20px;
     color: white; /* A color that contrasts well with your button background */
-    background-color: #a8a9a9; /* A yellow shade that matches your design */
-    border-radius: 4px; /* Adjust as per your design preference */
+    background-color: #7d7d7f; /* A yellow shade that matches your design */
+    border-radius: 10px; /* Adjust as per your design preference */
     border: none; /* Assuming you want a flat design without borders */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: subtle shadow for depth */
     transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transition for hover effects */
+    margin-top: 30px;
   }
 
   el-button:hover {

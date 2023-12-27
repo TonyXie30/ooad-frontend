@@ -41,7 +41,7 @@ export default {
   },
   computed: {
     userName: function() {
-      return this.$store.getters.name
+      return sessionStorage.getItem('username')
     },
     isCurrentUser: function() {
       return this.comment.author === this.userName

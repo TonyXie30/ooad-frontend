@@ -12,7 +12,8 @@
         </pan-thumb>
       </div>
       <div class="box-center">
-        <div class="user-name text-center">{{ user.name }}</div>
+        <!--        <div class="user-name text-center">{{ user.name }}</div>-->
+        <mallki class-name="mallki-text" :text="user.name" />
         <div class="user-role text-center text-muted">{{ user.subject }}</div>
       </div>
     </div>
@@ -43,9 +44,10 @@
 <script>
 import PanThumb from '@/components/PanThumb'
 import { gerProfile } from '@/api/article'
+import Mallki from '@/components/TextHoverEffect/Mallki.vue'
 
 export default {
-  components: { PanThumb },
+  components: { Mallki, PanThumb },
   props: {
     user: {
       type: Object,
@@ -69,9 +71,9 @@ export default {
     initMethod() {
       console.log(localStorage.getItem('username'))
       new Promise((resolve, reject) => {
-        gerProfile(localStorage.getItem('username')).then(response => {
+        gerProfile(sessionStorage.getItem('username')).then(response => {
           console.log(response.data)
-          this.$props.user.name = localStorage.getItem('username')
+          this.$props.user.name = sessionStorage.getItem('username')
           this.$props.user.subject = response.data.subject.name
           console.log(this.$props.user.subject)
           this.$props.user.wakeupTime = response.data.uptime.timeSlot

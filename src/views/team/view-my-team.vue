@@ -1,12 +1,12 @@
 <template>
   <div class="view-my-team">
     <h1>Team {{ team.leader }}</h1>
-    <p>Current Members: {{ team.members.length }}</p>
+    <p>Current Team Size: {{ team.members.length }}</p>
 
     <ul>
-      <li v-for="member in team.members" :key="member.memberName">
-        {{ member.memberName }}
-        <button v-if="isLeader" class="remove-btn" @click="removeMember(member.memberName)">Remove</button>
+      <li v-for="member in team.members" :key="member.username">
+        {{ member.username }}
+        <button v-if="isLeader" class="remove-btn" @click="removeMember(member.username)">Remove</button>
       </li>
     </ul>
 
@@ -15,18 +15,14 @@
 </template>
 
 <script>
-import { leaveThisTeam, disbandThisTeam, kickThisMember } from '@/api/team'
+import { leaveThisTeam, disbandThisTeam, kickThisMember, getTeamMember } from '@/api/team'
 export default {
   name: 'ViewMyTeam',
   data() {
     return {
       team: {
-        members: [
-          { memberName: 'Alice' },
-          { memberName: 'Bob' },
-          { memberName: 'Charlie' }
-        ],
-        leader: 'Super Admin'
+        members: [],
+        leader: ''
       }
     }
   },
@@ -35,16 +31,38 @@ export default {
       return this.team.leader === this.userName
     },
     userName: function() {
-      return this.$store.getters.name
+      return sessionStorage.getItem('username')
     }
+  },
+  async created() {
+    await this.getTeamMemberList()
   },
   methods: {
     leaveTeam() {
-      // need confirm
       if (!this.isLeader) {
-        leaveThisTeam(this.userName)
+        this.$confirm('Confirm to leave the team?', 'Warning', {
+          confirmButtonText: 'Confirm',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          leaveThisTeam(this.userName)
+          this.$message({
+            type: 'success',
+            message: 'You leave the team successfully!'
+          })
+        })
       } else {
-        disbandThisTeam(this.userName)
+        this.$confirm('Confirm to disband the team?', 'Warning', {
+          confirmButtonText: 'Confirm',
+          cancelButtonText: 'Cancel',
+          type: 'warning'
+        }).then(() => {
+          disbandThisTeam(this.userName)
+          this.$message({
+            type: 'success',
+            message: 'You disband the team successfully!'
+          })
+        })
       }
     },
     async removeMember(removeMemberName) {
@@ -54,6 +72,11 @@ export default {
       } else {
         alert("The leader can't be removed individually.")
       }
+    },
+    async getTeamMemberList() {
+      const response = await getTeamMember(this.userName)
+      this.team.members = response.data.members
+      this.team.leader = response.data.leader.username
     }
   }
 }
