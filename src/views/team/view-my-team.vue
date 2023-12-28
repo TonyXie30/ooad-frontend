@@ -7,7 +7,7 @@
       <li v-for="member in team.members" :key="member.username">
         <div class="row-element">
           {{ member.username }}
-          <el-button v-if="isLeader" type="primary" class="remove-btn" @click="removeMember(member.username)">Remove</el-button>
+          <el-button v-if="isLeader && member.username !== team.leader" type="primary" class="remove-btn" @click="removeMember(member.username)">Remove</el-button>
         </div>
       </li>
     </ul>
@@ -80,12 +80,18 @@ export default {
       }
     },
     async removeMember(removeMemberName) {
-      if (removeMemberName !== this.team.leader) {
+      this.$confirm('Confirm to remove this member?', 'Warning', {
+        confirmButtonText: 'Confirm',
+        cancelButtonText: 'Cancel',
+        type: 'warning'
+      }).then(async() => {
         await kickThisMember(this.userName, removeMemberName)
         this.team.members = this.team.members.filter(member => member.memberName !== removeMemberName)
-      } else {
-        alert("The leader can't be removed individually.")
-      }
+        this.$message({
+          type: 'success',
+          message: 'You removed this member successfully!'
+        })
+      })
     },
     async getTeamMemberList() {
       const response = await getTeamMember(this.userName)

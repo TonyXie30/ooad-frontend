@@ -207,20 +207,20 @@ export default {
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
       subjects: [{
-        value: 1,
-        label: '数学系'
+        value: '070101',
+        label: '数学与应用数学'
       }, {
-        value: 2,
-        label: '计算机系'
+        value: '080901',
+        label: '计算机科学与技术'
       }, {
-        value: 3,
-        label: '物理系'
+        value: '070201',
+        label: '物理学'
       }, {
-        value: 4,
-        label: '化学系'
+        value: '070301',
+        label: '化学'
       }, {
-        value: 5,
-        label: '金融系'
+        value: '080201',
+        label: '机械工程'
       }],
       timeRanges: [{
         value: '00:00:00',

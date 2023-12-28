@@ -8,7 +8,6 @@ import Layout from '@/layout'
 
 /* Router Modules */
 import componentsRouter from './modules/components'
-import chartsRouter from './modules/charts'
 import tableRouter from './modules/table'
 import viewDormRouter from './modules/view-dorm'
 import teamRouter from '@/router/modules/team'
@@ -85,19 +84,6 @@ export const constantRoutes = [
     ]
   },
   {
-    path: '/guide',
-    component: Layout,
-    redirect: '/guide/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/guide/index'),
-        name: 'Guide',
-        meta: { title: 'Guide', icon: 'guide', noCache: true }
-      }
-    ]
-  },
-  {
     path: '/profile',
     component: Layout,
     redirect: '/profile/index',
@@ -134,6 +120,19 @@ export const constantRoutes = [
         component: () => import('@/views/roomExchange/index'),
         name: 'roomExchange',
         meta: { title: 'Exchange room', icon: 'example' }
+      }
+    ]
+  },
+  {
+    path: '/message',
+    component: Layout,
+    redirect: '/message/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/message/index'),
+        name: 'messageBox',
+        meta: { title: 'Message Box', icon: 'email' }
       }
     ]
   },
@@ -254,7 +253,6 @@ export const asyncRoutes = [
 
   /** when your routing map is too long, you can split it into small modules **/
   componentsRouter,
-  chartsRouter,
   tableRouter,
 
   {
@@ -373,23 +371,6 @@ export const asyncRoutes = [
         component: () => import('@/views/excel/upload-excel'),
         name: 'UploadExcel',
         meta: { title: 'Upload Excel' }
-      }
-    ]
-  },
-
-  {
-    path: '/zip',
-    component: Layout,
-    redirect: '/zip/download',
-    alwaysShow: true,
-    name: 'Zip',
-    meta: { title: 'Zip', icon: 'zip' },
-    children: [
-      {
-        path: 'download',
-        component: () => import('@/views/zip/index'),
-        name: 'ExportZip',
-        meta: { title: 'Export Zip' }
       }
     ]
   },

@@ -15,17 +15,19 @@
       </router-link>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
-      <div class="card-panel">
-        <div class="card-panel-icon-wrapper icon-message">
-          <svg-icon icon-class="message" class-name="card-panel-icon" />
-        </div>
-        <div class="card-panel-description">
-          <div class="card-panel-text">
-            Messages
+      <router-link to="/message/index">
+        <div class="card-panel">
+          <div class="card-panel-icon-wrapper icon-message">
+            <svg-icon icon-class="message" class-name="card-panel-icon" />
           </div>
-          <count-to :start-val="0" :end-val="30" :duration="3000" class="card-panel-num" />
+          <div class="card-panel-description">
+            <div class="card-panel-text">
+              Messages
+            </div>
+            <count-to :start-val="0" :end-val="mailNum" :duration="3000" class="card-panel-num" />
+          </div>
         </div>
-      </div>
+      </router-link>
     </el-col>
     <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
       <router-link to="/dormSelect/index">
@@ -60,10 +62,30 @@
 
 <script>
 import CountTo from 'vue-count-to'
+import { getMailBox } from '@/api/message'
 
 export default {
   components: {
     CountTo
+  },
+  data() {
+    return {
+      mailNum: 0
+    }
+  },
+  computed: {
+    userName: function() {
+      return sessionStorage.getItem('username')
+    }
+  },
+  async created() {
+    await this.getMailNums()
+  },
+  methods: {
+    async getMailNums() {
+      const response = await getMailBox(this.userName)
+      this.mailNum = response.data.length
+    }
   }
 }
 </script>
@@ -79,7 +101,7 @@ export default {
   }
 
   .card-panel {
-    height: 90px;
+    height: 100px;
     width: auto;
     cursor: pointer;
     position: relative;

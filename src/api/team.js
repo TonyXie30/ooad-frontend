@@ -41,3 +41,10 @@ export function requestTeamUp(leaderName, userName) {
     method: 'post'
   })
 }
+
+export function teamUp(leaderName, userName) {
+  return request({
+    url: `http://localhost:8443/api/teamUp?memberName=${userName}&leaderName=${leaderName}`,
+    method: 'post'
+  })
+}
