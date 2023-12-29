@@ -142,6 +142,7 @@ export default {
 <style>
 .room-container {
   width: 100%;
+  min-height: 100vh;
   padding: 30px;
   margin-left: 10px;
   margin-bottom: 20px;

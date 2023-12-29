@@ -4,7 +4,7 @@
 
     <ul class="team-list">
       <li v-for="(team, index) in filteredTeams" :key="index" class="team-item">
-        <span>{{ team }}</span>
+        <span>Team {{ team }}</span>
         <el-button type="primary" @click="requestToTeamUp(team)">Join</el-button>
       </li>
     </ul>
@@ -79,7 +79,7 @@ export default {
 input {
   margin-bottom: 20px; /* adds space below the search input */
   padding: 10px;
-  width: calc(100% - 22px); /* adjusts width to account for padding */
+  width: 400px;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
