@@ -14,7 +14,7 @@ import PanelGroup from './components/PanelGroup'
 import VideoBackground from 'vue-responsive-video-background-player'
 
 export default {
-  name: 'DashboardAdmin',
+  name: 'UserDashboard',
   components: {
     PanelGroup,
     VideoBackground

@@ -7,9 +7,13 @@
       </div>
       <div class="mail-content">
         <p>{{ message.content }}</p>
-        <div v-if="looksLikeApplication(message.content)">
-          <el-button type="success" @click="acceptApplication(getApplicantName(message.content))">Accept</el-button>
+        <div v-if="teamApplication(message.content)">
+          <el-button type="success" @click="acceptTeamApplication(getTeamApplicantName(message.content), message.id)">Accept</el-button>
           <el-button type="danger" @click="deleteMessage(message.id)">Reject</el-button>
+        </div>
+        <div v-else-if="roomApplication(message.content)">
+          <el-button type="success" @click="acceptExchangeApplication(getExchangeApplicantName(message.content), message.id)">Accept</el-button>
+          <el-button type="danger" @click="rejectExchangeApplication(getExchangeApplicantName(message.content), message.id)">Reject</el-button>
         </div>
         <div v-else>
           <el-button type="danger" @click="deleteMessage(message.id)">Delete</el-button>
@@ -22,6 +26,7 @@
 <script>
 import { getMailBox, deleteNotification } from '@/api/message'
 import { teamUp } from '@/api/team'
+import { exchangeAccept, exchangeReject } from '@/api/room-exchange'
 export default {
   name: 'Mailbox',
   data() {
@@ -38,22 +43,51 @@ export default {
     await this.getAllMessages()
   },
   methods: {
-    looksLikeApplication(content) {
+    teamApplication(content) {
       return content.includes('id:') && content.includes('name:')
     },
-    async acceptApplication(name) {
+    roomApplication(content) {
+      return content.includes('location:') && content.includes('buildingName:')
+    },
+    async acceptTeamApplication(name, id) {
       await teamUp(this.userName, name)
-      // Success notification
+      await this.deleteMessage(id)
+      this.$message({
+        type: 'success',
+        message: 'Team up successfully!'
+      })
+    },
+    async acceptExchangeApplication(name, id) {
+      await exchangeAccept(this.userName, name)
+      await this.deleteMessage(id)
+      this.$message({
+        type: 'success',
+        message: 'Exchange the room successfully!'
+      })
+    },
+    async rejectExchangeApplication(name, id) {
+      await exchangeReject(this.userName, name)
+      await this.deleteMessage(id)
     },
     messageDate(originalDate) {
       return new Date(originalDate).toLocaleString()
     },
-    getApplicantName(message) {
+    getTeamApplicantName(message) {
       const lines = message.split('\n')
       let name = ''
       lines.forEach((line) => {
         if (line.trim().startsWith('name:')) {
           name = line.split('name:')[1].trim().replace(',', '')
+        }
+      })
+      return name
+    },
+    getExchangeApplicantName(message) {
+      const lines = message.split('\n')
+      let name = ''
+      lines.forEach((line) => {
+        if (line.trim().startsWith('Apply from:')) {
+          name = line.split('Apply from:')[1].trim().replace(',', '')
         }
       })
       return name

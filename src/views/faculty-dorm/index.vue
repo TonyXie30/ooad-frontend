@@ -204,10 +204,10 @@ import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 
 const locationTypes = [
-  { key: 'P1', display_name: '一期' },
-  { key: 'P2', display_name: '二期' },
-  { key: 'hupan', display_name: '湖畔' }
-  // { key: 'EU', display_name: 'Eurozone' }
+  { key: '二期', display_name: '二期' },
+  { key: '湖畔', display_name: '湖畔' },
+  { key: '荔园', display_name: '荔园' },
+  { key: '欣园', display_name: '欣园' }
 ]
 
 // arr to obj, such as { CN : "China", US : "USA" }
