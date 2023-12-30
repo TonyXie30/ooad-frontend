@@ -6,3 +6,10 @@ export function getMailBox(username) {
     method: 'post'
   })
 }
+
+export function deleteNotification(id) {
+  return request({
+    url: `http://localhost:8443/api/deleteNotification?notification_id=${id}`,
+    method: 'post'
+  })
+}

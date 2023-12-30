@@ -80,7 +80,7 @@ export const constantRoutes = [
         path: 'dashboard',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
-        meta: { title: 'Menu', icon: 'guide', affix: true }
+        meta: { title: 'Menu', icon: 'guide', affix: true, noCache: true }
       }
     ]
   },
@@ -108,19 +108,6 @@ export const constantRoutes = [
         component: () => import('@/views/dormSelect/index'),
         name: 'DormSelect',
         meta: { title: 'Select Dorm', icon: 'list' }
-      }
-    ]
-  },
-  {
-    path: '/roomExchange',
-    component: Layout,
-    redirect: '/roomExchange/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/roomExchange/index'),
-        name: 'roomExchange',
-        meta: { title: 'Exchange room', icon: 'example' }
       }
     ]
   },
@@ -188,19 +175,6 @@ export const asyncRoutes = [
     ]
   },
   {
-    path: '/faculty',
-    component: Layout,
-    redirect: '/faculty/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/faculty/index'),
-        name: 'faculty',
-        meta: { title: 'Faculty', icon: 'tree', roles: ['admin'] }
-      }
-    ]
-  },
-  {
     path: '/faculty-dorm',
     component: Layout,
     redirect: '/faculty-dorm/index',
@@ -255,39 +229,6 @@ export const asyncRoutes = [
   /** when your routing map is too long, you can split it into small modules **/
   componentsRouter,
   tableRouter,
-
-  {
-    path: '/example',
-    component: Layout,
-    redirect: '/example/list',
-    name: 'Example',
-    meta: {
-      title: 'Example',
-      icon: 'el-icon-s-help'
-    },
-    children: [
-      {
-        path: 'create',
-        component: () => import('@/views/example/create'),
-        name: 'CreateArticle',
-        meta: { title: 'Create Article', icon: 'edit' }
-      },
-      {
-        path: 'edit/:id(\\d+)',
-        component: () => import('@/views/example/edit'),
-        name: 'EditArticle',
-        meta: { title: 'Edit Article', noCache: true, activeMenu: '/example/list' },
-        hidden: true
-      },
-      {
-        path: 'list',
-        component: () => import('@/views/example/list'),
-        name: 'ArticleList',
-        meta: { title: 'Article List', icon: 'list' }
-      }
-    ]
-  },
-
   {
     path: '/tab',
     component: Layout,

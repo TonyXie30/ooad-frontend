@@ -26,7 +26,7 @@
 
     <div class="enter-button">
       <router-link :to="{ name: 'RoomPage', params: { roomInfo: selectedInfo }}">
-        <el-button>
+        <el-button type="primary">
           Enter
         </el-button>
       </router-link>

@@ -6,20 +6,26 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import adminDashboard from './admin'
+import UserDashboard from './admin'
+import AdminDashboard from './faculty'
 
 export default {
   name: 'Dashboard',
-  components: { adminDashboard },
+  components: { UserDashboard, AdminDashboard },
   data() {
     return {
-      currentRole: 'adminDashboard'
+      currentRole: 'UserDashboard'
     }
   },
   computed: {
     ...mapGetters([
       'roles'
     ])
+  },
+  created() {
+    if (!this.roles.includes('editor')) {
+      this.currentRole = 'AdminDashboard'
+    }
   }
 }
 </script>

@@ -1,25 +1,26 @@
 <template>
-  <div class="team-page">
-    <!-- Introduction Section -->
-    <div class="introduction">
-      <h2 class="title">Welcome to the Team Module!</h2>
-      <div class="content">
-        <p>In this module, you can:</p>
-        <ul>
-          <li>Search for teams and join one of them if you want.</li>
-          <li>View your team information.</li>
-          <li>Manage your team members if you are a leader.</li>
-        </ul>
+  <div class="team-container">
+    <div class="upper-container">
+      <div class="col-intro-container">
+        <h2 class="title">Team Module</h2>
+        <div class="content">
+          <ul>
+            <li>Search and join teams.</li>
+            <li>View your team information.</li>
+            <li>Manage your team members if you are a leader.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="col-img-container">
+        <img src="/team.png" alt="Team Collaboration Image">
       </div>
     </div>
-
-    <!-- Button Section -->
-    <div class="flex-container">
+    <div class="bottom-container">
       <router-link to="/team/join-team">
-        <el-button class="button">Join Team</el-button>
+        <el-button class="line-button">Join Team</el-button>
       </router-link>
       <router-link to="/team/view-my-team">
-        <el-button class="button">View My Team</el-button>
+        <el-button class="line-button">View My Team</el-button>
       </router-link>
     </div>
   </div>
@@ -27,57 +28,84 @@
 
 <script>
 export default {
-  name: 'TeamPage',
-  methods: {
-  }
+  name: 'TeamPage'
+  // Other options and methods...
 }
 </script>
 
 <style scoped>
-.team-page {
-  height: 100vh;
+.team-container {
+  width: 100%;
+  height: 93vh; /* Use 100% of the viewport height */
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  text-align: center;
+  background-color: #CAFFFF;
+  padding: 3rem;
 }
 
-.introduction .title {
-  font-family: Algerian,fantasy;
-  font-size: 30px;
+.upper-container {
+  flex: 1; /* Takes the remaining space minus the space taken by buttons */
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2rem; /* Space between upper and bottom parts */
+}
+
+.col-intro-container {
+  width: 50%; /* Adjusted to provide space for the image */
+}
+
+.col-intro-container .title {
+  font-family: "JetBrains Mono ExtraBold", emoji;
+  color: #833600;
+  font-size: 60px;
   margin-bottom: 10px;
 }
 
-.introduction .content {
-  font-family: Algerian,serif;
-  font-size: 25px;
+.col-intro-container .content {
+  font-family: -apple-system,system-ui;
+  font-size: 28px;
+  color: #833600;
   text-align: left;
-  max-width: 800px;
-  line-height: 60px;
+  line-height: 90px;
+  margin-top: 130px;
 }
 
-.flex-container {
+.col-intro-container .content ul {
+  list-style: none; /* Removes bullet points */
+  padding: 0; /* Resets default padding */
+  margin: 0; /* Resets default margin */
+}
+
+.col-img-container {
+  width: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.col-img-container img {
+  max-width: 100%;
+  height: auto;
+}
+
+.bottom-container {
+  width: 100%;
   display: flex;
   justify-content: space-around;
-  width: 60%;
-  .button {
-    font-family: 'Your Font Family', sans-serif; /* Match the font family of your page */
-    font-weight: bold; /* Assuming the font on your page is bold */
-    font-size: 20px;
-    color: white; /* A color that contrasts well with your button background */
-    background-color: #7d7d7f; /* A yellow shade that matches your design */
-    border-radius: 10px; /* Adjust as per your design preference */
-    border: none; /* Assuming you want a flat design without borders */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: subtle shadow for depth */
-    transition: background-color 0.3s, box-shadow 0.3s; /* Smooth transition for hover effects */
-    margin-top: 30px;
-  }
-
-  el-button:hover {
-    background-color: #4d4d4d; /* A slightly lighter shade for the hover state */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Optional: more pronounced shadow on hover */
-  }
 }
 
+.line-button {
+  font-size: 20px;
+  background-color: #CAFFFF;
+  color: #833600;
+  border-color: #833600;
+  margin: 0 1rem; /* Adds space between buttons */
+}
+
+.line-button:hover {
+  background-color: #833600;
+  color: #CAFFFF;
+}
 </style>

@@ -3,7 +3,7 @@
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">Dorm selection system @ SUSTech</h3>
+        <h3 class="title">Dorm Selection System @ SUSTech</h3>
       </div>
 
       <el-form-item prop="username">
@@ -44,17 +44,23 @@
           </span>
         </el-form-item>
       </el-tooltip>
-
+      <div class="captcha-container">
+        <img :src="captchaImageUrl" alt="">
+      </div>
+      <el-form-item prop="captcha">
+        <el-input
+          v-model="captchaInput"
+          placeholder="Enter the code shown above"
+          name="captcha"
+        />
+      </el-form-item>
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
-
       <div style="position:relative">
         <div class="tips">
-          <span>Username : admin</span>
-          <span>Password : any</span>
+          <span>Faculty no need to register</span>
         </div>
         <div class="tips">
-          <span style="margin-right:18px;">Username : editor</span>
-          <span>Password : any</span>
+          <span style="margin-right:18px;">Faculty username : System</span>
         </div>
       </div>
 
@@ -167,6 +173,7 @@
 <script>
 import { validUsername } from '@/utils/validate'
 import { Login, Register } from '@/api/article'
+import { getVerification } from '@/api/login'
 export default {
   name: 'Login',
   data() {
@@ -385,24 +392,13 @@ export default {
       capsTooltip: false,
       loading: false,
       showDialog: false,
-      redirect: undefined,
-      otherQuery: {}
+      captchaImageUrl: 'url-to-captcha-image',
+      captchaCode: '',
+      captchaInput: ''
     }
   },
-  watch: {
-    $route: {
-      handler: function(route) {
-        const query = route.query
-        if (query) {
-          this.redirect = query.redirect
-          this.otherQuery = this.getOtherQuery(query)
-        }
-      },
-      immediate: true
-    }
-  },
-  created() {
-    // window.addEventListener('storage', this.afterQRScan)
+  async created() {
+    await this.getVerificationCode()
   },
   mounted() {
     if (this.loginForm.username === '') {
@@ -410,9 +406,6 @@ export default {
     } else if (this.loginForm.password === '') {
       this.$refs.password.focus()
     }
-  },
-  destroyed() {
-    // window.removeEventListener('storage', this.afterQRScan)
   },
   methods: {
     checkCapslock(e) {
@@ -430,57 +423,55 @@ export default {
       })
     },
     handleLogin() {
-      // this.$router.push({ path: "/profile/index" })
-      // this.$forceUpdate()
-      new Promise((resolve, reject) => {
-        Login(this.realUser).then(response => {
-          this.allList = response.data
-          this.total = this.allList.length
-          resolve()
-          setTimeout(() => {
-            this.listLoading = false
-          }, 1000)
-          this.$notify({
-            title: 'Success',
-            message: 'Login Successfully',
-            type: 'success',
-            duration: 2000
-          })
-          if (response.data.admin === true) {
-            this.loginForm.username = 'admin'
-          } else {
-            this.loginForm.username = 'editor'
-          }
-          // const actionTypes = Object.keys(store._actions).map(action => action);
-          // console.log(actionTypes);
-          this.$store.dispatch('realUsername/setRealUser', this.realUser.username)
-          sessionStorage.setItem('username', this.realUser.username)
-          console.log(this.$store.getters.realUserName)
-          this.$refs.loginForm.validate(valid => {
-            if (valid) {
-              this.loading = true
-              this.$store.dispatch('user/login', this.loginForm)
-                .then(() => {
-                  // console.log("r:"+this.redirect)
-                  // console.log("q:"+this.otherQuery)
-                  this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
-                  // this.$router.push({ path: this.redirect })
-                  this.loading = false
-                })
-                .catch(() => {
-                  this.loading = false
-                })
+      if (this.captchaInput === this.captchaCode) {
+        new Promise((resolve, reject) => {
+          Login(this.realUser).then(response => {
+            this.allList = response.data
+            this.total = this.allList.length
+            resolve()
+            setTimeout(() => {
+              this.listLoading = false
+            }, 1000)
+            this.$notify({
+              title: 'Success',
+              message: 'Login Successfully',
+              type: 'success',
+              duration: 2000
+            })
+            if (response.data.admin === true) {
+              this.loginForm.username = 'admin'
             } else {
-              console.log('error submit!!')
-              return false
+              this.loginForm.username = 'editor'
             }
+            // const actionTypes = Object.keys(store._actions).map(action => action);
+            this.$store.dispatch('realUsername/setRealUser', this.realUser.username)
+            sessionStorage.setItem('username', this.realUser.username)
+            this.$refs.loginForm.validate(valid => {
+              if (valid) {
+                this.loading = true
+                this.$store.dispatch('user/login', this.loginForm)
+                  .then(() => {
+                    this.$router.push({ path: '/dashboard' })
+                    this.loading = false
+                  })
+                  .catch(() => {
+                    this.loading = false
+                  })
+              } else {
+                console.log('error submit!!')
+                return false
+              }
+            })
           })
         })
-      })
+      } else {
+        this.$message({
+          type: 'error',
+          message: 'Wrong verification code!'
+        })
+      }
     },
     handleRegister() {
-      // console.log(this.registerForm)
-
       const regData = {
         username: this.registerForm.username,
         password: this.registerForm.password,
@@ -518,27 +509,11 @@ export default {
           })
         })
       })
-      // this.$axios.post('/login', loginData)
-      /*
-      axios.post('/register', this.registerForm)
-        .then(response => {
-          // 处理登录成功的响应
-          console.log('Register successful:', response.data);
-          // 可以跳转到其他页面或执行其他操作
-        })
-        .catch(error => {
-          // 处理登录失败的响应
-          console.error('Register failed:', error);
-        });
-        */
     },
-    getOtherQuery(query) {
-      return Object.keys(query).reduce((acc, cur) => {
-        if (cur !== 'redirect') {
-          acc[cur] = query[cur]
-        }
-        return acc
-      }, {})
+    async getVerificationCode() {
+      const response = await getVerification()
+      this.captchaImageUrl = response.data.verifyCodeImgUrl
+      this.captchaCode = response.data.verifyCode
     }
   }
 }
@@ -567,9 +542,9 @@ $cursor: #fff;
 
     input {
       background: transparent;
-      border: 0px;
+      border: 0;
       -webkit-appearance: none;
-      border-radius: 0px;
+      border-radius: 0;
       padding: 12px 5px 12px 15px;
       color: $light_gray;
       height: 47px;
@@ -615,6 +590,11 @@ $light_gray:#eee;
     overflow: hidden;
   }
 
+  .captcha-container {
+    margin-left: 130px;
+    margin-bottom: 10px;
+  }
+
   .tips {
     font-size: 14px;
     color: #fff;
@@ -641,7 +621,7 @@ $light_gray:#eee;
     .title {
       font-size: 26px;
       color: $light_gray;
-      margin: 0px auto 40px auto;
+      margin: 0 auto 40px auto;
       text-align: center;
       font-weight: bold;
     }
@@ -668,12 +648,6 @@ $light_gray:#eee;
     position: absolute;
     right: 10%;
     bottom: 20px;
-  }
-
-  @media only screen and (max-width: 470px) {
-    .thirdparty-button {
-      display: none;
-    }
   }
 }
 
