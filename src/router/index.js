@@ -97,34 +97,7 @@ export const constantRoutes = [
       }
     ]
   },
-  {
-    path: '/dormSelect',
-    component: Layout,
-    redirect: '/dormSelect/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/dormSelect/index'),
-        name: 'DormSelect',
-        meta: { title: 'Select Dorm', icon: 'list' }
-      }
-    ]
-  },
-  {
-    path: '/message',
-    component: Layout,
-    redirect: '/message/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/message/index'),
-        name: 'messageBox',
-        meta: { title: 'Message Box', icon: 'email' }
-      }
-    ]
-  },
-  viewDormRouter,
-  teamRouter
+  viewDormRouter
 ]
 
 /**
@@ -182,7 +155,7 @@ export const asyncRoutes = [
         path: 'index',
         component: () => import('@/views/faculty-dorm/index'),
         name: 'faculty-dorm',
-        meta: { title: 'Faculty Dorm', icon: 'list', roles: ['admin'] }
+        meta: { title: 'Dorm Management', icon: 'list', roles: ['admin'] }
       }
     ]
   },
@@ -195,7 +168,7 @@ export const asyncRoutes = [
         path: 'index',
         component: () => import('@/views/faculty-user/index'),
         name: 'faculty-user',
-        meta: { title: 'Faculty User', icon: 'list', roles: ['admin'] }
+        meta: { title: 'User Management', icon: 'list', roles: ['admin'] }
       }
     ]
   },
@@ -208,7 +181,46 @@ export const asyncRoutes = [
         path: 'index',
         component: () => import('@/views/faculty-time_range/index'),
         name: 'faculty-time_range',
-        meta: { title: 'Faculty Time', icon: 'list', roles: ['admin'] }
+        meta: { title: 'Time Management', icon: 'list', roles: ['admin'] }
+      }
+    ]
+  },
+  {
+    path: '/message',
+    component: Layout,
+    redirect: '/message/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/message/index'),
+        name: 'messageBox',
+        meta: { title: 'Message Box', icon: 'email', roles: ['editor'] }
+      }
+    ]
+  },
+  {
+    path: '/dormSelect',
+    component: Layout,
+    redirect: '/dormSelect/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/dormSelect/index'),
+        name: 'DormSelect',
+        meta: { title: 'Select Dorm', icon: 'list', roles: ['editor'] }
+      }
+    ]
+  },
+  {
+    path: '/data-export',
+    component: Layout,
+    redirect: '/excel-export/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/excel-export/index'),
+        name: 'DataExport',
+        meta: { title: 'Data Export', icon: 'list', roles: ['admin'] }
       }
     ]
   },
@@ -228,6 +240,7 @@ export const asyncRoutes = [
   /** when your routing map is too long, you can split it into small modules **/
   componentsRouter,
   tableRouter,
+  teamRouter,
   {
     path: '/tab',
     component: Layout,
@@ -289,12 +302,6 @@ export const asyncRoutes = [
       icon: 'excel'
     },
     children: [
-      {
-        path: 'export-excel',
-        component: () => import('@/views/excel/export-excel'),
-        name: 'ExportExcel',
-        meta: { title: 'Export Excel' }
-      },
       {
         path: 'export-selected-excel',
         component: () => import('@/views/excel/select-excel'),

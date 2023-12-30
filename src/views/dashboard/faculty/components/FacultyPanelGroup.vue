@@ -42,6 +42,20 @@
         </div>
       </router-link>
     </el-col>
+    <el-col :xs="12" :sm="12" :lg="6" class="card-panel-col">
+      <router-link to="/data-export/index">
+        <div class="card-panel">
+          <div class="card-panel-icon-wrapper icon-form">
+            <svg-icon icon-class="link" class-name="card-panel-icon" />
+          </div>
+          <div class="card-panel-description">
+            <div class="card-panel-text">
+              Data Export
+            </div>
+          </div>
+        </div>
+      </router-link>
+    </el-col>
   </el-row>
 </template>
 
@@ -53,22 +67,25 @@ export default {
 
 <style lang="scss" scoped>
 .panel-group {
-  margin-top: 18px;
 
   .card-panel-col {
+    padding: 10px;
     margin-bottom: 32px;
+    margin-left: 70px;
+    margin-right: 80px;
   }
 
   .card-panel {
-    height: 108px;
+    margin-top: 100px;
+    height: 100px;
     cursor: pointer;
-    font-size: 12px;
     position: relative;
     overflow: hidden;
-    color: #666;
+    border-radius: 20px;
     background: #fff;
     box-shadow: 4px 4px 40px rgba(0, 0, 0, .05);
     border-color: rgba(0, 0, 0, .05);
+    opacity: 0.85;
 
     &:hover {
       .card-panel-icon-wrapper {
@@ -93,7 +110,7 @@ export default {
     }
 
     .icon-building {
-      font-size: 50px;
+      font-size: 45px;
       color: #40c9c6;
     }
 
@@ -129,9 +146,8 @@ export default {
 
       .card-panel-text {
         line-height: 18px;
-        color: rgba(0, 0, 0, 0.45);
-        font-size: 16px;
-        margin-bottom: 12px;
+        color: #0000FF;
+        font-size: 18px;
       }
 
       .card-panel-num {
