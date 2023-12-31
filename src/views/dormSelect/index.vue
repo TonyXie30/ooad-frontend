@@ -259,7 +259,7 @@ export default {
     //   this.getList()
     // })
     this.user = this.$store.getters.realUserName
-    console.log(localStorage.getItem('username'))
+    // console.log(localStorage.getItem('username'))
     this.getList()
     this.getBuildings()
     this.getFloors()
@@ -268,6 +268,7 @@ export default {
     getList() {
       this.templistQuery = Object.assign({}, this.listQuery)
       this.templistQuery.page -= 1
+      this.templistQuery.username = sessionStorage.getItem('username')
       this.listLoading = true
       checkUser(sessionStorage.getItem('username')).then(response => {
         this.selected = response.data

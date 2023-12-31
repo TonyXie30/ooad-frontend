@@ -175,6 +175,9 @@
         </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
+        <el-button type="warning" @click="handleOpenSecondDialog()">
+          delete user
+        </el-button>
         <el-button @click="dialogFormVisible = false">
           Cancel
         </el-button>
@@ -182,6 +185,15 @@
           Confirm
         </el-button>
       </div>
+    </el-dialog>
+
+    <el-dialog :visible.sync="secondDialogVisible" title="delete checkin user">
+      <el-select v-model="selectedUser">
+        <el-option v-for="option in dormUsers" :key="option.id" :label="option.username" :value="option.username" />
+      </el-select>
+      <el-button @click="handleConfirm(selectedUser)">
+        Confirm
+      </el-button>
     </el-dialog>
 
     <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
@@ -197,7 +209,7 @@
 </template>
 
 <script>
-import { fetchList, fetchPv, createDorm } from '@/api/article'
+import { fetchList, fetchPv, createDorm, getDormUsers, checkOutUser } from '@/api/article'
 import { findBuilding, findFloor, selectRoom, deleteDorm } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
@@ -361,7 +373,11 @@ export default {
         // timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
         // title: [{ required: true, message: 'title is required', trigger: 'blur' }]
       },
-      downloadLoading: false
+      downloadLoading: false,
+      secondDialogVisible: false,
+      dormUsers: [],
+      selectedUser: null,
+      TempRow: null
     }
   },
   created() {
@@ -464,6 +480,7 @@ export default {
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
       // this.temp.timestamp = new Date(this.temp.timestamp)
+      this.TempRow = Object.assign({}, row)
       this.temp.gender = row.gender.gender
       this.temp.degree = row.degree.degree
       this.dialogStatus = 'update'
@@ -545,6 +562,29 @@ export default {
         })
         this.downloadLoading = false
       })
+    },
+    handleOpenSecondDialog() {
+      this.selectedUser = null
+      getDormUsers(this.TempRow.id).then(response => {
+        this.dormUsers = response.data
+      })
+      this.secondDialogVisible = true
+    },
+    handleConfirm(selectedUser) {
+      var data = {}
+      data.username = selectedUser
+      data.id = this.temp.id
+      console.log(data)
+      checkOutUser(data).then(response => {
+        this.$notify({
+          title: 'Success',
+          message: 'delete Successfully',
+          type: 'success',
+          duration: 2000
+        })
+      })
+      this.getList
+      this.secondDialogVisible = false
     },
     formatJson(filterVal) {
       return this.list.map(v => filterVal.map(j => {
