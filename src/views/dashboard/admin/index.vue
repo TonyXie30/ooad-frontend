@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-editor-container">
     <video-background
-      src="/autumn-leaves.mp4"
+      src="/bgvideo.mp4"
       style="max-height: 900px; height: 100vh;"
     >
       <panel-group />

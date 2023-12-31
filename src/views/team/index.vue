@@ -102,6 +102,7 @@ export default {
   color: #833600;
   border-color: #833600;
   margin: 0 1rem; /* Adds space between buttons */
+  border-radius: 15px;
 }
 
 .line-button:hover {
