@@ -120,14 +120,6 @@ export function getDormUsers(query) {
   })
 }
 
-export function fetchArticle(id) {
-  return request({
-    url: '/vue-element-admin/article/detail',
-    method: 'get',
-    params: { id }
-  })
-}
-
 export function fetchPv(pv) {
   return request({
     url: '/vue-element-admin/article/pv',
@@ -236,6 +228,14 @@ export function deleteTimeInterval(data) {
     url: url,
     method: 'post',
     data
+  })
+}
+
+export function getBookmark(username) {
+  const url = `http://localhost:8443/api/getBookMark?username=${username}`
+  return request({
+    url: url,
+    method: 'post'
   })
 }
 
