@@ -6,24 +6,17 @@
         <el-col :span="8" :xs="24">
           <user-card :user="user" />
         </el-col>
-
-        <!--        <el-col :span="18" :xs="24">-->
-        <!--          <el-card>-->
-        <!--            <el-tabs v-model="activeTab">-->
-        <!--              <el-tab-pane label="Activity" name="activity">-->
-        <!--                <activity />-->
-        <!--              </el-tab-pane>-->
-        <!--              <el-tab-pane label="Timeline" name="timeline">-->
-        <!--                <timeline />-->
-        <!--              </el-tab-pane>-->
-        <!--              <el-tab-pane label="Account" name="account">-->
-        <!--                <account :user="user" />-->
-        <!--              </el-tab-pane>-->
-        <!--            </el-tabs>-->
-        <!--          </el-card>-->
-        <!--        </el-col>-->
         <el-col :span="16" :xs="24">
           <recommend :user="user" />
+        </el-col>
+      </el-row>
+      <el-row :gutter="20">
+
+        <el-col :span="16" :xs="24">
+          <Bookmark :user="user" />
+        </el-col>
+        <el-col :span="8" :xs="24">
+          <Setting :user="user" />
         </el-col>
       </el-row>
     </div>
@@ -34,13 +27,15 @@
 import { mapGetters } from 'vuex'
 import UserCard from './components/UserCard'
 import Recommend from '@/views/profile/components/Recommend.vue'
+import Bookmark from '@/views/profile/components/Bookmark.vue'
+import Setting from '@/views/profile/components/Setting.vue'
 // import Activity from './components/Activity'
 // import Timeline from './components/Timeline'
 // import Account from './components/Account'
 
 export default {
   name: 'Profile',
-  components: { Recommend, UserCard },
+  components: { Recommend, UserCard, Bookmark, Setting },
   data() {
     return {
       user: {},

@@ -174,6 +174,7 @@
 import { validUsername } from '@/utils/validate'
 import { Login, Register } from '@/api/article'
 import { getVerification } from '@/api/login'
+const CryptoJS = require('crypto-js')
 export default {
   name: 'Login',
   data() {
@@ -425,7 +426,11 @@ export default {
     handleLogin() {
       if (this.captchaInput === this.captchaCode) {
         new Promise((resolve, reject) => {
-          Login(this.realUser).then(response => {
+          const loginData = {
+            username: this.realUser.username,
+            password: CryptoJS.MD5(this.realUser.password).toString()
+          }
+          Login(loginData).then(response => {
             this.allList = response.data
             this.total = this.allList.length
             resolve()
@@ -474,7 +479,7 @@ export default {
     handleRegister() {
       const regData = {
         username: this.registerForm.username,
-        password: this.registerForm.password,
+        password: CryptoJS.MD5(this.registerForm.password).toString(),
         gender: {
           gender: this.registerForm.gender
         },

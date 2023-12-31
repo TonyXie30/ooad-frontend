@@ -76,6 +76,9 @@ export default {
           this.$props.user.name = sessionStorage.getItem('username')
           this.$props.user.subject = response.data.subject.name
           console.log(this.$props.user.subject)
+          if (response.data.photo != null) {
+            this.$props.user.avatar = response.data.photo
+          }
           this.$props.user.wakeupTime = response.data.uptime.timeSlot
           this.$props.user.bedTime = response.data.bedtime.timeSlot
           resolve()

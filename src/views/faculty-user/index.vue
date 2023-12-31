@@ -201,7 +201,7 @@ import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
 import UploadExcelComponent from '@/components/UploadExcel/index.vue'
-import XLSX from 'xlsx'
+// import XLSX from 'xlsx'
 
 const genderTypes = [
   {
