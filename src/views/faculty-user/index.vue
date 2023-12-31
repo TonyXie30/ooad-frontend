@@ -20,8 +20,8 @@
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
       </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
-        添加
+      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="showDialog">
+        批量添加
       </el-button>
       <!-- <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
         Export
@@ -127,29 +127,30 @@
 
     <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible">
       <el-form ref="dataForm" :rules="rules" :model="temp" label-position="left" label-width="70px" style="width: 400px; margin-left:50px;">
-        <el-form-item label="区域" prop="type">
+        <!-- <el-form-item label="区域" prop="type">
           <el-select v-model="temp.location" class="filter-item" placeholder="Please select">
             <el-option v-for="item in genderTypes" :key="item.key" :label="item.display_name" :value="item.key" />
           </el-select>
-        </el-form-item>
+        </el-form-item> -->
         <!-- <el-form-item label="Date" prop="timestamp">
           <el-date-picker v-model="temp.timestamp" type="datetime" placeholder="Please pick a date" />
         </el-form-item> -->
-        <el-form-item label="房间号" prop="houseNum">
-          <el-input v-model="temp.houseNum" />
+        <el-form-item label="性别" prop="gender">
+          <el-select v-model="temp.gender" class="filter-item" placeholder="Please select">
+            <el-option v-for="item in genders" :key="item.gender.id" :label="item.gender.gender" :value="item.gender" />
+          </el-select>
         </el-form-item>
-        <el-form-item label="栋" prop="buildingName">
-          <el-input v-model="temp.buildingName" />
+        <el-form-item label="学级" prop="degree">
+          <el-select v-model="temp.degree" class="filter-item" placeholder="Please select">
+            <el-option v-for="item in degrees" :key="item.degree.id" :label="item.degree.degree" :value="item.degree" />
+          </el-select>
         </el-form-item>
-        <el-form-item label="楼层" prop="floor">
-          <el-input v-model.number="temp.floor" />
+        <el-form-item label="专业" prop="subject">
+          <el-select v-model="temp.subject" class="filter-item" placeholder="Please select">
+            <el-option v-for="item in subjectTypes" :key="item.id" :label="item.name" :value="item" />
+          </el-select>
         </el-form-item>
-        <el-form-item label="类型" prop="type">
-          <el-input v-model="temp.type" />
-        </el-form-item>
-        <el-form-item label="床位" prop="bed">
-          <el-input v-model.number="temp.bed" />
-        </el-form-item>
+
         <!-- <el-form-item label="Status">
           <el-select v-model="temp.status" class="filter-item" placeholder="Please select">
             <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
@@ -172,6 +173,15 @@
       </div>
     </el-dialog>
 
+    <el-dialog title="Import Excel" :visible.sync="uploadDialogVisible">
+      <upload-excel-component :on-success="handleUpload" :before-upload="beforeUpload" />
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="uploadDialogVisible = false">
+          取消
+        </el-button>
+      </span>
+    </el-dialog>
+
     <el-dialog :visible.sync="dialogPvVisible" title="Reading statistics">
       <el-table :data="pvData" border fit highlight-current-row style="width: 100%">
         <el-table-column prop="key" label="Channel" />
@@ -185,16 +195,127 @@
 </template>
 
 <script>
-import { fetchUserList, fetchPv, createDorm } from '@/api/article'
+import { fetchUserList, fetchPv, createDorm, updateUser, uploadUser } from '@/api/article'
 import { findBuilding, findFloor, selectRoom, deleteUser } from '@/api/article'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
+import UploadExcelComponent from '@/components/UploadExcel/index.vue'
+import XLSX from 'xlsx'
 
 const genderTypes = [
-  { key: 'male', display_name: '男' },
-  { key: 'female', display_name: '女' }
-  // { key: 'EU', display_name: 'Eurozone' }
+  {
+    gender: 'male',
+    display_name: '男'
+  },
+  {
+    gender: 'female',
+    display_name: '女'
+  }
+]
+
+const gradeTypes = [
+  {
+    degree: 'postgraduate',
+    display_name: '硕士研究生'
+  },
+  {
+    degree: 'doctorate',
+    display_name: '博士研究生'
+  }
+]
+
+const subjectTypes = [
+  {
+    id: '070101',
+    name: '数学与应用数学'
+  },
+  {
+    id: '070201',
+    name: '物理学'
+  },
+  {
+    id: '070301',
+    name: '化学'
+  },
+  {
+    id: '070701',
+    name: '海洋科学'
+  },
+  {
+    id: '070801',
+    name: '地球物理学'
+  },
+  {
+    id: '071001',
+    name: '生物科学'
+  },
+  {
+    id: '071003',
+    name: '生物信息学'
+  },
+  {
+    id: '071201',
+    name: '统计学'
+  },
+  {
+    id: '080101',
+    name: '理论与应用力学'
+  },
+  {
+    id: '080201',
+    name: '机械工程'
+  },
+  {
+    id: '080401',
+    name: '材料科学与工程'
+  },
+  {
+    id: '080901',
+    name: '计算机科学与技术'
+  },
+  {
+    id: '080907T',
+    name: '智能科学与技术'
+  },
+  {
+    id: '080910T',
+    name: '数据科学与大数据技术'
+  },
+  {
+    id: '100103T',
+    name: '生物医学科学'
+  }
+]
+
+const degrees = [
+  {
+    degree: {
+      id: 1,
+      degree: 'postgraduate'
+    }
+  },
+  {
+    degree: {
+      id: 2,
+      degree: 'doctorate'
+    }
+  }
+]
+
+const genders = [
+  {
+    gender: {
+      id: 1,
+      gender: 'male'
+    }
+  },
+  {
+    gender: {
+      id: 2,
+      gender: 'female'
+    }
+  }
 ]
 
 // arr to obj, such as { CN : "China", US : "USA" }
@@ -205,7 +326,7 @@ const calendarTypeKeyValue = genderTypes.reduce((acc, cur) => {
 
 export default {
   name: 'DormSelect',
-  components: { Pagination },
+  components: { Pagination, UploadExcelComponent },
   directives: { waves },
   filters: {
     statusFilter(status) {
@@ -252,23 +373,26 @@ export default {
       },
       importanceOptions: [1, 2, 3],
       genderTypes,
+      gradeTypes,
+      subjectTypes,
+      genders,
+      degrees,
       sortOptions: [{ label: '正序', key: '+' }, { label: '倒序', key: '-' }],
       statusOptions: ['published', 'draft', 'deleted'],
       showReviewer: false,
       temp: {
-        id: 1,
-        houseNum: undefined,
-        floor: undefined,
-        buildingName: undefined,
-        type: '123',
-        location: undefined,
-        bookedNum: 0,
-        bed: undefined
-        // importance: 1,
-        // remark: '',
-        // timestamp: new Date(),
-        // title: '',
-        // status: 'published'
+        gender: {
+          gender: null,
+          id: null
+        },
+        degree: {
+          degree: null,
+          id: null
+        },
+        subject: {
+          id: null,
+          name: null
+        }
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -277,14 +401,15 @@ export default {
         create: 'Create'
       },
       dialogPvVisible: false,
+      uploadDialogVisible: false,
       pvData: [],
       rules: {
-        type: [{ required: true, message: 'type is required', trigger: 'change' }],
-        houseNum: [{ required: true, message: '需要房间号', trigger: 'change' }],
-        floor: [{ required: true, type: 'number', message: '需要楼层', trigger: 'change' }],
-        buildingName: [{ required: true, message: '需要栋', trigger: 'change' }],
-        location: [{ required: true, message: '需要位置', trigger: 'change' }],
-        bed: [{ required: true, type: 'number', message: '需要床位数量', trigger: 'change' }]
+        // type: [{ required: true, message: 'type is required', trigger: 'change' }],
+        // houseNum: [{ required: true, message: '需要房间号', trigger: 'change' }],
+        // floor: [{ required: true, type: 'number', message: '需要楼层', trigger: 'change' }],
+        // buildingName: [{ required: true, message: '需要栋', trigger: 'change' }],
+        // location: [{ required: true, message: '需要位置', trigger: 'change' }],
+        // bed: [{ required: true, type: 'number', message: '需要床位数量', trigger: 'change' }]
         // timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
         // title: [{ required: true, message: 'title is required', trigger: 'blur' }]
       },
@@ -350,14 +475,18 @@ export default {
     },
     resetTemp() {
       this.temp = {
-        id: 1,
-        houseNum: undefined,
-        floor: undefined,
-        buildingName: undefined,
-        type: '123',
-        location: undefined,
-        bookedNum: 0,
-        bed: undefined
+        gender: {
+          gender: null,
+          id: null
+        },
+        degree: {
+          degree: null,
+          id: null
+        },
+        subject: {
+          id: null,
+          name: null
+        }
       }
     },
     handleCreate() {
@@ -388,9 +517,14 @@ export default {
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row) // copy obj
+      this.temp.gender = this.temp.gender.gender
+      this.temp.degree = this.temp.degree.degree
+      // this.temp.subject.name = row.subject.name
       // this.temp.timestamp = new Date(this.temp.timestamp)
       this.dialogStatus = 'update'
       this.dialogFormVisible = true
+      console.log(this.temp)
+      console.log(this.temp.subject.name)
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
@@ -398,11 +532,12 @@ export default {
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
-          const tempData = Object.assign({}, this.temp)
-          tempData.timestamp = +new Date(tempData.timestamp) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
-          createDorm(tempData).then(() => {
-            const index = this.list.findIndex(v => v.id === this.temp.id)
-            this.list.splice(index, 1, this.temp)
+          var tempData = Object.assign({}, this.temp)
+          // tempData.degree = this.degrees.find(item => item.degree.degree === tempData.degree)?.degree
+          // tempData.gender = this.genders.find(item => item.gender.gender === tempData.gender)?.gender
+          console.log(tempData)
+          updateUser(tempData).then(() => {
+            this.getList()
             this.dialogFormVisible = false
             this.$notify({
               title: 'Success',
@@ -413,6 +548,55 @@ export default {
           })
         }
       })
+    },
+    showDialog() {
+      this.uploadDialogVisible = true
+    },
+    handleUpload(data) {
+      // { results, header }
+      // this.tableData = results
+      // this.tableHeader = header
+      // console.log(results)
+      // console.log(header)
+      // console.log(JSON.stringify(results))
+      // const results2d = results.map(row => {
+      //   return Object.values(row)
+      // })
+      // const workbook = XLSX.utils.book_new()
+      // const worksheet = XLSX.utils.aoa_to_sheet(results2d)
+      // // 设置Header
+      // if (header && header.length > 0) {
+      //   worksheet["!ref"] = XLSX.utils.encode_range({
+      //     s: {c:0,r:0},
+      //     e: {c:header.length-1, r:0}
+      //   })
+      // }
+      // XLSX.utils.book_append_sheet(workbook, worksheet, 'Sheet1')
+      // const wbout = XLSX.write(workbook, {bookType:'xlsx', type:'binary'})
+      // const blob = new Blob([wbout], { type: 'multipart/form-data' });
+      uploadUser(data).then(() => {
+        this.getList
+        this.$notify({
+          title: 'Success',
+          message: 'Created Successfully',
+          type: 'success',
+          duration: 2000
+        })
+      })
+      this.dialogFormVisible = false
+    },
+    beforeUpload(file) {
+      const isLt1M = file.size / 1024 / 1024 < 1
+
+      if (isLt1M) {
+        return true
+      }
+
+      this.$message({
+        message: 'Please do not upload files larger than 1m in size.',
+        type: 'warning'
+      })
+      return false
     },
     handleChoose(row) {
       selectRoom(row).then(response => {

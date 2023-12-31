@@ -24,14 +24,16 @@ export default {
       excelData: {
         header: null,
         results: null
-      }
+      },
+      formData: new FormData()
     }
   },
   methods: {
     generateData({ header, results }) {
       this.excelData.header = header
       this.excelData.results = results
-      this.onSuccess && this.onSuccess(this.excelData)
+      // this.onSuccess && this.onSuccess(this.excelData)
+      this.onSuccess && this.onSuccess(this.formData)
     },
     handleDrop(e) {
       e.stopPropagation()
@@ -77,6 +79,7 @@ export default {
       if (before) {
         this.readerData(rawFile)
       }
+      this.formData.append('file', rawFile, rawFile.name)
     },
     readerData(rawFile) {
       this.loading = true
@@ -87,6 +90,7 @@ export default {
           const workbook = XLSX.read(data, { type: 'array' })
           const firstSheetName = workbook.SheetNames[0]
           const worksheet = workbook.Sheets[firstSheetName]
+          console.log(worksheet)
           const header = this.getHeaderRow(worksheet)
           const results = XLSX.utils.sheet_to_json(worksheet)
           this.generateData({ header, results })
