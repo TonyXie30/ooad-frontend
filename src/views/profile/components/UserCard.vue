@@ -12,6 +12,7 @@
         </pan-thumb>
       </div>
       <div class="box-center">
+        <br>
         <!--        <div class="user-name text-center">{{ user.name }}</div>-->
         <mallki class-name="mallki-text" :text="user.name" />
         <div class="user-role text-center text-muted">{{ user.subject }}</div>
@@ -149,5 +150,13 @@ export default {
       font-weight: bold;
     }
   }
+}
+.mallki-text{
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.el-card{
+  height: 503px
 }
 </style>
