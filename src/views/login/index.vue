@@ -477,18 +477,8 @@ export default {
             password: CryptoJS.MD5(this.realUser.password).toString()
           }
           Login(loginData).then(response => {
-            this.allList = response.data
-            this.total = this.allList.length
-            resolve()
-            setTimeout(() => {
-              this.listLoading = false
-            }, 1000)
-            this.$notify({
-              title: 'Success',
-              message: 'Login Successfully',
-              type: 'success',
-              duration: 2000
-            })
+            // this.allList = response.data
+            // this.total = this.allList.length
             if (response.data.admin === true) {
               this.loginForm.username = 'admin'
             } else {
@@ -504,6 +494,12 @@ export default {
                   .then(() => {
                     this.$router.push({ path: '/dashboard' })
                     this.loading = false
+                    this.$notify({
+                      title: 'Success',
+                      message: 'Login Successfully',
+                      type: 'success',
+                      duration: 2000
+                    })
                   })
                   .catch(() => {
                     this.loading = false
@@ -513,7 +509,20 @@ export default {
                 return false
               }
             })
-          })
+            resolve()
+            setTimeout(() => {
+              this.listLoading = false
+            }, 1000)
+          }).catch(
+            response => {
+              this.$notify({
+                title: 'error',
+                message: 'Wrong username or password',
+                type: 'error',
+                duration: 2000
+              })
+            }
+          )
         })
       } else {
         this.$message({

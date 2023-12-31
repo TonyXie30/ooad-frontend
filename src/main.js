@@ -20,6 +20,9 @@ import './utils/error-log' // error log
 
 import * as filters from './filters' // global filters
 
+import VueSocketIO from 'vue-socket.io'
+Vue.config.productionTip = false
+
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api
@@ -36,7 +39,20 @@ if (process.env.NODE_ENV === 'production') {
 Vue.use(Element, {
   size: Cookies.get('size') || 'medium', // set element-ui default size
   locale: enLang // 如果使用中文，无需设置，请删除
-})
+}).use(
+  new VueSocketIO({
+    debug: false, // debug调试，生产建议关闭
+    connection: 'http://localhost:3000',
+    vuex: {
+      store,
+      actionPrefix: 'SOCKET_',
+      mutationPrefix: 'SOCKET_'
+    },
+    options: { // Optional options,
+      autoConnect: false // 关闭自动连接，在用户登录后在连接。
+    }
+  })
+)
 
 // register global utility filters
 Object.keys(filters).forEach(key => {
