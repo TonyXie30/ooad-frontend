@@ -1,7 +1,7 @@
 <template>
   <el-card style="margin-bottom:20px;">
     <div slot="header" class="clearfix">
-      <span>Recommend roommate</span>
+      <span>Recommend roommates</span>
     </div>
 
     <!--    <br><br><br>-->
@@ -21,16 +21,16 @@
     <el-container>
       <el-header>
         <span class="title">Recommend roommates based on their major and schedule</span>
-        <el-button type="primary" class="button" @click.native.prevent="update">
-          Update
-        </el-button>
+        <!--        <el-button type="primary" class="button" @click.native.prevent="update">-->
+        <!--          Update-->
+        <!--        </el-button>-->
       </el-header>
 
       <el-main>
         <el-table :data="tableData">
           <el-table-column prop="username" label="username" width="180" />
           <el-table-column prop="subject" label="subject" width="180" />
-          <el-table-column prop="wakeupTime" label="wakeupTime" width="200" />
+          <el-table-column prop="wakeupTime" label="wakeupTime" width="180" />
           <el-table-column prop="bedTime" label="bedTime" width="200" />
         </el-table>
       </el-main>
@@ -47,64 +47,34 @@ export default {
   data() {
     return {
 
-      tableData: [
-        {
-          username: 'none',
-          subject: 'null',
-          wakeupTime: 'null',
-          bedTime: 'null'
-        },
-        {
-          username: 'none',
-          subject: 'null',
-          wakeupTime: 'null',
-          bedTime: 'null'
-        },
-        {
-          username: 'none',
-          subject: 'null',
-          wakeupTime: 'null',
-          bedTime: 'null'
-        },
-        {
-          username: 'none',
-          subject: 'null',
-          wakeupTime: 'null',
-          bedTime: 'null'
-        },
-        {
-          username: 'none',
-          subject: 'null',
-          wakeupTime: 'null',
-          bedTime: 'null'
-        },
-        {
-          username: 'none',
-          subject: 'null',
-          wakeupTime: 'null',
-          bedTime: 'null'
-        }
-      ]
+      tableData: []
 
     }
+  },
+  mounted() {
+    this.update()
   },
   methods: {
     update() {
       new Promise((resolve, reject) => {
         recommend(sessionStorage.getItem('username')).then(response => {
           console.log(response.data)
-          for (let i = 0; i < 6; i++) {
-            if (i < response.data.length) {
-              this.$data.tableData[i].username = response.data[i].username
-              this.$data.tableData[i].subject = response.data[i].subject
-              this.$data.tableData[i].bedTime = response.data[i].bedTime
-              this.$data.tableData[i].wakeupTime = response.data[i].upTime
-            } else {
-              this.$data.tableData[i].username = 'none'
-              this.$data.tableData[i].subject = 'null'
-              this.$data.tableData[i].bedTime = 'null'
-              this.$data.tableData[i].wakeupTime = 'null'
+          const length = this.$data.tableData.length
+          for (let i = 0; i < length; i++) {
+            this.$data.tableData.pop()
+          }
+          for (let i = 0; i < response.data.length; i++) {
+            const item = {
+              username: 'none',
+              subject: 'null',
+              wakeupTime: 'null',
+              bedTime: 'null'
             }
+            item.username = response.data[i].username
+            item.subject = response.data[i].subject
+            item.bedTime = response.data[i].bedTime
+            item.wakeupTime = response.data[i].upTime
+            this.$data.tableData.push(item)
           }
 
           resolve()
@@ -128,9 +98,9 @@ export default {
   line-height: 60px;
 }
 .button{
-  top: 17%;
-  right: 5%;
-  position: absolute;
+  top: 0%;
+  right: -10%;
+  position: relative;
 }
 .title{
   font-weight: bold;
@@ -141,4 +111,13 @@ export default {
   color: #333;
 }
 
+.el-table {
+  height: 100%;
+
+}
+
+.el-card{
+  height: 502px;
+  overflow: auto;
+}
 </style>
