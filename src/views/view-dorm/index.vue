@@ -1,6 +1,6 @@
 <template>
   <div class="dorm-map">
-    <img src="https://www.sustech.edu.cn/uploads/images/2022/09/27102859_86185.jpg" alt="Dorm Map" class="map-image">
+    <img src="/map.jpg" alt="Dorm Map" class="map-image">
     <div
       v-for="zone in zones"
       :key="zone.id"
@@ -11,7 +11,7 @@
     >
       {{ zone.name }}
       <div v-if="zone.hovering" class="preview-page">
-        <img src="/dorm.png" alt="" class="dorm-image">
+        <img :src="getImage(zone.name)" alt="" class="dorm-image">
         <router-link :to="{ name: 'ViewDormInZone', params: { zoneName: zone.name }}">
           <el-button>
             Enter
@@ -35,6 +35,20 @@ export default {
         { id: 3, name: '荔园', num: 42, x: '44%', y: '19%', hovering: false },
         { id: 4, name: '欣园', num: 107, x: '52%', y: '14%', hovering: false }
       ]
+    }
+  },
+  methods: {
+    getImage(zoneName) {
+      switch (zoneName) {
+        case '湖畔':
+          return '/hp-dorm.png'
+        case '二期':
+          return '/erqi-dorm.png'
+        case '荔园':
+          return '/liyuan-dorm.png'
+        default:
+          return '/dorm.png'
+      }
     }
   }
 }
