@@ -555,8 +555,8 @@ export default {
       }
       new Promise((resolve, reject) => {
         Register(regData).then(response => {
-          this.allList = response.data
-          this.total = this.allList.length
+          // this.allList = response.data
+          // this.total = this.allList.length
           resolve()
           setTimeout(() => {
             this.listLoading = false
