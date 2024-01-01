@@ -38,6 +38,15 @@
         </div>
       </div>
 
+      <div class="user-education user-bio-section">
+        <div class="user-bio-section-header"><span>Selected Dorm</span></div>
+        <div class="user-bio-section-body">
+          <div class="text-muted">
+            {{ user.dorm }}
+          </div>
+        </div>
+      </div>
+
     </div>
   </el-card>
 </template>
@@ -60,7 +69,8 @@ export default {
           role: '',
           subject: '',
           wakeupTime: '',
-          bedTime: ''
+          bedTime: '',
+          dorm: ''
         }
       }
     }
@@ -82,6 +92,14 @@ export default {
           }
           this.$props.user.wakeupTime = response.data.uptime.timeSlot
           this.$props.user.bedTime = response.data.bedtime.timeSlot
+          if (response.data.bookedDormitory === null) {
+            this.$props.user.dorm = 'null'
+          } else {
+            this.$props.user.dorm = response.data.bookedDormitory.location + ' ' +
+              response.data.bookedDormitory.buildingName + '栋 ' + response.data.bookedDormitory.floor +
+              '层 ' + response.data.bookedDormitory.houseNum + '室'
+          }
+
           resolve()
           setTimeout(() => {
             this.listLoading = false
@@ -157,6 +175,7 @@ export default {
   transform: translate(-50%, -50%);
 }
 .el-card{
-  height: 503px
+  height: 560px;
+  overflow: auto
 }
 </style>

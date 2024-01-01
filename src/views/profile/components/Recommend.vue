@@ -117,7 +117,7 @@ export default {
 }
 
 .el-card{
-  height: 502px;
+  height: 560px;
   overflow: auto;
 }
 </style>
