@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-input v-model="input" placeholder="请输入内容" @keyup.enter.native="send" />
+    <el-input v-model="input" placeholder="在此输入消息，按下回车键发送" @keyup.enter.native="send" />
   </div>
 </template>
 

@@ -233,7 +233,7 @@ export const asyncRoutes = [
         path: 'index',
         component: () => import('@/views/chat/index'),
         name: 'chat',
-        meta: { title: 'chat', icon: 'email', roles: ['editor'] }
+        meta: { title: 'Chat', icon: 'message', roles: ['editor'] }
       }
     ]
   },

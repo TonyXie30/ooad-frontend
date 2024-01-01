@@ -1,24 +1,24 @@
 <template>
   <div class="common">
     <!-- 登录 -->
-    <div v-if="!isLogin" class="login">
-      <el-tabs v-model="activeName">
-        <el-tab-pane label="欢迎登录" name="first">
-          <!-- 用户名输入 -->
-          <el-input v-model="username" placeholder="请输入用户名">
-            <el-button slot="append" @click="login">登录</el-button>
-          </el-input>
-          <!-- 头像选择 -->
-          <div class="avatar">
-            <span v-for="(src,index) in avatarList" :key="index" @click="avatar(src)">
-              <el-avatar :src="src" :class="{'choosed':src==choosed}" />
-            </span>
-          </div>
-        </el-tab-pane>
-      </el-tabs>
-    </div>
+    <!--    <div v-if="!isLogin" class="login">-->
+    <!--      <el-tabs v-model="activeName">-->
+    <!--        <el-tab-pane label="欢迎登录" name="first">-->
+    <!--          &lt;!&ndash; 用户名输入 &ndash;&gt;-->
+    <!--          <el-input v-model="username" placeholder="请输入用户名">-->
+    <!--            <el-button slot="append" @click="login">登录</el-button>-->
+    <!--          </el-input>-->
+    <!--          &lt;!&ndash; 头像选择 &ndash;&gt;-->
+    <!--          <div class="avatar">-->
+    <!--            <span v-for="(src,index) in avatarList" :key="index" @click="avatar(src)">-->
+    <!--              <el-avatar :src="src" :class="{'choosed':src==choosed}" />-->
+    <!--            </span>-->
+    <!--          </div>-->
+    <!--        </el-tab-pane>-->
+    <!--      </el-tabs>-->
+    <!--    </div>-->
     <!-- 聊天 -->
-    <el-container v-else>
+    <el-container>
       <el-aside width="350px">
         <my-aside />
       </el-aside>
@@ -43,6 +43,8 @@ import store from './store/index'
 import myAside from './components/myAside.vue'
 import myMain from './components/myMain.vue'
 import myFooter from './components/myFooter.vue'
+import { gerProfile } from '@/api/article'
+
 export default {
   name: 'App',
   components: { myAside, myMain, myFooter },
@@ -50,17 +52,7 @@ export default {
     return {
       activeName: 'first',
       username: '',
-      choosed: '',
-      avatarList: [
-        'http://img.mp.itc.cn/upload/20170808/5861bc790e654d56bc9289c567b44875_th.jpg',
-        'https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png',
-        'http://5b0988e595225.cdn.sohucs.com/images/20180312/366885f17a20469587cac376c0102527.jpeg',
-        'http://img.52z.com/upload/news/image/20180111/20180111085521_86389.jpg',
-        'https://pic.qqtn.com/up/2019-1/2019010208201525732.jpg',
-        'http://img.zcool.cn/community/010e9557f74cbba84a0d304faa657c.jpg',
-        'http://img.zcool.cn/community/01a7f7590cd5a3a8012145509a8335.jpg@2o.jpg',
-        'http://5b0988e595225.cdn.sohucs.com/images/20180526/60a21af360d2457c950295839bea8feb.jpeg'
-      ]
+      avatar: ''
     }
   },
   computed: {
@@ -68,60 +60,72 @@ export default {
       return store.state.isLogin
     },
     userInfo() {
+      // console.log(store.state.userInfo)
       return store.state.userInfo
     },
     userList() {
       return store.state.userList
     }
   },
+  mounted() {
+    console.log('0')
+    this.loginChat()
+  },
 
   methods: {
-    avatar(src) {
-      this.choosed = src
-    },
-    login() {
-      if (this.username && this.choosed) {
-        /* 连接socket */
-        this.$socket.connect()
-        this.$socket.emit('login', { name: this.username, img: this.choosed }, (result) => {
-          if (result) {
-            /* 登录成功的情况下，才修改vuex的数据 */
-            this.$message.success('登录成功！')
-            /* 告诉vuex修改个人信息 */
-            store.commit('setMyInfo', {
-              img: this.choosed,
-              name: this.username
-            })
+    loginChat() {
+      console.log('1')
+      this.username = sessionStorage.getItem('username')
+      new Promise((resolve, reject) => {
+        gerProfile(sessionStorage.getItem('username')).then(response => {
+          if (response.data.photo != null) {
+            this.avatar = response.data.photo
           } else {
-            /* 失败，给出提示！ */
-            this.$message.error('用户名重复！')
+            this.avatar = 'http://img.mp.itc.cn/upload/20170808/5861bc790e654d56bc9289c567b44875_th.jpg'
           }
+          console.log(this.avatar)
+          this.$socket.connect()
+          this.$socket.emit('login', { name: this.username, img: this.avatar }, (result) => {
+            if (result) {
+              /* 登录成功的情况下，才修改vuex的数据 */
+              this.$message.success('欢迎来到在线聊天室！')
+              /* 告诉vuex修改个人信息 */
+              store.commit('setMyInfo', {
+                img: this.avatar,
+                name: this.username
+              })
+              console.log(result)
+              // console.log(store._mutations)
+              // store.commit('SOCKET_login', result.userList)
+              // console.log(store.state.myInfo)
+            }
+          })
+          resolve()
+          setTimeout(() => {
+            this.listLoading = false
+          }, 1000)
         })
-      }
+      })
+    }
+  },
+
+  sockets: {
+    login(data) {
+      console.log(data)
+      store.commit('SOCKET_login', data)
+    },
+    updateChatMessageList(data) {
+      console.log(data)
+      store.commit('SOCKET_updateChatMessageList', data)
     }
   }
 }
 </script>
 <style scoped>
-.choosed{
-  border:  solid 2px red;
-}
-.login{
-  width: 50%;
-  margin-left: 25%;
-  border: solid 1px rgb(228, 231, 237);
-  padding: 30px;
-}
-.login .avatar{
-  margin-top: 20px;
-}
-.login .avatar .el-avatar{
-  cursor: pointer;
-  margin-left: 5px;
-}
+
 .common {
   /* padding: 100px; */
-  margin-top: 100px;
+  margin-top: 0;
   /* width: 800px; */ /* 800 是我为了演示3个用户同时在线，建议设为100%，项目的宽度直接受这个影响*/
   width:100%;
   height: 200px;
@@ -138,7 +142,10 @@ export default {
   background-color: #d3dce6;
   color: #333;
   text-align: center;
-  height: 500px;
+  height: 620px;
+}
+.el-container{
+  height: 620px;
 }
 
 .el-main {
@@ -147,7 +154,4 @@ export default {
   height: 280px;
 }
 
-body > .el-container {
-  margin-bottom: 40px;
-}
 </style>

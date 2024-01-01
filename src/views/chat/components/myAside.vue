@@ -9,13 +9,21 @@
     </el-row>
     <!-- 搜索好友 -->
     <el-row style="height: 50px">
-      <el-input v-model="keyword" placeholder="搜索好友">
+      <el-input v-model="keyword" placeholder="搜索在线用户">
         <el-button slot="append" icon="el-icon-search" />
       </el-input>
     </el-row>
     <!-- 好友列表 -->
-    <el-row style="height: 390px">
-      <el-table :data="tableData.filter(data => (!keyword||(data.name.toLowerCase().includes(keyword.toLowerCase())))&&!(data.name.toLowerCase().includes(myInfo.name.toLowerCase())))" height="390px" stripe style="width: 100%" :show-header="false" @cell-click="setUserInfo">
+    <el-row style="height: 430px">
+      <el-table
+        :data="tableData.filter(
+          data => (!keyword||(data.name.toLowerCase().includes(keyword.toLowerCase())))&&!(data.name.toLowerCase().includes(myInfo.name.toLowerCase())))"
+        height="390px"
+        stripe
+        style="width: 100%; height: 100%"
+        :show-header="false"
+        @cell-click="setUserInfo"
+      >
         <el-table-column label="日期">
           <template slot-scope="scope">
             <div class="userlist">

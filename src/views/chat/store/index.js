@@ -3,7 +3,7 @@ import Vuex from 'vuex'
 
 Vue.use(Vuex)
 
-export default new Vuex.Store({
+const store = new Vuex.Store({
   state: {
     /* 聊天类型 */
     chatType: '',
@@ -11,7 +11,7 @@ export default new Vuex.Store({
     isLogin: false,
     /* 我的信息 */
     myInfo: {
-      img: 'http://img.52z.com/upload/news/image/20180111/20180111085521_86389.jpg',
+      img: 'http://img.mp.itc.cn/upload/20170808/5861bc790e654d56bc9289c567b44875_th.jpg',
       name: ''
     },
     /* 别人的信息（特指聊天对象） */
@@ -47,4 +47,17 @@ export default new Vuex.Store({
   },
   actions: {},
   modules: {}
+  // plugin: {
+  //   p1: new VueSocketIO({
+  //     debug: false,
+  //     connection: 'http://localhost:3000',
+  //     vuex: {
+  //       store,
+  //       actionPrefix: 'SOCKET_',
+  //       mutationPrefix: 'SOCKET_'
+  //     }
+  //   })
+  // }
 })
+
+export default store
