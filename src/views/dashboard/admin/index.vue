@@ -1,7 +1,7 @@
 <template>
   <div class="dashboard-editor-container">
     <video-background
-      src="/autumn-leaves.mp4"
+      src="/bgvideo.mp4"
       style="max-height: 900px; height: 100vh;"
     >
       <panel-group />
@@ -14,7 +14,7 @@ import PanelGroup from './components/PanelGroup'
 import VideoBackground from 'vue-responsive-video-background-player'
 
 export default {
-  name: 'DashboardAdmin',
+  name: 'UserDashboard',
   components: {
     PanelGroup,
     VideoBackground
@@ -24,7 +24,6 @@ export default {
 
 <style lang="scss" scoped>
 .dashboard-editor-container {
-  padding: 3px;
   background-color: rgb(240, 242, 245);
   position: relative;
 }

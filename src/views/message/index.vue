@@ -7,9 +7,16 @@
       </div>
       <div class="mail-content">
         <p>{{ message.content }}</p>
-        <div v-if="looksLikeApplication(message.content)" class="mail-actions">
-          <el-button type="success" @click="acceptApplication(getApplicantName(message.content))">Accept</el-button>
-          <el-button type="danger">Reject</el-button>
+        <div v-if="teamApplication(message.content)">
+          <el-button type="success" @click="acceptTeamApplication(getTeamApplicantName(message.content), message.id)">Accept</el-button>
+          <el-button type="danger" @click="deleteMessage(message.id)">Reject</el-button>
+        </div>
+        <div v-else-if="roomApplication(message.content)">
+          <el-button type="success" @click="acceptExchangeApplication(getExchangeApplicantName(message.content), message.id)">Accept</el-button>
+          <el-button type="danger" @click="rejectExchangeApplication(getExchangeApplicantName(message.content), message.id)">Reject</el-button>
+        </div>
+        <div v-else>
+          <el-button type="danger" @click="deleteMessage(message.id)">Delete</el-button>
         </div>
       </div>
     </div>
@@ -17,30 +24,14 @@
 </template>
 
 <script>
-import { getMailBox } from '@/api/message'
+import { getMailBox, deleteNotification } from '@/api/message'
 import { teamUp } from '@/api/team'
+import { exchangeAccept, exchangeReject } from '@/api/room-exchange'
 export default {
   name: 'Mailbox',
   data() {
     return {
-      // Sample messages data
-      messages: [
-        {
-          id: 1,
-          sender: 'Alice',
-          content: 'This is a test message.',
-          sentDate: '2023-12-28',
-          type: 'other' // Other type of message
-        },
-        {
-          id: 2,
-          sender: 'Bob',
-          content: 'Notification: There\'s a new application for your team. Here\'s his brief introduction: id: 4, name: zzm, gender: male, subject: Computer Science',
-          sentDate: '2023-12-29',
-          type: 'application' // Application type of message
-        }
-        // ... other messages
-      ]
+      messages: []
     }
   },
   computed: {
@@ -52,28 +43,51 @@ export default {
     await this.getAllMessages()
   },
   methods: {
-    looksLikeApplication(content) {
+    teamApplication(content) {
       return content.includes('id:') && content.includes('name:')
     },
-    async acceptApplication(name) {
-      console.log(name)
+    roomApplication(content) {
+      return content.includes('location:') && content.includes('buildingName:')
+    },
+    async acceptTeamApplication(name, id) {
       await teamUp(this.userName, name)
-      // Implement the logic to accept the application
+      await this.deleteMessage(id)
+      this.$message({
+        type: 'success',
+        message: 'Team up successfully!'
+      })
+    },
+    async acceptExchangeApplication(name, id) {
+      await exchangeAccept(this.userName, name)
+      await this.deleteMessage(id)
+      this.$message({
+        type: 'success',
+        message: 'Exchange the room successfully!'
+      })
+    },
+    async rejectExchangeApplication(name, id) {
+      await exchangeReject(this.userName, name)
+      await this.deleteMessage(id)
     },
     messageDate(originalDate) {
       return new Date(originalDate).toLocaleString()
     },
-    getApplicantName(message) {
-      // Split the message by lines
+    getTeamApplicantName(message) {
       const lines = message.split('\n')
-      // Initialize name variable
       let name = ''
-      // Loop through each line to find the name
       lines.forEach((line) => {
-        // Check if the line contains the name field
         if (line.trim().startsWith('name:')) {
-          // Extract the name after the 'name:' part and trim any whitespace or commas
           name = line.split('name:')[1].trim().replace(',', '')
+        }
+      })
+      return name
+    },
+    getExchangeApplicantName(message) {
+      const lines = message.split('\n')
+      let name = ''
+      lines.forEach((line) => {
+        if (line.trim().startsWith('Apply from:')) {
+          name = line.split('Apply from:')[1].trim().replace(',', '')
         }
       })
       return name
@@ -81,6 +95,10 @@ export default {
     async getAllMessages() {
       const response = await getMailBox(this.userName)
       this.messages = response.data
+    },
+    async deleteMessage(id) {
+      await deleteNotification(id)
+      this.messages = this.messages.filter(message => message.id !== id)
     }
   }
 }

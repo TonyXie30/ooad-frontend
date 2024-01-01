@@ -1,19 +1,21 @@
 <template>
   <div class="view-my-team">
-    <h1>Team {{ team.leader }}</h1>
-    <p>Current Team Size: {{ team.members.length }}</p>
-
-    <ul>
-      <li v-for="member in team.members" :key="member.username">
-        <div class="row-element">
-          {{ member.username }}
-          <el-button v-if="isLeader && member.username !== team.leader" type="primary" class="remove-btn" @click="removeMember(member.username)">Remove</el-button>
+    <div class="upper-part">
+      <div class="left-container">
+        <h1 class="title">Team: {{ team.leader }}</h1>
+        <p class="size">Current Team Size: {{ team.members.length }}</p>
+      </div>
+      <div class="right-container">
+        <div v-for="member in team.members" :key="member.username" class="member-row">
+          <span>{{ member.username }}</span>
+          <el-button v-if="isLeader && member.username !== team.leader" type="danger" class="remove-btn" @click="removeMember(member.username)">Remove</el-button>
         </div>
-      </li>
-    </ul>
-
-    <el-button v-if="isLeader" type="primary" class="leave-btn" @click="disbandTeam">Disband Team</el-button>
-    <el-button v-else class="leave-btn" type="primary" @click="leaveTeam">Leave Team</el-button>
+      </div>
+    </div>
+    <div class="bottom-part">
+      <el-button v-if="isLeader" class="leave-btn" type="danger" @click="disbandTeam">Disband Team</el-button>
+      <el-button v-else class="leave-btn" type="danger" @click="leaveTeam">Leave Team</el-button>
+    </div>
   </div>
 </template>
 
@@ -62,8 +64,9 @@ export default {
     },
     disbandTeam() {
       if (this.team.members.length === 1) {
-        this.$alert('You are the only member of the team!', {
-          confirmButtonText: 'Confirm'
+        this.$message({
+          type: 'error',
+          message: 'You are the only one member of the team!'
         })
       } else {
         this.$confirm('Confirm to disband the team?', 'Warning', {
@@ -86,7 +89,7 @@ export default {
         type: 'warning'
       }).then(async() => {
         await kickThisMember(this.userName, removeMemberName)
-        this.team.members = this.team.members.filter(member => member.memberName !== removeMemberName)
+        this.team.members = this.team.members.filter(member => member.username !== removeMemberName)
         this.$message({
           type: 'success',
           message: 'You removed this member successfully!'
@@ -108,27 +111,74 @@ export default {
 
 <style scoped>
 .view-my-team {
-  position: relative;
-  width: 600px;
-  margin: 80px auto auto;
-  padding: 3rem;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  background-color: #CAFFFF;
+  color: #833600;
+  padding: 20px; /* Padding for overall alignment */
+}
+
+.upper-part {
+  display: flex;
+  justify-content: space-between; /* This will space out the left and right containers */
+  margin-top: 50px;
+  margin-bottom: 20px; /* Space between upper and bottom parts */
+}
+
+.left-container {
+  width: 50%; /* Adjust as necessary for your layout */
+  margin-left: 100px;
+}
+
+.title {
+  font-size: 50px;
+}
+
+.size {
+  margin-top: 100px;
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.right-container {
+  width: 50%; /* Adjust as necessary for your layout */
+  display: flex;
+  flex-direction: column;
+  margin-top: 40px;
+  margin-right: 250px;
+  align-items: flex-end; /* This aligns the children to the right */
+  font-size: 20px;
+}
+
+.member-row {
+  width: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding: 10px;
   background-color: #f7f7f7;
-  opacity: 0.8;
-  border-radius: 20px;
+  border-radius: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.row-element {
-  display: flex;
-  font-size: 25px;
-  .remove-btn {
-    display: block;
-    margin-left: 120px;
-  }
+.bottom-part {
+  margin-top: 400px;
+  margin-left: 610px;
+}
+
+.remove-btn {
+  border-radius: 10px;
 }
 
 .leave-btn {
-  display: block;
-  margin: 0 auto;
+  font-size: 20px;
+  align-self: center; /* Centers the button in the bottom part */
+  border-radius: 10px;
 }
+
+/* ... other styles ... */
 </style>
+

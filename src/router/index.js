@@ -7,8 +7,6 @@ Vue.use(Router)
 import Layout from '@/layout'
 
 /* Router Modules */
-import componentsRouter from './modules/components'
-import tableRouter from './modules/table'
 import viewDormRouter from './modules/view-dorm'
 import teamRouter from '@/router/modules/team'
 
@@ -79,7 +77,7 @@ export const constantRoutes = [
         path: 'dashboard',
         component: () => import('@/views/dashboard/index'),
         name: 'Dashboard',
-        meta: { title: 'Menu', icon: 'guide', affix: true }
+        meta: { title: 'Menu', icon: 'guide', affix: true, noCache: true }
       }
     ]
   },
@@ -97,47 +95,7 @@ export const constantRoutes = [
       }
     ]
   },
-  {
-    path: '/dormSelect',
-    component: Layout,
-    redirect: '/dormSelect/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/dormSelect/index'),
-        name: 'DormSelect',
-        meta: { title: 'Select Dorm', icon: 'list' }
-      }
-    ]
-  },
-  {
-    path: '/roomExchange',
-    component: Layout,
-    redirect: '/roomExchange/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/roomExchange/index'),
-        name: 'roomExchange',
-        meta: { title: 'Exchange room', icon: 'example' }
-      }
-    ]
-  },
-  {
-    path: '/message',
-    component: Layout,
-    redirect: '/message/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/message/index'),
-        name: 'messageBox',
-        meta: { title: 'Message Box', icon: 'email' }
-      }
-    ]
-  },
-  viewDormRouter,
-  teamRouter
+  viewDormRouter
 ]
 
 /**
@@ -154,7 +112,7 @@ export const asyncRoutes = [
     meta: {
       title: 'Permission',
       icon: 'lock',
-      roles: ['admin', 'editor'] // you can set roles in root nav
+      roles: ['admin'] // you can set roles in root nav
     },
     children: [
       {
@@ -162,8 +120,7 @@ export const asyncRoutes = [
         component: () => import('@/views/permission/page'),
         name: 'PagePermission',
         meta: {
-          title: 'Page Permission',
-          roles: ['admin'] // or you can only set roles in sub nav
+          title: 'Page Permission'
         }
       },
       {
@@ -172,7 +129,6 @@ export const asyncRoutes = [
         name: 'DirectivePermission',
         meta: {
           title: 'Directive Permission'
-          // if do not set roles, means: this page does not require permission
         }
       },
       {
@@ -180,22 +136,8 @@ export const asyncRoutes = [
         component: () => import('@/views/permission/role'),
         name: 'RolePermission',
         meta: {
-          title: 'Role Permission',
-          roles: ['admin']
+          title: 'Role Permission'
         }
-      }
-    ]
-  },
-  {
-    path: '/faculty',
-    component: Layout,
-    redirect: '/faculty/index',
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/faculty/index'),
-        name: 'faculty',
-        meta: { title: 'Faculty', icon: 'tree', roles: ['admin'] }
       }
     ]
   },
@@ -208,7 +150,7 @@ export const asyncRoutes = [
         path: 'index',
         component: () => import('@/views/faculty-dorm/index'),
         name: 'faculty-dorm',
-        meta: { title: 'Faculty Dorm', icon: 'list', roles: ['admin'] }
+        meta: { title: 'Dorm Management', icon: 'list', roles: ['admin'] }
       }
     ]
   },
@@ -221,7 +163,7 @@ export const asyncRoutes = [
         path: 'index',
         component: () => import('@/views/faculty-user/index'),
         name: 'faculty-user',
-        meta: { title: 'Faculty User', icon: 'list', roles: ['admin'] }
+        meta: { title: 'User Management', icon: 'list', roles: ['admin'] }
       }
     ]
   },
@@ -234,75 +176,69 @@ export const asyncRoutes = [
         path: 'index',
         component: () => import('@/views/faculty-time_range/index'),
         name: 'faculty-time_range',
-        meta: { title: 'Faculty Time', icon: 'list', roles: ['admin'] }
+        meta: { title: 'Time Management', icon: 'list', roles: ['admin'] }
       }
     ]
   },
   {
-    path: '/icon',
+    path: '/message',
     component: Layout,
+    redirect: '/message/index',
     children: [
       {
         path: 'index',
-        component: () => import('@/views/icons/index'),
-        name: 'Icons',
-        meta: { title: 'Icons', icon: 'icon', noCache: true }
+        component: () => import('@/views/message/index'),
+        name: 'messageBox',
+        meta: { title: 'Message Box', icon: 'email', roles: ['editor'] }
+      }
+    ]
+  },
+  {
+    path: '/dormSelect',
+    component: Layout,
+    redirect: '/dormSelect/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/dormSelect/index'),
+        name: 'DormSelect',
+        meta: { title: 'Select Dorm', icon: 'list', roles: ['editor'] }
+      }
+    ]
+  },
+  {
+    path: '/data-export',
+    component: Layout,
+    redirect: '/excel-export/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/excel-export/index'),
+        name: 'DataExport',
+        meta: { title: 'Data Export', icon: 'list', roles: ['admin'] }
+      }
+    ]
+  },
+  {
+    path: '/chat',
+    component: Layout,
+    redirect: '/chat/index',
+    children: [
+      {
+        path: 'index',
+        component: () => import('@/views/chat/index'),
+        name: 'chat',
+        meta: { title: 'Chat', icon: 'message', roles: ['editor'] }
       }
     ]
   },
 
   /** when your routing map is too long, you can split it into small modules **/
-  componentsRouter,
-  tableRouter,
-
-  {
-    path: '/example',
-    component: Layout,
-    redirect: '/example/list',
-    name: 'Example',
-    meta: {
-      title: 'Example',
-      icon: 'el-icon-s-help'
-    },
-    children: [
-      {
-        path: 'create',
-        component: () => import('@/views/example/create'),
-        name: 'CreateArticle',
-        meta: { title: 'Create Article', icon: 'edit' }
-      },
-      {
-        path: 'edit/:id(\\d+)',
-        component: () => import('@/views/example/edit'),
-        name: 'EditArticle',
-        meta: { title: 'Edit Article', noCache: true, activeMenu: '/example/list' },
-        hidden: true
-      },
-      {
-        path: 'list',
-        component: () => import('@/views/example/list'),
-        name: 'ArticleList',
-        meta: { title: 'Article List', icon: 'list' }
-      }
-    ]
-  },
-
-  {
-    path: '/tab',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/tab/index'),
-        name: 'Tab',
-        meta: { title: 'Tab', icon: 'tab' }
-      }
-    ]
-  },
-
+  teamRouter,
   {
     path: '/error',
     component: Layout,
+    hidden: true,
     redirect: 'noRedirect',
     name: 'ErrorPages',
     meta: {
@@ -321,68 +257,6 @@ export const asyncRoutes = [
         component: () => import('@/views/error-page/404'),
         name: 'Page404',
         meta: { title: '404', noCache: true }
-      }
-    ]
-  },
-
-  {
-    path: '/error-log',
-    component: Layout,
-    children: [
-      {
-        path: 'log',
-        component: () => import('@/views/error-log/index'),
-        name: 'ErrorLog',
-        meta: { title: 'Error Log', icon: 'bug' }
-      }
-    ]
-  },
-
-  {
-    path: '/excel',
-    component: Layout,
-    redirect: '/excel/export-excel',
-    name: 'Excel',
-    meta: {
-      title: 'Excel',
-      icon: 'excel'
-    },
-    children: [
-      {
-        path: 'export-excel',
-        component: () => import('@/views/excel/export-excel'),
-        name: 'ExportExcel',
-        meta: { title: 'Export Excel' }
-      },
-      {
-        path: 'export-selected-excel',
-        component: () => import('@/views/excel/select-excel'),
-        name: 'SelectExcel',
-        meta: { title: 'Export Selected' }
-      },
-      {
-        path: 'export-merge-header',
-        component: () => import('@/views/excel/merge-header'),
-        name: 'MergeHeader',
-        meta: { title: 'Merge Header' }
-      },
-      {
-        path: 'upload-excel',
-        component: () => import('@/views/excel/upload-excel'),
-        name: 'UploadExcel',
-        meta: { title: 'Upload Excel' }
-      }
-    ]
-  },
-  {
-    path: '/theme',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        component: () => import('@/views/theme/index'),
-        name: 'Theme',
-        meta: { title: 'Theme', icon: 'theme' }
       }
     ]
   },

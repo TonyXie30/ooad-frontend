@@ -3,7 +3,7 @@
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">Dorm selection system @ SUSTech</h3>
+        <h3 class="title">Dorm Selection System @ SUSTech</h3>
       </div>
 
       <el-form-item prop="username">
@@ -44,17 +44,23 @@
           </span>
         </el-form-item>
       </el-tooltip>
-
+      <div class="captcha-container">
+        <img :src="captchaImageUrl" alt="">
+      </div>
+      <el-form-item prop="captcha">
+        <el-input
+          v-model="captchaInput"
+          placeholder="Enter the code shown above"
+          name="captcha"
+        />
+      </el-form-item>
       <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
-
       <div style="position:relative">
         <div class="tips">
-          <span>Username : admin</span>
-          <span>Password : any</span>
+          <span>Faculty no need to register</span>
         </div>
         <div class="tips">
-          <span style="margin-right:18px;">Username : editor</span>
-          <span>Password : any</span>
+          <span style="margin-right:18px;">Faculty username : System</span>
         </div>
       </div>
 
@@ -167,6 +173,8 @@
 <script>
 import { validUsername } from '@/utils/validate'
 import { Login, Register } from '@/api/article'
+import { getVerification } from '@/api/login'
+const CryptoJS = require('crypto-js')
 export default {
   name: 'Login',
   data() {
@@ -206,166 +214,212 @@ export default {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
         password: [{ required: true, trigger: 'blur', validator: validatePassword }]
       },
-      subjects: [{
-        value: '070101',
-        label: '数学与应用数学'
-      }, {
-        value: '080901',
-        label: '计算机科学与技术'
-      }, {
-        value: '070201',
-        label: '物理学'
-      }, {
-        value: '070301',
-        label: '化学'
-      }, {
-        value: '080201',
-        label: '机械工程'
-      }],
+      subjects: [
+        {
+          value: '070101',
+          label: '数学与应用数学'
+        },
+        {
+          value: '070201',
+          label: '物理学'
+        },
+        {
+          value: '070301',
+          label: '化学'
+        },
+        {
+          value: '070701',
+          label: '海洋科学'
+        },
+        {
+          value: '070801',
+          label: '地球物理学'
+        },
+        {
+          value: '071001',
+          label: '生物科学'
+        },
+        {
+          value: '071003',
+          label: '生物信息学'
+        },
+        {
+          value: '071201',
+          label: '统计学'
+        },
+        {
+          value: '080101',
+          label: '理论与应用力学'
+        },
+        {
+          value: '080201',
+          label: '机械工程'
+        },
+        {
+          value: '080401',
+          label: '材料科学与工程'
+        },
+        {
+          value: '080901',
+          label: '计算机科学与技术'
+        },
+        {
+          value: '080907T',
+          label: '智能科学与技术'
+        },
+        {
+          value: '080910T',
+          label: '数据科学与大数据技术'
+        },
+        {
+          value: '100103T',
+          label: '生物医学科学'
+        }
+      ],
       timeRanges: [{
-        value: '00:00:00',
-        label: '00:00:00-00:30:00'
+        value: '00:00',
+        label: '00:00-00:30'
       }, {
-        value: '00:30:00',
-        label: '00:30:00-01:00:00'
+        value: '00:30',
+        label: '00:30-01:00'
       }, {
-        value: '01:00:00',
-        label: '01:00:00-01:30:00'
+        value: '01:00',
+        label: '01:00-01:30'
       }, {
-        value: '01:30:00',
-        label: '01:30:00-02:00:00'
+        value: '01:30',
+        label: '01:30-02:00'
       }, {
-        value: '02:00:00',
-        label: '02:00:00-02:30:00'
+        value: '02:00',
+        label: '02:00-02:30'
       }, {
-        value: '02:30:00',
-        label: '02:30:00-03:00:00'
+        value: '02:30',
+        label: '02:30-03:00'
       }, {
-        value: '03:00:00',
-        label: '03:00:00-03:30:00'
+        value: '03:00',
+        label: '03:00-03:30'
       }, {
-        value: '03:30:00',
-        label: '03:30:00-04:00:00'
+        value: '03:30',
+        label: '03:30-04:00'
       }, {
-        value: '04:00:00',
-        label: '04:00:00-04:30:00'
+        value: '04:00',
+        label: '04:00-04:30'
       }, {
-        value: '04:30:00',
-        label: '04:30:00-05:00:00'
+        value: '04:30',
+        label: '04:30-05:00'
       }, {
-        value: '05:00:00',
-        label: '05:00:00-05:30:00'
+        value: '05:00',
+        label: '05:00-05:30'
       }, {
-        value: '05:30:00',
-        label: '05:30:00-06:00:00'
+        value: '05:30',
+        label: '05:30-06:00'
       }, {
-        value: '06:00:00',
-        label: '06:00:00-06:30:00'
+        value: '06:00',
+        label: '06:00-06:30'
       }, {
-        value: '06:30:00',
-        label: '06:30:00-07:00:00'
+        value: '06:30',
+        label: '06:30-07:00'
       }, {
-        value: '07:00:00',
-        label: '07:00:00-07:30:00'
+        value: '07:00',
+        label: '07:00-07:30'
       }, {
-        value: '07:30:00',
-        label: '07:30:00-08:00:00'
+        value: '07:30',
+        label: '07:30-08:00'
       }, {
-        value: '08:00:00',
-        label: '08:00:00-08:30:00'
+        value: '08:00',
+        label: '08:00-08:30'
       }, {
-        value: '08:30:00',
-        label: '08:30:00-09:00:00'
+        value: '08:30',
+        label: '08:30-09:00'
       }, {
-        value: '09:00:00',
-        label: '09:00:00-09:30:00'
+        value: '09:00',
+        label: '09:00-09:30'
       }, {
-        value: '09:30:00',
-        label: '09:30:00-10:00:00'
+        value: '09:30',
+        label: '09:30-10:00'
       }, {
-        value: '10:00:00',
-        label: '10:00:00-10:30:00'
+        value: '10:00',
+        label: '10:00-10:30'
       }, {
-        value: '10:30:00',
-        label: '10:30:00-11:00:00'
+        value: '10:30',
+        label: '10:30-11:00'
       }, {
-        value: '11:00:00',
-        label: '11:00:00-11:30:00'
+        value: '11:00',
+        label: '11:00-11:30'
       }, {
-        value: '11:30:00',
-        label: '11:30:00-12:00:00'
+        value: '11:30',
+        label: '11:30-12:00'
       }, {
-        value: '12:00:00',
-        label: '12:00:00-12:30:00'
+        value: '12:00',
+        label: '12:00-12:30'
       }, {
-        value: '12:30:00',
-        label: '12:30:00-13:00:00'
+        value: '12:30',
+        label: '12:30-13:00'
       }, {
-        value: '13:00:00',
-        label: '13:00:00-13:30:00'
+        value: '13:00',
+        label: '13:00-13:30'
       }, {
-        value: '13:30:00',
-        label: '13:30:00-14:00:00'
+        value: '13:30',
+        label: '13:30-14:00'
       }, {
-        value: '14:00:00',
-        label: '14:00:00-14:30:00'
+        value: '14:00',
+        label: '14:00-14:30'
       }, {
-        value: '14:30:00',
-        label: '14:30:00-15:00:00'
+        value: '14:30',
+        label: '14:30-15:00'
       }, {
-        value: '15:00:00',
-        label: '15:00:00-15:30:00'
+        value: '15:00',
+        label: '15:00-15:30'
       }, {
-        value: '15:30:00',
-        label: '15:30:00-16:00:00'
+        value: '15:30',
+        label: '15:30-16:00'
       }, {
-        value: '16:00:00',
-        label: '16:00:00-16:30:00'
+        value: '16:00',
+        label: '16:00-16:30'
       }, {
-        value: '16:30:00',
-        label: '16:30:00-17:00:00'
+        value: '16:30',
+        label: '16:30-17:00'
       }, {
-        value: '17:00:00',
-        label: '17:00:00-17:30:00'
+        value: '17:00',
+        label: '17:00-17:30'
       }, {
-        value: '17:30:00',
-        label: '17:30:00-18:00:00'
+        value: '17:30',
+        label: '17:30-18:00'
       }, {
-        value: '18:00:00',
-        label: '18:00:00-18:30:00'
+        value: '18:00',
+        label: '18:00-18:30'
       }, {
-        value: '18:30:00',
-        label: '18:30:00-19:00:00'
+        value: '18:30',
+        label: '18:30-19:00'
       }, {
-        value: '19:00:00',
-        label: '19:00:00-19:30:00'
+        value: '19:00',
+        label: '19:00-19:30'
       }, {
-        value: '19:30:00',
-        label: '19:30:00-20:00:00'
+        value: '19:30',
+        label: '19:30-20:00'
       }, {
-        value: '20:00:00',
-        label: '20:00:00-20:30:00'
+        value: '20:00',
+        label: '20:00-20:30'
       }, {
-        value: '20:30:00',
-        label: '20:30:00-21:00:00'
+        value: '20:30',
+        label: '20:30-21:00'
       }, {
-        value: '21:00:00',
-        label: '21:00:00-21:30:00'
+        value: '21:00',
+        label: '21:00-21:30'
       }, {
-        value: '21:30:00',
-        label: '21:30:00-22:00:00'
+        value: '21:30',
+        label: '21:30-22:00'
       }, {
-        value: '22:00:00',
-        label: '22:00:00-22:30:00'
+        value: '22:00',
+        label: '22:00-22:30'
       }, {
-        value: '22:30:00',
-        label: '22:30:00-23:00:00'
+        value: '22:30',
+        label: '22:30-23:00'
       }, {
-        value: '23:00:00',
-        label: '23:00:00-23:30:00'
+        value: '23:00',
+        label: '23:00-23:30'
       }, {
-        value: '23:30:00',
-        label: '23:30:00-24:00:00'
+        value: '23:30',
+        label: '23:30-24:00'
       }],
       genders: [{
         value: 'male',
@@ -385,24 +439,13 @@ export default {
       capsTooltip: false,
       loading: false,
       showDialog: false,
-      redirect: undefined,
-      otherQuery: {}
+      captchaImageUrl: 'url-to-captcha-image',
+      captchaCode: '',
+      captchaInput: ''
     }
   },
-  watch: {
-    $route: {
-      handler: function(route) {
-        const query = route.query
-        if (query) {
-          this.redirect = query.redirect
-          this.otherQuery = this.getOtherQuery(query)
-        }
-      },
-      immediate: true
-    }
-  },
-  created() {
-    // window.addEventListener('storage', this.afterQRScan)
+  async created() {
+    await this.getVerificationCode()
   },
   mounted() {
     if (this.loginForm.username === '') {
@@ -410,9 +453,6 @@ export default {
     } else if (this.loginForm.password === '') {
       this.$refs.password.focus()
     }
-  },
-  destroyed() {
-    // window.removeEventListener('storage', this.afterQRScan)
   },
   methods: {
     checkCapslock(e) {
@@ -430,60 +470,71 @@ export default {
       })
     },
     handleLogin() {
-      // this.$router.push({ path: "/profile/index" })
-      // this.$forceUpdate()
-      new Promise((resolve, reject) => {
-        Login(this.realUser).then(response => {
-          this.allList = response.data
-          this.total = this.allList.length
-          resolve()
-          setTimeout(() => {
-            this.listLoading = false
-          }, 1000)
-          this.$notify({
-            title: 'Success',
-            message: 'Login Successfully',
-            type: 'success',
-            duration: 2000
-          })
-          if (response.data.admin === true) {
-            this.loginForm.username = 'admin'
-          } else {
-            this.loginForm.username = 'editor'
+      if (this.captchaInput === this.captchaCode) {
+        new Promise((resolve, reject) => {
+          const loginData = {
+            username: this.realUser.username,
+            password: CryptoJS.MD5(this.realUser.password).toString()
           }
-          // const actionTypes = Object.keys(store._actions).map(action => action);
-          // console.log(actionTypes);
-          this.$store.dispatch('realUsername/setRealUser', this.realUser.username)
-          sessionStorage.setItem('username', this.realUser.username)
-          console.log(this.$store.getters.realUserName)
-          this.$refs.loginForm.validate(valid => {
-            if (valid) {
-              this.loading = true
-              this.$store.dispatch('user/login', this.loginForm)
-                .then(() => {
-                  // console.log("r:"+this.redirect)
-                  // console.log("q:"+this.otherQuery)
-                  this.$router.push({ path: this.redirect || '/', query: this.otherQuery })
-                  // this.$router.push({ path: this.redirect })
-                  this.loading = false
-                })
-                .catch(() => {
-                  this.loading = false
-                })
+          Login(loginData).then(response => {
+            // this.allList = response.data
+            // this.total = this.allList.length
+            if (response.data.admin === true) {
+              this.loginForm.username = 'admin'
             } else {
-              console.log('error submit!!')
-              return false
+              this.loginForm.username = 'editor'
             }
-          })
+            // const actionTypes = Object.keys(store._actions).map(action => action);
+            this.$store.dispatch('realUsername/setRealUser', this.realUser.username)
+            sessionStorage.setItem('username', this.realUser.username)
+            this.$refs.loginForm.validate(valid => {
+              if (valid) {
+                this.loading = true
+                this.$store.dispatch('user/login', this.loginForm)
+                  .then(() => {
+                    this.$router.push({ path: '/dashboard' })
+                    this.loading = false
+                    this.$notify({
+                      title: 'Success',
+                      message: 'Login Successfully',
+                      type: 'success',
+                      duration: 2000
+                    })
+                  })
+                  .catch(() => {
+                    this.loading = false
+                  })
+              } else {
+                console.log('error submit!!')
+                return false
+              }
+            })
+            resolve()
+            setTimeout(() => {
+              this.listLoading = false
+            }, 1000)
+          }).catch(
+            response => {
+              this.$notify({
+                title: 'error',
+                message: 'Wrong username or password',
+                type: 'error',
+                duration: 2000
+              })
+            }
+          )
         })
-      })
+      } else {
+        this.$message({
+          type: 'error',
+          message: 'Wrong verification code!'
+        })
+      }
     },
     handleRegister() {
-      // console.log(this.registerForm)
-
       const regData = {
         username: this.registerForm.username,
-        password: this.registerForm.password,
+        password: CryptoJS.MD5(this.registerForm.password).toString(),
         gender: {
           gender: this.registerForm.gender
         },
@@ -518,27 +569,11 @@ export default {
           })
         })
       })
-      // this.$axios.post('/login', loginData)
-      /*
-      axios.post('/register', this.registerForm)
-        .then(response => {
-          // 处理登录成功的响应
-          console.log('Register successful:', response.data);
-          // 可以跳转到其他页面或执行其他操作
-        })
-        .catch(error => {
-          // 处理登录失败的响应
-          console.error('Register failed:', error);
-        });
-        */
     },
-    getOtherQuery(query) {
-      return Object.keys(query).reduce((acc, cur) => {
-        if (cur !== 'redirect') {
-          acc[cur] = query[cur]
-        }
-        return acc
-      }, {})
+    async getVerificationCode() {
+      const response = await getVerification()
+      this.captchaImageUrl = response.data.verifyCodeImgUrl
+      this.captchaCode = response.data.verifyCode
     }
   }
 }
@@ -567,9 +602,9 @@ $cursor: #fff;
 
     input {
       background: transparent;
-      border: 0px;
+      border: 0;
       -webkit-appearance: none;
-      border-radius: 0px;
+      border-radius: 0;
       padding: 12px 5px 12px 15px;
       color: $light_gray;
       height: 47px;
@@ -615,6 +650,11 @@ $light_gray:#eee;
     overflow: hidden;
   }
 
+  .captcha-container {
+    margin-left: 130px;
+    margin-bottom: 10px;
+  }
+
   .tips {
     font-size: 14px;
     color: #fff;
@@ -641,7 +681,7 @@ $light_gray:#eee;
     .title {
       font-size: 26px;
       color: $light_gray;
-      margin: 0px auto 40px auto;
+      margin: 0 auto 40px auto;
       text-align: center;
       font-weight: bold;
     }
@@ -668,12 +708,6 @@ $light_gray:#eee;
     position: absolute;
     right: 10%;
     bottom: 20px;
-  }
-
-  @media only screen and (max-width: 470px) {
-    .thirdparty-button {
-      display: none;
-    }
   }
 }
 

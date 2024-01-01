@@ -26,7 +26,7 @@
 
     <div class="enter-button">
       <router-link :to="{ name: 'RoomPage', params: { roomInfo: selectedInfo }}">
-        <el-button>
+        <el-button type="primary">
           Enter
         </el-button>
       </router-link>
@@ -64,13 +64,13 @@ export default {
       this.selectedInfo.selectedBuilding = this.buildings[0]
       await this.updateFloors()
       if (this.selectedInfo.zoneName === '湖畔') {
-        this.imgLink = 'https://mirrors.sustech.edu.cn/site/sustech-online/img/facility/buildings/zhiren-college.jpg'
+        this.imgLink = '/zhiren.jpg'
       } else if (this.selectedInfo.zoneName === '二期') {
-        this.imgLink = 'https://mirrors.sustech.edu.cn/site/sustech-online/img/facility/buildings/p2-dormitory.jpg'
+        this.imgLink = '/erqi.jpg'
       } else if (this.selectedInfo.zoneName === '荔园') {
-        this.imgLink = 'https://mirrors.sustech.edu.cn/site/sustech-online/img/facility/buildings/liyuan-gate.jpg'
+        this.imgLink = '/liyuan.jpg'
       } else {
-        this.imgLink = 'https://mirrors.sustech.edu.cn/site/sustech-online/img/facility/buildings/liyuan-huiyuann-xinyuan.jpg'
+        this.imgLink = '/xinyuan.jpg'
       }
     },
     async updateFloors() {
@@ -99,6 +99,7 @@ export default {
 }
 
 .eq-dorm-image {
+  padding: 10px;
   text-align: center;
   display: block;
 }

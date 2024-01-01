@@ -12,6 +12,7 @@
         </pan-thumb>
       </div>
       <div class="box-center">
+        <br>
         <!--        <div class="user-name text-center">{{ user.name }}</div>-->
         <mallki class-name="mallki-text" :text="user.name" />
         <div class="user-role text-center text-muted">{{ user.subject }}</div>
@@ -76,6 +77,9 @@ export default {
           this.$props.user.name = sessionStorage.getItem('username')
           this.$props.user.subject = response.data.subject.name
           console.log(this.$props.user.subject)
+          if (response.data.photo != null) {
+            this.$props.user.avatar = response.data.photo
+          }
           this.$props.user.wakeupTime = response.data.uptime.timeSlot
           this.$props.user.bedTime = response.data.bedtime.timeSlot
           resolve()
@@ -146,5 +150,13 @@ export default {
       font-weight: bold;
     }
   }
+}
+.mallki-text{
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+.el-card{
+  height: 503px
 }
 </style>

@@ -4,8 +4,8 @@
 
     <ul class="team-list">
       <li v-for="(team, index) in filteredTeams" :key="index" class="team-item">
-        <span>{{ team }}</span>
-        <el-button type="primary" @click="requestToTeamUp(team)">Join</el-button>
+        <span>Team {{ team }}</span>
+        <el-button class="join-button" @click="requestToTeamUp(team)">Join</el-button>
       </li>
     </ul>
   </div>
@@ -42,6 +42,10 @@ export default {
     },
     async requestToTeamUp(leaderName) {
       await requestTeamUp(leaderName, this.userName)
+      this.$message({
+        type: 'success',
+        message: 'Your application has been sent!'
+      })
     }
   }
 }
@@ -49,15 +53,17 @@ export default {
 
 <style scoped>
 .join-team-page {
-  max-width: 600px;
+  height: 100vh;
   margin: 0 auto;
   padding: 20px;
+  background-color: #CAFFFF;
+  color: #833600;
 }
 
 .team-list {
+  margin-left: 500px;
   list-style-type: none;
   padding: 0;
-  margin: 0;
 }
 
 .team-item {
@@ -65,11 +71,13 @@ export default {
   border: 1px solid #ddd;
   padding: 10px;
   width: 300px;
+  font-size: 18px;
   margin-bottom: 10px; /* adds space between team items */
   border-radius: 10px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  opacity: 0.9;
 }
 
 .team-item span {
@@ -77,10 +85,26 @@ export default {
 }
 
 input {
-  margin-bottom: 20px; /* adds space below the search input */
+  margin-bottom: 20px;
+  margin-left: 500px;
   padding: 10px;
-  width: calc(100% - 22px); /* adjusts width to account for padding */
+  width: 400px;
   border: 1px solid #ddd;
   border-radius: 4px;
+  opacity: 0.8;
+}
+
+.join-button {
+  font-size: 15px;
+  background-color: #CAFFFF;
+  color: #833600;
+  border-color: #833600;
+  margin: 0 1rem; /* Adds space between buttons */
+  border-radius: 10px;
+}
+
+.join-button:hover {
+  background-color: #833600;
+  color: #CAFFFF;
 }
 </style>

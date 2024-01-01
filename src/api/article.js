@@ -120,14 +120,6 @@ export function getDormUsers(query) {
   })
 }
 
-export function fetchArticle(id) {
-  return request({
-    url: '/vue-element-admin/article/detail',
-    method: 'get',
-    params: { id }
-  })
-}
-
 export function fetchPv(pv) {
   return request({
     url: '/vue-element-admin/article/pv',
@@ -146,6 +138,24 @@ export function createDorm(data) {
 
 export function deleteDorm(data) {
   var url = 'http://localhost:8443/api/admin/removeDormitory'
+  return request({
+    url: url,
+    method: 'post',
+    data
+  })
+}
+
+export function checkOutUser(data) {
+  var url = `http://localhost:8443/api/checkOutDorm?username=${data.username}&dormitoryid=${data.id}`
+  console.log(url)
+  return request({
+    url: url,
+    method: 'post'
+  })
+}
+
+export function uploadUser(data) {
+  var url = 'http://localhost:8443/api/admin/user/register/upload'
   return request({
     url: url,
     method: 'post',
@@ -172,6 +182,15 @@ export function fetchUserList(query) {
     url: url,
     method: 'post'
     // params: query
+  })
+}
+
+export function updateUser(data) {
+  const url = `http://localhost:8443/api/updateUser`
+  return request({
+    url: url,
+    method: 'post',
+    data
   })
 }
 
@@ -209,6 +228,14 @@ export function deleteTimeInterval(data) {
     url: url,
     method: 'post',
     data
+  })
+}
+
+export function getBookmark(username) {
+  const url = `http://localhost:8443/api/getBookMark?username=${username}`
+  return request({
+    url: url,
+    method: 'post'
   })
 }
 
