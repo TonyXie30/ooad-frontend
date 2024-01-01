@@ -58,6 +58,7 @@ export default {
   padding: 20px;
   background-color: #CAFFFF;
   color: #833600;
+  overflow: auto
 }
 
 .team-list {

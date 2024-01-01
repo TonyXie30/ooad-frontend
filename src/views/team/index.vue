@@ -36,12 +36,13 @@ export default {
 <style scoped>
 .team-container {
   width: 100%;
-  height: 93vh; /* Use 100% of the viewport height */
+  height: 100vh; /* Use 100% of the viewport height */
   display: flex;
   flex-direction: column;
   align-items: center;
   background-color: #CAFFFF;
   padding: 3rem;
+  overflow: auto;
 }
 
 .upper-container {
