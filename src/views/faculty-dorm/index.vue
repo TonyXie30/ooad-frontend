@@ -175,7 +175,7 @@
         </el-form-item> -->
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button v-if="!dialogStatus==='create'" type="warning" @click="handleOpenSecondDialog()">
+        <el-button v-if="dialogStatus==='update'" type="warning" @click="handleOpenSecondDialog()">
           delete user
         </el-button>
         <el-button @click="dialogFormVisible = false">
