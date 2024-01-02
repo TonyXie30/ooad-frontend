@@ -430,10 +430,10 @@ export default {
       }],
       degrees: [{
         value: 'postgraduate',
-        label: '本科'
+        label: '硕士'
       }, {
         value: 'doctorate',
-        label: '研究生'
+        label: '博士'
       }],
       passwordType: 'password',
       capsTooltip: false,
@@ -569,10 +569,17 @@ export default {
               type: 'success',
               duration: 2000
             })
+          } else if (response.code === 5102) {
+            this.$notify({
+              title: 'Error',
+              message: 'User already exists',
+              type: 'error',
+              duration: 2000
+            })
           } else {
             this.$notify({
               title: 'Error',
-              message: 'User registration failed',
+              message: 'data error',
               type: 'error',
               duration: 2000
             })
