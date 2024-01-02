@@ -118,6 +118,7 @@ export default {
   background-color: #CAFFFF;
   color: #833600;
   padding: 20px; /* Padding for overall alignment */
+  overflow: auto;
 }
 
 .upper-part {
