@@ -1,5 +1,5 @@
 <template>
-  <el-card style="margin-bottom:20px; margin-right: 20px">
+  <el-card style="margin-bottom:20px; margin-right: 0">
     <div slot="header" class="clearfix">
       <span>Bookmarks</span>
     </div>
@@ -106,7 +106,6 @@ export default {
 .el-card{
   height: 255px;
   overflow: auto;
-  width:840px
 }
 
 </style>

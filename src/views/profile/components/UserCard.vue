@@ -15,11 +15,11 @@
         <br>
         <!--        <div class="user-name text-center">{{ user.name }}</div>-->
         <mallki class-name="mallki-text" :text="user.name" />
-        <div class="user-role text-center text-muted">{{ user.subject }}</div>
+        <div v-if="this.user.user" class="user-role text-center text-muted">{{ user.subject }}</div>
       </div>
     </div>
 
-    <div class="user-bio">
+    <div v-if="this.user.user" class="user-bio">
       <div class="user-education user-bio-section">
         <div class="user-bio-section-header"><span>Wake up Time</span></div>
         <div class="user-bio-section-body">
@@ -29,7 +29,7 @@
         </div>
       </div>
 
-      <div class="user-education user-bio-section">
+      <div v-if="this.user.user" class="user-education user-bio-section">
         <div class="user-bio-section-header"><span>Bed Time</span></div>
         <div class="user-bio-section-body">
           <div class="text-muted">
@@ -38,7 +38,7 @@
         </div>
       </div>
 
-      <div class="user-education user-bio-section">
+      <div v-if="this.user.user" class="user-education user-bio-section">
         <div class="user-bio-section-header"><span>Selected Dorm </span></div>
         <div class="user-bio-section-body">
           <div class="text-muted">
@@ -74,7 +74,8 @@ export default {
           bedTime: '',
           dorm: '',
           dormID: '',
-          visible: false
+          visible: false,
+          user: true
         }
       }
     }
@@ -101,35 +102,45 @@ export default {
       })
     },
     initMethod() {
+      this.$props.user.user = true
       // console.log(localStorage.getItem('username'))
-      new Promise((resolve, reject) => {
-        gerProfile(sessionStorage.getItem('username')).then(response => {
-          // console.log(response.data)
-          this.$props.user.name = sessionStorage.getItem('username')
-          this.$props.user.subject = response.data.subject.name
-          // console.log(this.$props.user.subject)
-          if (response.data.photo != null) {
-            this.$props.user.avatar = response.data.photo
-          }
-          this.$props.user.wakeupTime = response.data.uptime.timeSlot
-          this.$props.user.bedTime = response.data.bedtime.timeSlot
-          if (response.data.bookedDormitory === null) {
+      if (sessionStorage.getItem('username') !== 'System') {
+        new Promise((resolve, reject) => {
+          gerProfile(sessionStorage.getItem('username')).then(response => {
+            console.log(response.data)
+            this.$props.user.name = sessionStorage.getItem('username')
+            this.$props.user.subject = response.data.subject.name
+            // console.log(this.$props.user.subject)
+            if (response.data.photo != null) {
+              this.$props.user.avatar = response.data.photo
+            }
+            this.$props.user.wakeupTime = response.data.uptime.timeSlot
+            this.$props.user.bedTime = response.data.bedtime.timeSlot
             this.$props.user.dorm = 'null'
             this.$props.user.visible = false
-          } else {
-            this.$props.user.dorm = response.data.bookedDormitory.location + ' ' +
-              response.data.bookedDormitory.buildingName + '栋 ' + response.data.bookedDormitory.floor +
-              '层 ' + response.data.bookedDormitory.houseNum + '室'
-            this.$props.user.dormID = response.data.bookedDormitory.id
-            this.$props.user.visible = true
-          }
-
-          resolve()
-          setTimeout(() => {
-            this.listLoading = false
-          }, 1000)
+            // console.log('?' + this.$props.user.dorm)
+            if (response.data.bookedDormitory === null) {
+              this.$props.user.dorm = 'null'
+              this.$props.user.visible = false
+              console.log(this.$props.user.dorm)
+            } else {
+              this.$props.user.dorm = response.data.bookedDormitory.location + ' ' +
+                response.data.bookedDormitory.buildingName + '栋 ' + response.data.bookedDormitory.floor +
+                '层 ' + response.data.bookedDormitory.houseNum + '室'
+              this.$props.user.dormID = response.data.bookedDormitory.id
+              this.$props.user.visible = true
+              console.log(this.$props.user.dorm)
+            }
+            resolve()
+            setTimeout(() => {
+              this.listLoading = false
+            }, 1000)
+          })
         })
-      })
+      } else {
+        this.$props.user.name = 'System'
+        this.$props.user.user = false
+      }
     }
   }
 }

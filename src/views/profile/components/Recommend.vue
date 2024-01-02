@@ -29,7 +29,7 @@
       <el-main>
         <el-table :data="tableData">
           <el-table-column prop="username" label="username" width="180" />
-          <el-table-column prop="subject" label="subject" width="180" />
+          <el-table-column prop="subject" label="major" width="180" />
           <el-table-column prop="wakeupTime" label="wakeupTime" width="180" />
           <el-table-column prop="bedTime" label="bedTime" width="200" />
         </el-table>
@@ -56,33 +56,35 @@ export default {
   },
   methods: {
     update() {
-      new Promise((resolve, reject) => {
-        recommend(sessionStorage.getItem('username')).then(response => {
-          console.log(response.data)
-          const length = this.$data.tableData.length
-          for (let i = 0; i < length; i++) {
-            this.$data.tableData.pop()
-          }
-          for (let i = 0; i < response.data.length; i++) {
-            const item = {
-              username: 'none',
-              subject: 'null',
-              wakeupTime: 'null',
-              bedTime: 'null'
+      if (sessionStorage.getItem('username') !== 'System') {
+        new Promise((resolve, reject) => {
+          recommend(sessionStorage.getItem('username')).then(response => {
+            console.log(response.data)
+            const length = this.$data.tableData.length
+            for (let i = 0; i < length; i++) {
+              this.$data.tableData.pop()
             }
-            item.username = response.data[i].username
-            item.subject = response.data[i].subject
-            item.bedTime = response.data[i].bedTime
-            item.wakeupTime = response.data[i].upTime
-            this.$data.tableData.push(item)
-          }
+            for (let i = 0; i < response.data.length; i++) {
+              const item = {
+                username: 'none',
+                subject: 'null',
+                wakeupTime: 'null',
+                bedTime: 'null'
+              }
+              item.username = response.data[i].username
+              item.subject = response.data[i].subject
+              item.bedTime = response.data[i].bedTime
+              item.wakeupTime = response.data[i].upTime
+              this.$data.tableData.push(item)
+            }
 
-          resolve()
-          setTimeout(() => {
-            this.listLoading = false
-          }, 1000)
+            resolve()
+            setTimeout(() => {
+              this.listLoading = false
+            }, 1000)
+          })
         })
-      })
+      }
     }
   }
 }
