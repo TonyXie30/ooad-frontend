@@ -64,8 +64,8 @@ export default {
               item.gender = response.data[i].gender.gender
               item.degree = response.data[i].degree.degree
               item.bed = response.data[i].bed
-              console.log('???')
-              console.log(item)
+              // console.log('???')
+              // console.log(item)
               this.$data.tableData.push(item)
             }
           }
