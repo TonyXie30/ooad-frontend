@@ -39,21 +39,23 @@
       </div>
 
       <div class="user-education user-bio-section">
-        <div class="user-bio-section-header"><span>Selected Dorm</span></div>
+        <div class="user-bio-section-header"><span>Selected Dorm </span></div>
         <div class="user-bio-section-body">
           <div class="text-muted">
             {{ user.dorm }}
           </div>
         </div>
       </div>
-
+      <button v-if="this.user.visible" class="button" @click="cancel">
+        deselect
+      </button>
     </div>
   </el-card>
 </template>
 
 <script>
 import PanThumb from '@/components/PanThumb'
-import { gerProfile } from '@/api/article'
+import { checkOutUser, gerProfile } from '@/api/article'
 import Mallki from '@/components/TextHoverEffect/Mallki.vue'
 
 export default {
@@ -70,7 +72,9 @@ export default {
           subject: '',
           wakeupTime: '',
           bedTime: '',
-          dorm: ''
+          dorm: '',
+          dormID: '',
+          visible: false
         }
       }
     }
@@ -79,14 +83,31 @@ export default {
     this.initMethod()
   },
   methods: {
+    cancel() {
+      new Promise((resolve, reject) => {
+        const data = {
+          username: sessionStorage.getItem('username'),
+          id: this.$props.user.dormID
+        }
+        checkOutUser(data).then(response => {
+          this.$props.user.visible = false
+          this.$props.user.dorm = 'null'
+          location.reload()
+          resolve()
+          setTimeout(() => {
+            this.listLoading = false
+          }, 1000)
+        })
+      })
+    },
     initMethod() {
-      console.log(localStorage.getItem('username'))
+      // console.log(localStorage.getItem('username'))
       new Promise((resolve, reject) => {
         gerProfile(sessionStorage.getItem('username')).then(response => {
-          console.log(response.data)
+          // console.log(response.data)
           this.$props.user.name = sessionStorage.getItem('username')
           this.$props.user.subject = response.data.subject.name
-          console.log(this.$props.user.subject)
+          // console.log(this.$props.user.subject)
           if (response.data.photo != null) {
             this.$props.user.avatar = response.data.photo
           }
@@ -94,10 +115,13 @@ export default {
           this.$props.user.bedTime = response.data.bedtime.timeSlot
           if (response.data.bookedDormitory === null) {
             this.$props.user.dorm = 'null'
+            this.$props.user.visible = false
           } else {
             this.$props.user.dorm = response.data.bookedDormitory.location + ' ' +
               response.data.bookedDormitory.buildingName + '栋 ' + response.data.bookedDormitory.floor +
               '层 ' + response.data.bookedDormitory.houseNum + '室'
+            this.$props.user.dormID = response.data.bookedDormitory.id
+            this.$props.user.visible = true
           }
 
           resolve()
@@ -177,5 +201,10 @@ export default {
 .el-card{
   height: 560px;
   overflow: auto
+}
+.button{
+  right: 70%;
+  top: 86%;
+  position: absolute;
 }
 </style>

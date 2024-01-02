@@ -35,7 +35,7 @@ export default {
           senderimg: this.myInfo.img, // 发送者的img
           receiver: '默认群聊', // 接收方id
           time: time.toLocaleString(), // 发送时间
-          msg: this.input// 消息内容
+          msg: this.myInfo.name + ': ' + this.input// 消息内容
         }
         this.$socket.emit('groupChat', data)
         /* 自己的信息直接push到数组中 */
