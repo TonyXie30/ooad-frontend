@@ -404,14 +404,9 @@ export default {
       uploadDialogVisible: false,
       pvData: [],
       rules: {
-        // type: [{ required: true, message: 'type is required', trigger: 'change' }],
-        // houseNum: [{ required: true, message: '需要房间号', trigger: 'change' }],
-        // floor: [{ required: true, type: 'number', message: '需要楼层', trigger: 'change' }],
-        // buildingName: [{ required: true, message: '需要栋', trigger: 'change' }],
-        // location: [{ required: true, message: '需要位置', trigger: 'change' }],
-        // bed: [{ required: true, type: 'number', message: '需要床位数量', trigger: 'change' }]
-        // timestamp: [{ type: 'date', required: true, message: 'timestamp is required', trigger: 'change' }],
-        // title: [{ required: true, message: 'title is required', trigger: 'blur' }]
+        gender: [{ required: true, message: 'gender is required', trigger: 'change' }],
+        degree: [{ required: true, message: 'grade is required', trigger: 'change' }],
+        subject: [{ required: true, message: 'subject is required', trigger: 'change' }]
       },
       downloadLoading: false
     }

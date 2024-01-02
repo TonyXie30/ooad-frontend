@@ -93,6 +93,11 @@
           <span v-else>0</span>
         </template>
       </el-table-column> -->
+      <el-table-column label="Bed" class-name="status-col" width="100">
+        <template slot-scope="{row}">
+          <span>{{ row.bed }}</span>
+        </template>
+      </el-table-column>
       <el-table-column label="Remaining" class-name="status-col" width="100">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusFilter">
