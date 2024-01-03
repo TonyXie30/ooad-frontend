@@ -9,7 +9,7 @@ import request from '@/utils/request'
 // }
 export function Login(data) {
   return request({
-    url: `http://localhost:8443/api/login`,
+    url: `http://8.138.84.46:8443/api/login`,
     method: 'post',
     data
   })
@@ -17,7 +17,7 @@ export function Login(data) {
 
 export function Register(data) {
   return request({
-    url: `http://localhost:8443/api/register`,
+    url: `http://8.138.84.46:8443/api/register`,
     method: 'post',
     data
   })
@@ -25,13 +25,13 @@ export function Register(data) {
 
 export function gerProfile(data) {
   return request({
-    url: `http://localhost:8443/api/getUser?username=${data}`,
+    url: `http://8.138.84.46:8443/api/getUser?username=${data}`,
     method: 'post'
   })
 }
 export function recommend(data) {
   return request({
-    url: `http://localhost:8443/api/recommend?username=${data}`,
+    url: `http://8.138.84.46:8443/api/recommend?username=${data}`,
     method: 'post'
   })
 }
@@ -44,7 +44,7 @@ export function fetchList(query) {
   const sortParam = query.sort === '-' ? '-' : '%2B'
   const userParam = query.username ? `username=${query.username}` : ''
 
-  const url = `http://localhost:8443/api/findDorm?sort=${sortParam}&page=${query.page}&limit=${query.limit}&${houseNumParam}&${floorParam}&${buildingNameParam}&${locationParam}&${userParam}`
+  const url = `http://8.138.84.46:8443/api/findDorm?sort=${sortParam}&page=${query.page}&limit=${query.limit}&${houseNumParam}&${floorParam}&${buildingNameParam}&${locationParam}&${userParam}`
   return request({
     url: url,
     method: 'post'
@@ -53,7 +53,7 @@ export function fetchList(query) {
 }
 
 export function findBuilding(query) {
-  var url = `http://localhost:8443/api/findBuilding`
+  var url = `http://8.138.84.46:8443/api/findBuilding`
   if (query.location) {
     url += `?location=${query.location}`
   }
@@ -64,7 +64,7 @@ export function findBuilding(query) {
 }
 
 export function findFloor(query) {
-  var url = 'http://localhost:8443/api/findFloor'
+  var url = 'http://8.138.84.46:8443/api/findFloor'
   if (query.location) {
     url += `?location=${query.location}`
     if (query.buildingName) {
@@ -80,7 +80,7 @@ export function findFloor(query) {
 }
 
 export function selectRoom(query) {
-  var url = 'http://localhost:8443/api/checkInDorm'
+  var url = 'http://8.138.84.46:8443/api/checkInDorm'
   url += `?dormitoryId=${query.id}&username=${query.user}`
   return request({
     url: url,
@@ -89,7 +89,7 @@ export function selectRoom(query) {
 }
 
 export function exchangeRoom(query) {
-  var url = `http://localhost:8443/api/exchangeApply?username=${query.username}&to=${query.to}`
+  var url = `http://8.138.84.46:8443/api/exchangeApply?username=${query.username}&to=${query.to}`
   return request({
     url: url,
     method: 'post'
@@ -97,7 +97,7 @@ export function exchangeRoom(query) {
 }
 
 export function checkUser(query) {
-  var url = `http://localhost:8443/api/checkUserIsCheckedIn?username=${query}`
+  var url = `http://8.138.84.46:8443/api/checkUserIsCheckedIn?username=${query}`
   return request({
     url: url,
     method: 'post'
@@ -105,7 +105,7 @@ export function checkUser(query) {
 }
 
 export function checkTime(query) {
-  var url = `http://localhost:8443/api/checkTime?username=${query}`
+  var url = `http://8.138.84.46:8443/api/checkTime?username=${query}`
   return request({
     url: url,
     method: 'post'
@@ -113,7 +113,7 @@ export function checkTime(query) {
 }
 
 export function getDormUsers(query) {
-  var url = `http://localhost:8443/api/getRoomCheckInedUsers?dormitoryid=${query}`
+  var url = `http://8.138.84.46:8443/api/getRoomCheckInedUsers?dormitoryid=${query}`
   return request({
     url: url,
     method: 'post'
@@ -130,14 +130,14 @@ export function fetchPv(pv) {
 
 export function createDorm(data) {
   return request({
-    url: 'http://localhost:8443/api/admin/addDormitory',
+    url: 'http://8.138.84.46:8443/api/admin/addDormitory',
     method: 'post',
     data
   })
 }
 
 export function deleteDorm(data) {
-  var url = 'http://localhost:8443/api/admin/removeDormitory'
+  var url = 'http://8.138.84.46:8443/api/admin/removeDormitory'
   return request({
     url: url,
     method: 'post',
@@ -146,7 +146,7 @@ export function deleteDorm(data) {
 }
 
 export function checkOutUser(data) {
-  var url = `http://localhost:8443/api/checkOutDorm?username=${data.username}&dormitoryid=${data.id}`
+  var url = `http://8.138.84.46:8443/api/checkOutDorm?username=${data.username}&dormitoryid=${data.id}`
   console.log(url)
   return request({
     url: url,
@@ -155,7 +155,7 @@ export function checkOutUser(data) {
 }
 
 export function uploadUser(data) {
-  var url = 'http://localhost:8443/api/admin/user/register/upload'
+  var url = 'http://8.138.84.46:8443/api/admin/user/register/upload'
   return request({
     url: url,
     method: 'post',
@@ -177,7 +177,7 @@ export function fetchUserList(query) {
   // const subjectParam = query.subjectName ? `subject=${query.subject}` : ''
   const sortParam = query.sort === '-' ? '-' : '%2B'
 
-  const url = `http://localhost:8443/api/getUsers?sort=${sortParam}&page=${query.page}&limit=${query.limit}`
+  const url = `http://8.138.84.46:8443/api/getUsers?sort=${sortParam}&page=${query.page}&limit=${query.limit}`
   return request({
     url: url,
     method: 'post'
@@ -186,7 +186,7 @@ export function fetchUserList(query) {
 }
 
 export function updateUser(data) {
-  const url = `http://localhost:8443/api/updateUser`
+  const url = `http://8.138.84.46:8443/api/updateUser`
   return request({
     url: url,
     method: 'post',
@@ -195,7 +195,7 @@ export function updateUser(data) {
 }
 
 export function deleteUser(data) {
-  const url = `http://localhost:8443/api/admin/user/deleteUser?username=${data}`
+  const url = `http://8.138.84.46:8443/api/admin/user/deleteUser?username=${data}`
   return request({
     url: url,
     method: 'post'
@@ -205,7 +205,7 @@ export function deleteUser(data) {
 export function fetchTimeList(query) {
   const genderParam = query.gender ? `${query.gender}` : ''
   const degreeParam = query.degree ? `${query.degree}` : ''
-  const url = `http://localhost:8443/api/getSelectionTime?gender=${genderParam}&degree=${degreeParam}`
+  const url = `http://8.138.84.46:8443/api/getSelectionTime?gender=${genderParam}&degree=${degreeParam}`
   return request({
     url: url,
     method: 'post'
@@ -214,7 +214,7 @@ export function fetchTimeList(query) {
 }
 
 export function setTimeInterval(data) {
-  const url = 'http://localhost:8443/api/admin/setSelectionTime'
+  const url = 'http://8.138.84.46:8443/api/admin/setSelectionTime'
   return request({
     url: url,
     method: 'post',
@@ -223,7 +223,7 @@ export function setTimeInterval(data) {
 }
 
 export function deleteTimeInterval(data) {
-  const url = 'http://localhost:8443/api/admin/deleteSelectionTime'
+  const url = 'http://8.138.84.46:8443/api/admin/deleteSelectionTime'
   return request({
     url: url,
     method: 'post',
@@ -232,7 +232,7 @@ export function deleteTimeInterval(data) {
 }
 
 export function getBookmark(username) {
-  const url = `http://localhost:8443/api/getBookMark?username=${username}`
+  const url = `http://8.138.84.46:8443/api/getBookMark?username=${username}`
   return request({
     url: url,
     method: 'post'

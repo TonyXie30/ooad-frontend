@@ -50,7 +50,7 @@ const store = new Vuex.Store({
   // plugin: {
   //   p1: new VueSocketIO({
   //     debug: false,
-  //     connection: 'http://localhost:3000',
+  //     connection: 'http://8.138.84.46:3000',
   //     vuex: {
   //       store,
   //       actionPrefix: 'SOCKET_',

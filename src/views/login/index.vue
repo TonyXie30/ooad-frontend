@@ -174,7 +174,13 @@
 import { validUsername } from '@/utils/validate'
 import { Login, Register } from '@/api/article'
 import { getVerification } from '@/api/login'
+import Cookies from 'js-cookie'
 const CryptoJS = require('crypto-js')
+
+function setLoginCookies(keyName, keyValue) {
+  return Cookies.set(keyName, keyValue)
+}
+
 export default {
   name: 'Login',
   data() {
@@ -504,6 +510,7 @@ export default {
                   .catch(() => {
                     this.loading = false
                   })
+                setLoginCookies('username', this.realUser.username)
               } else {
                 console.log('error submit!!')
                 return false

@@ -45,7 +45,7 @@ Vue.use(Element, {
 Vue.use(
   new VueSocketIO({
     debug: false, // debug调试，生产建议关闭
-    connection: 'http://localhost:3000',
+    connection: 'http://8.138.84.46:3000',
     vuex: {
       store2,
       actionPrefix: 'SOCKET_',

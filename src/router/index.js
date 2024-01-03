@@ -237,14 +237,11 @@ const router = createRouter()
 router.beforeEach((to, from, next) => {
   // 检查是否访问的是需要登录的页面
   // 假设你有一个判断登录状态的方法，比如 isAuthenticated()
+  const isToken = Cookies.get('username')
   const isAuthenticated = sessionStorage.getItem('username')
 
-  if (!isAuthenticated) {
-    // 如果未认证，删除所有Cookies
-    Object.keys(Cookies.get()).forEach(cookieName => {
-      Cookies.remove(cookieName)
-    })
-
+  if (!isAuthenticated && isToken) {
+    sessionStorage.setItem('username', isToken)
     // 重定向到登录页面
     next()
   } else {
